@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26228.4
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetCoreEcsConsole", "NetCoreEcsConsole\NetCoreEcsConsole.csproj", "{D307FBBE-CCA4-44A4-AF18-A40895853CEB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntropyEcsCore", "EntropyEcsCore\EntropyEcsCore.csproj", "{D4C8FA7D-63DE-47F7-AE01-FEF3608689B2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleGame", "SampleGame\SampleGame.csproj", "{896A1B02-5C87-4168-BA44-212F0BF41803}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D307FBBE-CCA4-44A4-AF18-A40895853CEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D307FBBE-CCA4-44A4-AF18-A40895853CEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D307FBBE-CCA4-44A4-AF18-A40895853CEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D307FBBE-CCA4-44A4-AF18-A40895853CEB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D4C8FA7D-63DE-47F7-AE01-FEF3608689B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4C8FA7D-63DE-47F7-AE01-FEF3608689B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4C8FA7D-63DE-47F7-AE01-FEF3608689B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4C8FA7D-63DE-47F7-AE01-FEF3608689B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{896A1B02-5C87-4168-BA44-212F0BF41803}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{896A1B02-5C87-4168-BA44-212F0BF41803}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{896A1B02-5C87-4168-BA44-212F0BF41803}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{896A1B02-5C87-4168-BA44-212F0BF41803}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
