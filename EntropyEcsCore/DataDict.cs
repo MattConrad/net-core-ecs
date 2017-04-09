@@ -40,7 +40,8 @@ namespace EntropyEcsCore
 
             //for now, we won't support IEnumerable<T> as values, only List<T>s. maybe arrays, if we end up rehydrating json or something.
             return (value is long || value is string || value is decimal || value is bool
-                    || value is List<long> || value is List<string> || value is List<decimal>);
+                    || value is List<long> || value is List<string> || value is List<decimal>
+                    || value is HashSet<long>);
         }
 
         public object this[string key]
@@ -79,8 +80,6 @@ namespace EntropyEcsCore
             _internalDict.Add(key, value);
         }
 
-        //we probably want Append or AddRange for the IEnumerables, but let's see what happens.
-
         public void Add(string key, IEnumerable<long> value)
         {
             _internalDict.Add(key, value.ToList());
@@ -99,6 +98,25 @@ namespace EntropyEcsCore
         public void Add(string key, DataDict value)
         {
             _internalDict.Add(key, value);
+        }
+
+        //we probably want Append or AddRange for the IEnumerables, but let's see what happens.
+        public void AppendLong(string key, long value)
+        {
+            var obj = _internalDict[key];
+
+            if (obj is List<long>)
+            {
+                ((List<long>)obj).Add(value);
+            }
+            else if (obj is HashSet<long>)
+            {
+                ((HashSet<long>)obj).Add(value);
+            }
+            else
+            {
+                throw new InvalidOperationException($"Value for key '{key}' cannot append long value.");
+            }
         }
 
         public bool ContainsKey(string key)
@@ -129,6 +147,11 @@ namespace EntropyEcsCore
         public bool GetBool(string key)
         {
             return (bool)_internalDict[key];
+        }
+
+        public HashSet<long> GetHashSetLong(string key)
+        {
+            return (HashSet<long>)_internalDict[key];
         }
 
         public List<long> GetListLong(string key)

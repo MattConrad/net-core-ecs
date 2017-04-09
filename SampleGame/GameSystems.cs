@@ -36,10 +36,10 @@ namespace SampleGame
         /// <summary>
         /// Returns a random number in the range of -7/+7.
         /// </summary>
-        public static int GetRange7()
+        public static int GetRange5()
         {
             //later, we'll turn this into a bell curve.
-            return _rand.Next(15) - 7;
+            return _rand.Next(11) - 5;
         }
     }
 
@@ -66,8 +66,7 @@ namespace SampleGame
         {
             //we might have many containers for an entity later, in which case containerId or other filtering may matter.
             var container = rgs.GetComponentsOfType(ownerId, nameof(GCp.CpContainer)).First();
-            //MWCTODO: oh, ids really want to be a HashSet
-            var ids = container.Data.GetListLong(GCp.CpContainer.Keys.ContainedEntityIds);
+            var ids = container.Data.GetHashSetLong(GCp.CpContainer.Keys.ContainedEntityIds);
 
             bool succeeded = false;
             if (action == Action.AddEntity && !ids.Contains(toAddOrRemoveId))
@@ -110,11 +109,16 @@ namespace SampleGame
             var targetType = attackData.GetString(GM.AttackMessage.Keys.TargetType);
             if (targetType != GM.AttackMessage.Vals.TargetType.SingleMelee) throw new ArgumentException("Melee only.");
 
-            int roll = RandomSystem.GetRange7();
+            int roll = RandomSystem.GetRange5();
 
             long targetId = attackData.GetLong(GM.AttackMessage.Keys.TargetEntityId);
+            //maybe we'll optimize this later
+            var equipped = rgs.GetComponentsOfType(targetId, nameof(GCp.CpContainer))
+                .FirstOrDefault(c => c.Data.GetString(GCp.CpContainer.Keys.ContainerDescription) 
+                    == GCp.CpContainer.Vals.ContainerDescription.Equipped);
 
-
+            //how do we tidily get the entities from a container entity?
+            //var armor = equipped?.Data.GetLong()
 
             return attackData;
         }

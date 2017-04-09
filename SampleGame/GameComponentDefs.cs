@@ -105,7 +105,7 @@ namespace SampleGame.ComponentDefs
         public static class Keys
         {
             /// <summary>
-            /// List[long]. Entity ids contained in this container.  MWCTODO: ugh, should this be HashSet instead?
+            /// HashSet[long]. Entity ids contained in this container.
             /// </summary>
             public const string ContainedEntityIds = nameof(ContainedEntityIds);
 
@@ -123,6 +123,17 @@ namespace SampleGame.ComponentDefs
             /// String. Usually "in", but could be "on", or "equipped".
             /// </summary>
             public const string Containment = nameof(Containment);
+        }
+
+        public static class Vals
+        {
+            public static class ContainerDescription
+            {
+                public const string Inventory = nameof(Inventory);
+                public const string Equipped = nameof(Equipped);
+                public const string Aoe = nameof(Aoe);
+            }
+
         }
 
 
