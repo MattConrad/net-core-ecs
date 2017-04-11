@@ -1,29 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text;
 
-namespace SampleGame.ComponentDefs
+namespace SampleGame
 {
-    public static class CpEntityName
-    {
-        public static class Keys
-        {
-            public const string ProperName = nameof(ProperName);
-            public const string VagueName = nameof(VagueName);
-            public const string ShortDescription = nameof(ShortDescription);
-            public const string LongDescription = nameof(LongDescription);
-        }
-    }
-
     /// <summary>
     /// This component is always present on entities that are in-game objects.
     /// It provides default behaviors for physical objects (and perhaps sounds, golden glows, etc).
     /// Most objects will include other components for more specific behavior.
     /// </summary>
-    public static class CpWorldObject
+    internal static class CpPhysicalObject
     {
-        public static class Keys
+        internal static class Keys
         {
             /// <summary>
             /// Bool. Some world objects will be incorporeal, and have special or absent behavior compared to normal objects.
@@ -61,9 +49,9 @@ namespace SampleGame.ComponentDefs
             public const string WieldableModifier = nameof(WieldableModifier);
         }
 
-        public static class Vals
+        internal static class Vals
         {
-            public static class Condition
+            internal static class Condition
             {
                 public const string Destroyed = nameof(Destroyed);
                 public const string NearlyDestroyed = nameof(NearlyDestroyed);
@@ -72,7 +60,7 @@ namespace SampleGame.ComponentDefs
                 public const string Undamaged = nameof(Undamaged);
             }
 
-            public static class Size
+            internal static class Size
             {
                 //hmmm, is this a good way to handle?
                 public const string Miniscule = nameof(Miniscule);
@@ -84,7 +72,7 @@ namespace SampleGame.ComponentDefs
                 public const string Enormous = nameof(Enormous);
             }
 
-            public static class DamageType
+            internal static class DamageType
             {
                 public const string Mechanical = nameof(Mechanical);
                 public const string Heat = nameof(Heat);
@@ -93,52 +81,4 @@ namespace SampleGame.ComponentDefs
             }
         }
     }
-
-    /// <summary>
-    /// Anything can be a container, and can be multiple containers. Usually a container will list entities that are "in" the containing entity,
-    /// but it could have things that are "on" or "under", or all 3 at once.
-    /// Let's try having "equipped" be just another container. At least as a test drive.
-    /// However, a "region" won't be just a container, despite being somewhat containerish.
-    /// </summary>
-    public static class CpContainer
-    {
-        public static class Keys
-        {
-            /// <summary>
-            /// HashSet[long]. Entity ids contained in this container.
-            /// </summary>
-            public const string ContainedEntityIds = nameof(ContainedEntityIds);
-
-            /// <summary>
-            /// String. If the entity with this component isn't primarily a container, this is the description for the container part of the entity. e.g., "pack" for a person, or "trunk" for a car.
-            /// </summary>
-            public const string ContainerDescription = nameof(ContainerDescription);
-
-            /// <summary>
-            /// Bool.
-            /// </summary>
-            public const string ItemsAreVisible = nameof(ItemsAreVisible);
-
-            /// <summary>
-            /// String. Usually "in", but could be "on", or "equipped".
-            /// </summary>
-            public const string Containment = nameof(Containment);
-        }
-
-        public static class Vals
-        {
-            public static class ContainerDescription
-            {
-                public const string Inventory = nameof(Inventory);
-                public const string Equipped = nameof(Equipped);
-                public const string Aoe = nameof(Aoe);
-            }
-
-        }
-
-
-    }
-
-
-
 }

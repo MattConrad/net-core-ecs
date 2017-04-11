@@ -1,4 +1,5 @@
 ﻿using System;
+using SampleGame;
 
 namespace NetCoreEcsConsole
 {
@@ -6,7 +7,13 @@ namespace NetCoreEcsConsole
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            var game = new Game();
+
+            var lines = game.ProcessInput("nothing");
+            foreach (string line in lines)
+            {
+                Console.WriteLine(line);
+            }
         }
     }
 }

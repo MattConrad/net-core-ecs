@@ -1,30 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using EntropyEcsCore;
 
-namespace SampleGame.MessageDefs
+namespace SampleGame
 {
-    public static class AlterContainerContentsResultsMessage
+    internal static class AttackMessage
     {
-        public static class Keys
-        {
-            /// <summary>
-            /// Bool.
-            /// </summary>
-            public const string Succeeded = nameof(Succeeded);
-
-            /// <summary>
-            /// List[string]. Unless this needs to be a DataDict.
-            /// </summary>
-            public const string Output = nameof(Output);
-        }
-
-    }
-
-    public static class AttackMessage
-    {
-        public static class Keys
+        internal static class Keys
         {
             /// <summary>
             /// String: enum.
@@ -48,16 +30,16 @@ namespace SampleGame.MessageDefs
             public const string DamageType = nameof(DamageType);
         }
 
-        public static class Vals
+        internal static class Vals
         {
-            public static class TargetType
+            internal static class TargetType
             {
                 public const string SingleMelee = nameof(SingleMelee);
                 public const string SingleRanged = nameof(SingleRanged);
                 public const string Aoe = nameof(Aoe);
             }
 
-            public static class MeleeWeaponType
+            internal static class MeleeWeaponType
             {
                 public const string BareFist = nameof(BareFist);
                 public const string Dagger = nameof(Dagger);
@@ -65,7 +47,7 @@ namespace SampleGame.MessageDefs
                 public const string Claymore = nameof(Claymore);
             }
 
-            public static class DamageType
+            internal static class DamageType
             {
                 public const string Mechanical = nameof(Mechanical);
                 public const string Heat = nameof(Heat);
@@ -73,18 +55,26 @@ namespace SampleGame.MessageDefs
                 public const string Poison = nameof(Poison);
             }
         }
-
     }
 
-    public static class ConsoleMessage
+    internal static class CombatSystem
     {
-        public static class Keys
+        internal static DataDict ResolveAttack(EcsRegistrar rgs, long attackerId, DataDict attackData)
         {
-            /// <summary>
-            /// ListString: lines to write to output.
-            /// </summary>
-            public const string Lines = nameof(Lines);
+            var targetType = attackData.GetString(AttackMessage.Keys.TargetType);
+            if (targetType != AttackMessage.Vals.TargetType.SingleMelee) throw new ArgumentException("Melee only.");
+
+            int roll = RandomSystem.GetRange5();
+
+            long targetId = attackData.GetLong(AttackMessage.Keys.TargetEntityId);
+            //maybe we'll optimize this later
+            var targetEquipment = ContainerSystem
+                .GetEntityIdsFromFirstContainer(rgs, targetId, CpContainer.Vals.ContainerDescription.Equipped);
+
+            //for this simple game, there's only one piece of armor, but we'll use SelectMany anyhow.
+            var armor = targetEquipment.SelectMany(eid => rgs.GetComponentsOfType(eid, "MWCTODO:ARMOR")).First();
+
+            return attackData;
         }
     }
-
 }
