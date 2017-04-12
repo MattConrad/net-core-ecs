@@ -7,11 +7,25 @@ namespace SampleGame
 {
     public class Game
     {
+        public class Actions
+        {
+            public string Attack = CombatActionMessage.Vals.TargetType.SingleMelee;
+            public string RunAway = nameof(RunAway);
+        }
+
         private EcsRegistrar Rgs { get; set; } = new EcsRegistrar();
 
         public List<string> ProcessInput(string input)
         {
-            return new List<string> { "these", "are", "lines" };
+            List<string> results = new List<string>();
+            bool continuing = true;
+            while (continuing)
+            {
+                var actionResults = CombatSystem.AttemptAction(this.Rgs, 0L, 0L, out continuing);
+                results.AddRange(actionResults);
+            }
+
+            return results;
         }
     }
 }

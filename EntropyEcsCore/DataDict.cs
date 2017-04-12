@@ -100,6 +100,12 @@ namespace EntropyEcsCore
             _internalDict.Add(key, value);
         }
 
+        public void AppendString(string key, string value)
+        {
+            var obj = _internalDict[key];
+            ((List<string>)obj).Add(value);
+        }
+
         //we probably want Append or AddRange for the IEnumerables, but let's see what happens.
         public void AppendLong(string key, long value)
         {
@@ -131,7 +137,7 @@ namespace EntropyEcsCore
 
         public long GetLong(string key)
         {
-            return (int)_internalDict[key];
+            return (long)_internalDict[key];
         }
 
         public string GetString(string key)
