@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using EntropyEcsCore;
 
 namespace SampleGame
@@ -9,6 +7,7 @@ namespace SampleGame
     {
         internal static class Keys
         {
+            //MWCTODO: ugh. these aren't clear enough and in any case each needs an illustrating example in XML header comments.
             public const string ProperName = nameof(ProperName);
             public const string VagueName = nameof(VagueName);
             public const string ShortDescription = nameof(ShortDescription);
@@ -22,6 +21,5 @@ namespace SampleGame
         {
             return rgs.GetComponentsOfType(entityId, nameof(CpEntityName)).First().Data;
         }
-
     }
 }

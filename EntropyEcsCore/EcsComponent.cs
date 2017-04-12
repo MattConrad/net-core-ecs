@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace EntropyEcsCore
 {
     /// <summary>
-    /// The Type of a component indicates what kind of Data is found for that component.
+    /// The Type of a component indicates what kind of Data is found in that component.
     /// </summary>
     public class EcsComponent
     {

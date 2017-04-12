@@ -1,0 +1,10 @@
+﻿TODO: Fancy text interpolation for messages. See http://tracery.io/ also https://github.com/BenziAhamed/Tracery also https://github.com/sjl/chancery/
+TODO: arena
+TODO: locations for physical objects.
+TODO: weapons/armor droppable
+TODO: weapons/armor damageable
+TODO: combat/noncombat modes
+TODO: emit list of supported actions for specified (and/or current) mode
+
+http://ripplega.me/development/ecs-ez/ is talking to me at a level that is easy to understand.
+

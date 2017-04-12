@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.ComponentModel;
 
 namespace EntropyEcsCore
 {
@@ -14,6 +15,24 @@ namespace EntropyEcsCore
     /// </summary>
     public class DataDict
     {
+        //MWCTODO: i'm not sure we're keeping this method after all. if we can't use our consts to init anon objects, this is useless.
+        /// <summary>
+        /// Return a new DataDict from an anonymous key/value object. Relies on reflection.
+        /// </summary>
+        public static DataDict GetDataDict(object dataObject)
+        {
+            if (dataObject == null) throw new ArgumentNullException("dataObject may not be null.");
+
+            var dictionary = new Dictionary<string, object>();
+            foreach (PropertyDescriptor property in TypeDescriptor.GetProperties(dataObject))
+            {
+                object value = property.GetValue(dataObject);
+                dictionary.Add(property.Name, value);
+            }
+
+            return GetDataDict(dictionary);
+        }
+
         /// <summary>
         /// Return a new DataDict from any untyped string:object dictionary. Throws exception if any invalid values.
         /// </summary>

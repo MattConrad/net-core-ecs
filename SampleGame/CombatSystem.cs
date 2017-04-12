@@ -95,14 +95,14 @@ namespace SampleGame
             results.Add($"Attacker rolled a {roll}.");
 
             long targetId = attackData.GetLong(CombatActionMessage.Keys.TargetEntityId);
-            //maybe we'll optimize this later
-            var targetEquipment = ContainerSystem
-                .GetEntityIdsFromFirstContainer(rgs, targetId, CpContainer.Vals.ContainerDescription.Equipped);
+            ////maybe we'll optimize this later
+            //var targetEquipment = ContainerSystem
+            //    .GetEntityIdsFromFirstContainerByDesc(rgs, targetId, CpContainer.Vals.ContainerDescription.Equipped);
 
             ////for this simple game, there's only one piece of armor, but we'll use SelectMany anyhow.
-            //var armor = targetEquipment.SelectMany(eid => rgs.GetComponentsOfType(eid, "MWCTODO:ARMOR")).First();
+            //var armor = targetEquipment.SelectMany(eid => rgs.GetComponentsOfType(eid, "MWCTODO:ARMOR")).FirstOrDefault();
 
-            bool deathAndQuit = RandomSystem.GetRange5() > 3;
+            bool deathAndQuit = RandomSystem.Get1To100() > 99;
             if (deathAndQuit) results.Add("Someone died. Combat ends.");
 
             attackData.Add(CombatActionMessage.Keys.Results, results);

@@ -8,8 +8,6 @@ namespace EntropyEcsCore
     //one entity registrar per game. if only a single game per environment, only need one registrar.
     public class EcsRegistrar
     {
-        //http://ripplega.me/development/ecs-ez/ is talking to me at a level that is easy to understand.
-
         private long _currentId = 0L;
         private Dictionary<long, List<EcsComponent>> _entityIdsToComponents = new Dictionary<long, List<EcsComponent>>();
 
@@ -21,11 +19,27 @@ namespace EntropyEcsCore
             return _currentId++;
         }
 
+        /// <summary>
+        /// Add a component of type "type" to the entity, with empty Data.
+        /// </summary>
         public void AddComponent(long entityId, string type)
         {
             AddComponent(entityId, type, new DataDict());
         }
 
+        /// <summary>
+        /// Add a component of type "type" to the entity, with Data from "dataObj". Relies on reflection.
+        /// </summary>
+        public void AddComponent(long entityId, string type, object dataObj)
+        {
+            var cp = new EcsComponent { Id = NewId(), Type = type, Data = DataDict.GetDataDict(dataObj) };
+
+            _entityIdsToComponents[entityId].Add(cp);
+        }
+
+        /// <summary>
+        /// Add a component of type "type" to the entity, with Data of "data".
+        /// </summary>
         public void AddComponent(long entityId, string type, DataDict data)
         {
             var cp = new EcsComponent { Id = NewId(), Type = type, Data = data };
