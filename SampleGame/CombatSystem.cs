@@ -5,6 +5,7 @@ using EntropyEcsCore;
 
 namespace SampleGame
 {
+    //MWCTODO: probably, all this goes away and is replaced with enums used in CombatSystem. not crazy about messages any more.
     internal static class CombatActionMessage
     {
         internal static class Keys
@@ -68,9 +69,6 @@ namespace SampleGame
 
     internal static class CombatSystem
     {
-        //MWCTOOD: and now I begin to doubt that we want to pass dictionaries everywhere.
-        // maybe we don't want to use dicts for messages, only for components.
-        // if this is true, does it affect DataDict? probably not, but maybe.
         //MWCTODO: this is only temporary. real endpoints need to be a lot more flexible than this.
         public static List<string> AttemptAction(EcsRegistrar rgs, long attackerId, long targetId, out bool continuing)
         {

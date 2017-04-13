@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using EntropyEcsCore;
 
 namespace SampleGame
 {
@@ -19,7 +18,7 @@ namespace SampleGame
             public const string Corporeal = nameof(Corporeal);
 
             /// <summary>
-            /// String: enum
+            /// Decimal: range 0-1 with 0 = destroyed and 1 = perfect condition.
             /// </summary>
             public const string Condition = nameof(Condition);
 
@@ -33,33 +32,14 @@ namespace SampleGame
             /// </summary>
             public const string Size = nameof(Size);
 
-            /// <summary>
-            /// String: enum
-            /// </summary>
-            public const string SizeModifier = nameof(SizeModifier);
-
-            /// <summary>
-            /// String: enum
-            /// </summary>
-            public const string CarryableModifier = nameof(CarryableModifier);
-
-            /// <summary>
-            /// String: enum
-            /// </summary>
-            public const string WieldableModifier = nameof(WieldableModifier);
+            ///// <summary>
+            ///// String: enum
+            ///// </summary>
+            //public const string WieldableModifier = nameof(WieldableModifier);
         }
 
         internal static class Vals
         {
-            internal static class Condition
-            {
-                public const string Destroyed = nameof(Destroyed);
-                public const string NearlyDestroyed = nameof(NearlyDestroyed);
-                public const string Damaged = nameof(Damaged);
-                public const string SlightlyDamaged = nameof(SlightlyDamaged);
-                public const string Undamaged = nameof(Undamaged);
-            }
-
             internal static class Size
             {
                 //hmmm, is this a good way to handle?
@@ -72,13 +52,28 @@ namespace SampleGame
                 public const string Enormous = nameof(Enormous);
             }
 
-            internal static class DamageType
-            {
-                public const string Mechanical = nameof(Mechanical);
-                public const string Heat = nameof(Heat);
-                public const string Electric = nameof(Electric);
-                public const string Poison = nameof(Poison);
-            }
+            //internal static class DamageType
+            //{
+            //    public const string Mechanical = nameof(Mechanical);
+            //    public const string Heat = nameof(Heat);
+            //    public const string Electric = nameof(Electric);
+            //    public const string Poison = nameof(Poison);
+            //}
+        }
+
+        /// <summary>
+        /// Create an un-ided component.
+        /// </summary>
+        internal static EcsComponent Create(bool corporeal = true, decimal condition = 1.0M, decimal weight = 0M, string size = Vals.Size.Medium)
+        {
+            var cp = new EcsComponent { Type = nameof(CpPhysicalObject), Data = new DataDict() };
+
+            cp.Data[Keys.Corporeal] = corporeal;
+            cp.Data[Keys.Condition] = condition;
+            cp.Data[Keys.Weight] = weight;
+            cp.Data[Keys.Size] = size;
+
+            return cp;
         }
     }
 }

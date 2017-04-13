@@ -42,9 +42,25 @@ namespace SampleGame
             internal static class ContainerDescription
             {
                 public const string Inventory = nameof(Inventory);
-                public const string Equipped = nameof(Equipped);
             }
+        }
 
+        /// <summary>
+        /// Create an un-ided component.
+        /// </summary>
+        internal static EcsComponent Create(IEnumerable<long> containedEntityIds, string containerDescription = "", bool itemsAreVisible = false, string containment = "in")
+        {
+            var cp = new EcsComponent { Type = nameof(CpContainer), Data = new DataDict() };
+
+            cp.Data[Keys.ContainedEntityIds] = containedEntityIds == null
+                ? new HashSet<long>()
+                : new HashSet<long>(containedEntityIds);
+
+            cp.Data[Keys.ContainerDescription] = containerDescription ?? "";
+            cp.Data[Keys.ItemsAreVisible] = itemsAreVisible;
+            cp.Data[Keys.Containment] = containment ?? "";
+
+            return cp;
         }
     }
 
@@ -123,8 +139,8 @@ namespace SampleGame
 
                 results[nameof(AlterContainerContentsResultsMessage.Keys.Output)] =
                     string.Format(baseMessage,
-                        addedName.Data.GetString(CpEntityName.Keys.VagueName),
-                        ownerName.Data.GetString(CpEntityName.Keys.VagueName));
+                        addedName.Data.GetString(CpEntityName.Keys.GeneralName),
+                        ownerName.Data.GetString(CpEntityName.Keys.GeneralName));
             }
 
             return results;

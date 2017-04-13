@@ -8,3 +8,14 @@ TODO: emit list of supported actions for specified (and/or current) mode
 
 http://ripplega.me/development/ecs-ez/ is talking to me at a level that is easy to understand.
 
+So I find that what I am doing with Cp... for naming component static classes is strongly frowned upon. I could refactor so all components live in a "Cp" namespace instead.
+However, I'm not convinced this would be an improvement. Will keep thinking about this.
+
+I'm wondering if I want a special string class just to indicate that this value is supposed to be from a string enum.
+http://stackoverflow.com/questions/3436101/create-custom-string-class
+Yanno, an alias for string is what I really want. Not a new class. [...] Apparently this is called a "typedef" in C and I'm not the first to want it.
+Nope, can't inherit from string, it's sealed.
+Looks like the link above is the answer, if I want to do it at all. For now, won't.
+
+
+
