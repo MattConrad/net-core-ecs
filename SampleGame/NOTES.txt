@@ -6,6 +6,11 @@ TODO: weapons/armor damageable
 TODO: combat/noncombat modes
 TODO: emit list of supported actions for specified (and/or current) mode
 
+
+TODO: pretty text descriptions
+TODO: timing system: events fire off on a clock
+
+
 http://ripplega.me/development/ecs-ez/ is talking to me at a level that is easy to understand.
 
 So I find that what I am doing with Cp... for naming component static classes is strongly frowned upon. I could refactor so all components live in a "Cp" namespace instead.
@@ -17,5 +22,55 @@ Yanno, an alias for string is what I really want. Not a new class. [...] Apparen
 Nope, can't inherit from string, it's sealed.
 Looks like the link above is the answer, if I want to do it at all. For now, won't.
 
+
+
+way more than i need now, but maybe i'd like to remember this later.
+        internal static class Vals
+        {
+            internal static class TargetType
+            {
+                public const string SingleMelee = nameof(SingleMelee);
+                public const string SingleRanged = nameof(SingleRanged);
+                public const string Aoe = nameof(Aoe);
+            }
+
+            internal static class MeleeWeaponType
+            {
+                public const string BareFist = nameof(BareFist);
+                public const string Dagger = nameof(Dagger);
+                public const string LongSword = nameof(LongSword);
+                public const string Claymore = nameof(Claymore);
+            }
+
+            internal static class DamageType
+            {
+                public const string Mechanical = nameof(Mechanical);
+                public const string Heat = nameof(Heat);
+                public const string Electric = nameof(Electric);
+                public const string Poison = nameof(Poison);
+            }
+        }
+
+similar to above, but probably less valuable.
+            /// <summary>
+            /// String: enum.
+            /// </summary>
+            public const string TargetType = nameof(TargetType);
+            /// <summary>
+            /// Long
+            /// </summary>
+            public const string TargetEntityId = nameof(TargetEntityId);
+            /// <summary>
+            /// Long
+            /// </summary>
+            public const string RawRoll = nameof(RawRoll);
+            /// <summary>
+            /// DataDict
+            /// </summary>
+            public const string RollModifiers = nameof(RollModifiers);
+            /// <summary>
+            /// String: enum
+            /// </summary>
+            public const string DamageType = nameof(DamageType);
 
 

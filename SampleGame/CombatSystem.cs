@@ -11,10 +11,6 @@ namespace SampleGame
         internal static class Keys
         {
             /// <summary>
-            /// Bool
-            /// </summary>
-            public const string Continuing = nameof(Continuing);
-            /// <summary>
             /// List[string]
             /// </summary>
             public const string Results = nameof(Results);
@@ -34,65 +30,30 @@ namespace SampleGame
             /// DataDict
             /// </summary>
             public const string RollModifiers = nameof(RollModifiers);
-            /// <summary>
-            /// String: enum
-            /// </summary>
-            public const string DamageType = nameof(DamageType);
-        }
-
-        internal static class Vals
-        {
-            internal static class TargetType
-            {
-                public const string SingleMelee = nameof(SingleMelee);
-                public const string SingleRanged = nameof(SingleRanged);
-                public const string Aoe = nameof(Aoe);
-            }
-
-            internal static class MeleeWeaponType
-            {
-                public const string BareFist = nameof(BareFist);
-                public const string Dagger = nameof(Dagger);
-                public const string LongSword = nameof(LongSword);
-                public const string Claymore = nameof(Claymore);
-            }
-
-            internal static class DamageType
-            {
-                public const string Mechanical = nameof(Mechanical);
-                public const string Heat = nameof(Heat);
-                public const string Electric = nameof(Electric);
-                public const string Poison = nameof(Poison);
-            }
         }
     }
 
     internal static class CombatSystem
     {
-        //MWCTODO: this is only temporary. real endpoints need to be a lot more flexible than this.
-        public static List<string> AttemptAction(EcsRegistrar rgs, long attackerId, long targetId, out bool continuing)
+        public static List<string> HerosAction(EcsRegistrar rgs, long heroId, long villianId, out bool combatFinished)
         {
-            var msg = new DataDict();
-            msg.Add(CombatActionMessage.Keys.TargetType, CombatActionMessage.Vals.TargetType.SingleMelee);
-            msg.Add(CombatActionMessage.Keys.TargetEntityId, targetId);
+            List<string> results = new List<string>();
 
-            var results = ResolveAction(rgs, attackerId, msg);
+            results.AddRange(ResolveAction(rgs, heroId, villianId, out combatFinished));
 
-            continuing = results.GetBool(CombatActionMessage.Keys.Continuing);
-            return msg.GetListString(CombatActionMessage.Keys.Results);
+            if (!combatFinished) results.AddRange(ResolveAction(rgs, villianId, heroId, out combatFinished));
+
+            return results;
         }
 
-        private static DataDict ResolveAction(EcsRegistrar rgs, long attackerId, DataDict attackData)
+        private static List<string> ResolveAction(EcsRegistrar rgs, long attackerId, long targetId, out bool combatFinished)
         {
+            combatFinished = false;
             var results = new List<string>();
-
-            var targetType = attackData.GetString(CombatActionMessage.Keys.TargetType);
-            if (targetType != CombatActionMessage.Vals.TargetType.SingleMelee) throw new ArgumentException("Melee only.");
 
             int roll = RandomSystem.GetRange5();
             results.Add($"Attacker rolled a {roll}.");
 
-            long targetId = attackData.GetLong(CombatActionMessage.Keys.TargetEntityId);
             ////maybe we'll optimize this later
             //var targetEquipment = ContainerSystem
             //    .GetEntityIdsFromFirstContainerByDesc(rgs, targetId, CpContainer.Vals.ContainerDescription.Equipped);
@@ -101,12 +62,13 @@ namespace SampleGame
             //var armor = targetEquipment.SelectMany(eid => rgs.GetComponentsOfType(eid, "MWCTODO:ARMOR")).FirstOrDefault();
 
             bool deathAndQuit = RandomSystem.Get1To100() > 99;
-            if (deathAndQuit) results.Add("Someone died. Combat ends.");
+            if (deathAndQuit)
+            {
+                combatFinished = true;
+                results.Add("Someone died. Combat ends.");
+            }
 
-            attackData.Add(CombatActionMessage.Keys.Results, results);
-            attackData.Add(CombatActionMessage.Keys.Continuing, !deathAndQuit);
-
-            return attackData;
+            return new List<string>();
         }
     }
 }

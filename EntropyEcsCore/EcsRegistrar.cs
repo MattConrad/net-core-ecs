@@ -28,16 +28,6 @@ namespace EntropyEcsCore
         }
 
         /// <summary>
-        /// Add a component of type "type" to the entity, with Data from "dataObj". Relies on reflection.
-        /// </summary>
-        public void AddComponent(long entityId, string type, object dataObj)
-        {
-            var cp = new EcsComponent { Id = NewId(), Type = type, Data = DataDict.GetDataDict(dataObj) };
-
-            _entityIdsToComponents[entityId].Add(cp);
-        }
-
-        /// <summary>
         /// Add a component of type "type" to the entity, with Data of "data".
         /// </summary>
         public void AddComponent(long entityId, string type, DataDict data)

@@ -18,9 +18,24 @@ namespace SampleGame
             public const string Corporeal = nameof(Corporeal);
 
             /// <summary>
-            /// Decimal: range 0-1 with 0 = destroyed and 1 = perfect condition.
+            /// Long: range 0-10000 with 0 = destroyed and 10000 = perfect health. For living things, these are hit points.
+            /// You can divide by 100 to get the % condition of any physical object.
+            /// Notice that a housecat and a hill giant both start with 10000 hit points--but see DefaultDamageMultiplier. 
             /// </summary>
             public const string Condition = nameof(Condition);
+
+            //MWCTODO: condition desc? "health", "condition", "working order"?
+            
+            //MWCTODO: i dunno, this may be too different from other systems to work. but let's try it. the idea of a consistent scale for condition appeals.
+            //MWCTODO: do we want damage threshold AND damage multiplier? cause if we want both you need to think about how they'll work together
+            //     for example, which one is applied first? does it even make sense to have a common value for incoming damage with both DT and DM?
+            /// <summary>
+            /// Decimal: A general multiplier altering the default damage of all otherwise-unspecified types. A person in good health has
+            /// a default damage multiplier of 1.0. A housecat would have something like 5.0 (but also good evasion). A hill giant would have something like 0.2.
+            /// A heavy stone door would have something like 0.005.
+            /// (eventually) There are damage type specific modifiers also, which will take precedence over the default for that damage type.
+            /// </summary>
+            public const string DefaultDamageMultiplier = nameof(DefaultDamageMultiplier);
 
             /// <summary>
             /// Decimal, weight in pounds.
@@ -43,22 +58,15 @@ namespace SampleGame
             internal static class Size
             {
                 //hmmm, is this a good way to handle?
-                public const string Miniscule = nameof(Miniscule);
-                public const string Tiny = nameof(Tiny);
-                public const string Small = nameof(Small);
-                public const string Medium = nameof(Medium);
-                public const string Big = nameof(Big);
-                public const string VeryBig = nameof(VeryBig);
-                public const string Enormous = nameof(Enormous);
+                public const string Minuscule = "minuscule";
+                public const string Tiny = "tiny";
+                public const string Small = "small";
+                public const string Medium = "medium";
+                public const string Big = "big";
+                public const string VeryBig = "very big";
+                public const string Enormous = "enormous";
             }
 
-            //internal static class DamageType
-            //{
-            //    public const string Mechanical = nameof(Mechanical);
-            //    public const string Heat = nameof(Heat);
-            //    public const string Electric = nameof(Electric);
-            //    public const string Poison = nameof(Poison);
-            //}
         }
 
         /// <summary>

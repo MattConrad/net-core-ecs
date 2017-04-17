@@ -4,7 +4,6 @@ using EntropyEcsCore;
 
 namespace SampleGame
 {
-
     /// <summary>
     /// Baby's first entity creator. An agent is an entity that has:
     /// PhysicalObject, EntityName, Container (Inventory), and Faction.
