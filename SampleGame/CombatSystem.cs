@@ -59,7 +59,8 @@ namespace SampleGame
 
             //eventually we'll want to watch for crits and fumbles
             //there will be a variety of modifiers, temp and perm, that can apply here.
-            var netAttack = Math.Max(attackRoll - defenseRoll, 0);
+            var modifiedDefenseRoll = Math.Max(defenseRoll, 0);
+            var netAttack = Math.Max(attackRoll - modifiedDefenseRoll, 0);
 
             var targetPhysicalObject = rgs.GetComponentsOfType(targetId, nameof(CpPhysicalObject)).Single();
 
@@ -87,7 +88,7 @@ namespace SampleGame
 
             var attackerProperName = attackerNames.GetString(CpEntityName.Keys.ProperName);
             var targetProperName = targetNames.GetString(CpEntityName.Keys.ProperName);
-            var targetConditionString = CpPhysicalObject.GetLivingThingConditionDesc(targetPhysicalObject.Data.GetLong(CpPhysicalObject.Keys.Condition));
+            var targetConditionString = PhysicalObjectSystem.GetLivingThingConditionDesc(targetPhysicalObject.Data.GetLong(CpPhysicalObject.Keys.Condition));
 
             var attackResultsMessage = damageDealt > 0 
                 ? $"{attackerProperName} swings and hits {targetProperName}. {targetProperName} is {targetConditionString}." 

@@ -72,7 +72,7 @@ namespace SampleGame
         {
             internal static class Size
             {
-                //hmmm, is this a good way to handle?
+                //hmmm, is this a good way to handle? if you keep this, each of these categories needs an example. (or examples)
                 public const string Minuscule = "minuscule";
                 public const string Tiny = "tiny";
                 public const string Small = "small";
@@ -83,7 +83,96 @@ namespace SampleGame
             }
         }
 
-        // MWCTODO: This is just temporary for testing, doesn't belong here, maybe on a static PhysicalObjectSystem. replace with something better and less tacked-on.
+        /// <summary>
+        /// Create an un-ided component.
+        /// </summary>
+        internal static EcsComponent Create(bool corporeal = true, long condition = 10000L, decimal weight = 0M, string size = Vals.Size.Medium,
+            long defaultDamageThreshold = 0L, decimal defaultDamageMultiplier = 1.0m)
+        {
+            var cp = new EcsComponent { Type = nameof(CpPhysicalObject), Data = new DataDict() };
+
+            cp.Data[Keys.Corporeal] = corporeal;
+            cp.Data[Keys.Condition] = condition;
+            cp.Data[Keys.Weight] = weight;
+            cp.Data[Keys.Size] = size;
+            cp.Data[Keys.DefaultDamageThreshold] = defaultDamageThreshold;
+            cp.Data[Keys.DefaultDamageMultiplier] = defaultDamageMultiplier;
+
+            return cp;
+        }
+    }
+
+    //MWCTODO: probably these don't belong here. arguably, all the cps should be off in their own separate folder, maybe a "GameComponents" namespace.
+    internal static class CpArmor
+    {
+        internal static class Keys
+        {
+            /// <summary>
+            /// Long: Damage Threshold: normally positive for armor.
+            /// </summary>
+            public const string DamageThreshold = nameof(DamageThreshold);
+
+            /// <summary>
+            /// Decimal: Damage Multiplier: often 0 for armor.
+            /// </summary>
+            public const string DamageMultiplier = nameof(DamageMultiplier);
+        }
+
+
+        /// <summary>
+        /// Create an un-ided component.
+        /// </summary>
+        internal static EcsComponent Create(long damageThreshold, decimal damageMultiplier)
+        {
+            var cp = new EcsComponent { Type = nameof(CpArmor), Data = new DataDict() };
+
+            cp.Data[Keys.DamageThreshold] = damageThreshold;
+            cp.Data[Keys.DamageMultiplier] = damageMultiplier;
+
+            return cp;
+        }
+    }
+
+    internal static class CpWeapon
+    {
+        internal static class Keys
+        {
+            /// <summary>
+            /// String:enum
+            /// </summary>
+            public const string DamageType = nameof(DamageType);
+
+            /// <summary>
+            /// Long: Usually a multiple of 1000: 1000, 2000, 3000 . . .
+            /// </summary>
+            public const string DamageAmount = nameof(DamageAmount);
+        }
+
+        internal static class Vals
+        {
+            internal static class DamageType
+            {
+                public const string MechanicalPiercing = nameof(MechanicalPiercing);
+                public const string MechanicalSlashing = nameof(MechanicalSlashing);
+            }
+        }
+
+        /// <summary>
+        /// Create an un-ided component.
+        /// </summary>
+        internal static EcsComponent Create(string damageType, long damageAmount)
+        {
+            var cp = new EcsComponent { Type = nameof(CpWeapon), Data = new DataDict() };
+
+            cp.Data[Keys.DamageType] = damageType;
+            cp.Data[Keys.DamageAmount] = damageAmount;
+
+            return cp;
+        }
+    }
+
+    internal static class PhysicalObjectSystem
+    {
         internal static string GetLivingThingConditionDesc(long condition)
         {
             if (condition >= 10000) return "untouched";
@@ -94,24 +183,6 @@ namespace SampleGame
             if (condition >= 1) return "in desperate straits";
 
             return "dead";
-        }
-
-        /// <summary>
-        /// Create an un-ided component.
-        /// </summary>
-        internal static EcsComponent Create(bool corporeal = true, long condition = 10000L, decimal weight = 0M, string size = Vals.Size.Medium)
-        {
-            var cp = new EcsComponent { Type = nameof(CpPhysicalObject), Data = new DataDict() };
-
-            cp.Data[Keys.Corporeal] = corporeal;
-            cp.Data[Keys.Condition] = condition;
-            cp.Data[Keys.Weight] = weight;
-            cp.Data[Keys.Size] = size;
-            //MWCTODO: add params for these, and set the damage mulitplier to something orcish on the orc and heroish on the hero.
-            cp.Data[Keys.DefaultDamageThreshold] = 0L;
-            cp.Data[Keys.DefaultDamageMultiplier] = 1.0m;
-
-            return cp;
         }
     }
 }

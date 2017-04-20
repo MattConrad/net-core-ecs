@@ -1,4 +1,21 @@
-﻿TODO: Fancy text interpolation for messages. Forget tracery, see https://github.com/TheBerkin/Rant instead.
+﻿
+
+So you see I have come to doubt all that I once held as true . . .
+
+I am not sure this stuff with DataDict is so very damned clever after all. What am I really getting out of it, that I would not be getting out of an interface/abstract class with with long:Id and string:Type, and public string Serialize() (maybe also deserialize), with various custom components inheriting?
+I had some reason why I thought a more general data storage was better . . . but I am not sure it was a good reason or a clearly envisioned reason.
+With the DataDict, we don't have to do any casting, but god I would much rather do some casting than all of this complicated key/value juggling. DataDict would serialize automatically, but is serialization really hard with custom components?
+
+I think I need to at least try this the other way, cause what I'm doing now is a wordy overabstracted mess. Maybe bump up serialization and make sure that goes smoothly.
+
+
+
+
+
+
+
+TODO: serialize/deserialize game state.
+TODO: Fancy text interpolation for messages. Forget tracery, see https://github.com/TheBerkin/Rant instead.
 TODO: arena (battlefield? or just "combat"? entity with one container for actors and ...?)
 TODO: locations for physical objects.
 TODO: weapons/armor droppable
@@ -9,6 +26,13 @@ TODO: emit list of supported actions for specified (and/or current) mode
 
 TODO: pretty text descriptions
 TODO: timing system: events fire off on a clock
+
+
+
+
+
+
+
 
 
 http://ripplega.me/development/ecs-ez/ is talking to me at a level that is easy to understand.
