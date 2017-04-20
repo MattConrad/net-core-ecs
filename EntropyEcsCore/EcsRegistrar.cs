@@ -69,7 +69,7 @@ namespace EntropyEcsCore
             return GetAllComponents(entityId).Where(cp => cp.Type == componentType);
         }
 
-        public EcsComponent GetComponent(long entityId, long componentId)
+        public EcsComponent GetComponentById(long entityId, long componentId)
         {
             return _entityIdsToComponents[entityId].Single(cp => cp.Id == componentId);
         }

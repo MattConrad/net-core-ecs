@@ -51,9 +51,28 @@ namespace SampleGame
             combatFinished = false;
             var results = new List<string>();
 
-            int roll = RandomSystem.GetRange5();
-            results.Add($"Attacker rolled a {roll}.");
+            int attackRoll = RandomSystem.GetRange5();
+            results.Add($"Attacker rolled a {attackRoll}.");
 
+            int defenseRoll = RandomSystem.GetRange5();
+            results.Add($"Defender rolled a {defenseRoll}.");
+
+            //eventually we'll want to watch for crits and fumbles
+            //there will be a variety of modifiers, temp and perm, that can apply here.
+            var netAttack = Math.Max(attackRoll - defenseRoll, 0);
+
+            var targetPhysicalObject = rgs.GetComponentsOfType(targetId, nameof(CpPhysicalObject)).Single();
+
+            //MWCTODO: probably all these key accesses ought to be hidden behind methods.
+            //for now, we'll just multiply base roll by 1000, so doing 0-10 points damage in a turn, modified.
+            var damageDealt = ((netAttack * 1000) 
+                - targetPhysicalObject.Data.GetLong(CpPhysicalObject.Keys.DefaultDamageThreshold)) 
+                * targetPhysicalObject.Data.GetDecimal(CpPhysicalObject.Keys.DefaultDamageMultiplier);
+
+            targetPhysicalObject.Data[CpPhysicalObject.Keys.Condition] =
+                (long)(targetPhysicalObject.Data.GetLong(CpPhysicalObject.Keys.Condition) - damageDealt);
+
+            //let's do armor soon!
             ////maybe we'll optimize this later
             //var targetEquipment = ContainerSystem
             //    .GetEntityIdsFromFirstContainerByDesc(rgs, targetId, CpContainer.Vals.ContainerDescription.Equipped);
@@ -61,14 +80,26 @@ namespace SampleGame
             ////for this simple game, there's only one piece of armor, but we'll use SelectMany anyhow.
             //var armor = targetEquipment.SelectMany(eid => rgs.GetComponentsOfType(eid, "MWCTODO:ARMOR")).FirstOrDefault();
 
-            bool deathAndQuit = RandomSystem.Get1To100() > 99;
-            if (deathAndQuit)
-            {
-                combatFinished = true;
-                results.Add("Someone died. Combat ends.");
-            }
+            results.Add($"Adjusted damage: {damageDealt}.");
 
-            return new List<string>();
+            var attackerNames = EntityNameSystem.GetEntityNames(rgs, attackerId);
+            var targetNames = EntityNameSystem.GetEntityNames(rgs, targetId);
+
+            var attackerProperName = attackerNames.GetString(CpEntityName.Keys.ProperName);
+            var targetProperName = targetNames.GetString(CpEntityName.Keys.ProperName);
+            var targetConditionString = CpPhysicalObject.GetLivingThingConditionDesc(targetPhysicalObject.Data.GetLong(CpPhysicalObject.Keys.Condition));
+
+            var attackResultsMessage = damageDealt > 0 
+                ? $"{attackerProperName} swings and hits {targetProperName}. {targetProperName} is {targetConditionString}." 
+                : $"{attackerProperName} blunders about ineffectually, and {targetProperName} takes heart.";
+
+            results.Add(attackResultsMessage);
+
+            if (targetConditionString == "dead") combatFinished = true;
+
+            return results;
         }
+
+
     }
 }

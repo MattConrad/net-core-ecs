@@ -1,5 +1,5 @@
-﻿TODO: Fancy text interpolation for messages. See http://tracery.io/ also https://github.com/BenziAhamed/Tracery also https://github.com/sjl/chancery/
-TODO: arena
+﻿TODO: Fancy text interpolation for messages. Forget tracery, see https://github.com/TheBerkin/Rant instead.
+TODO: arena (battlefield? or just "combat"? entity with one container for actors and ...?)
 TODO: locations for physical objects.
 TODO: weapons/armor droppable
 TODO: weapons/armor damageable
