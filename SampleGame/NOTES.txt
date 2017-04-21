@@ -15,6 +15,12 @@ I think I need to at least try this the other way, cause what I'm doing now is a
 
 
 TODO: serialize/deserialize game state.
+http://stackoverflow.com/questions/8513042/json-net-serialize-deserialize-derived-types
+
+"Note that if you remove all instances of [DataContract] and [DataMemeber] from your classes, Json.Net behaves differently: in that case, the default behavior is for Json.Net to serialize all public properties, both in the base and derived classes."
+http://stackoverflow.com/questions/22080387/json-net-does-not-serialize-properties-from-derived-class
+
+
 TODO: Fancy text interpolation for messages. Forget tracery, see https://github.com/TheBerkin/Rant instead.
 TODO: arena (battlefield? or just "combat"? entity with one container for actors and ...?)
 TODO: locations for physical objects.
