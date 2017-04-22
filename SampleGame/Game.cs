@@ -24,8 +24,8 @@ namespace SampleGame
         public Game()
         {
             this.Rgs = new EcsRegistrar();
-            this.HeroId = AgentCreator.Agent(this.Rgs, "The Hero", "person", "The hero, who must emerge from battle victorious.", null, "pack", CpFaction.Vals.FactionName.Heroes);
-            this.VillainId = AgentCreator.Agent(this.Rgs, "Gruk", "orc", "A nasty orc who must surely die upon the hero's blade.", null, "pack", CpFaction.Vals.FactionName.Villians);
+            this.HeroId = AgentCreator.Agent(this.Rgs, "The Hero", "person", "The hero, who must emerge from battle victorious.", null, "pack", Parts.Faction.Vals.FactionName.Heroes);
+            this.VillainId = AgentCreator.Agent(this.Rgs, "Gruk", "orc", "A nasty orc who must surely die upon the hero's blade.", null, "pack", Parts.Faction.Vals.FactionName.Villians);
         }
 
         public List<string> ProcessInput(string input)

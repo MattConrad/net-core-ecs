@@ -1,15 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace EntropyEcsCore
 {
-    //NOT threadsafe, don't try to access same EcsRegistrar concurrently.
-    //one entity registrar per game. if only a single game per environment, only need one registrar.
     public class EcsRegistrar
     {
         private long _currentId = 0L;
-        private Dictionary<long, List<EcsComponent>> _entityIdsToComponents = new Dictionary<long, List<EcsComponent>>();
+        private Dictionary<long, List<EcsEntityPart>> _entityIdsToEntityParts = new Dictionary<long, List<EcsEntityPart>>();
+
+        public EcsRegistrar()
+        {
+            JsonConvert.DefaultSettings = () => new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.Auto
+            };
+        }
+
+        public EcsRegistrar(string serializedRegistry) : this()
+        {
+            _entityIdsToEntityParts = JsonConvert.DeserializeObject<Dictionary<long, List<EcsEntityPart>>>(serializedRegistry);
+        }
 
         /// <summary>
         /// This can be used for both entities and components.
@@ -20,58 +31,68 @@ namespace EntropyEcsCore
         }
 
         /// <summary>
-        /// Add a component of type "type" to the entity, with empty Data.
+        /// Add an entity part to an entity. If the part doesn't have an Id yet, a new Id will be assigned.
         /// </summary>
-        public void AddComponent(long entityId, string type)
+        public void AddComponent(long entityId, EcsEntityPart cp)
         {
-            AddComponent(entityId, type, new DataDict());
+            if (cp.Id == 0L) cp.Id = NewId();
+
+            _entityIdsToEntityParts[entityId].Add(cp);
         }
 
         /// <summary>
-        /// Add a component of type "type" to the entity, with Data of "data".
+        /// Loads a new entity into the registry with an empty part list.
         /// </summary>
-        public void AddComponent(long entityId, string type, DataDict data)
-        {
-            var cp = new EcsComponent { Id = NewId(), Type = type, Data = data };
-
-            _entityIdsToComponents[entityId].Add(cp);
-        }
-
-        public void AddComponent(long entityId, EcsComponent cp)
-        {
-            if (cp.Id != 0) throw new ArgumentException("Component may not already have an id before adding.");
-            if (string.IsNullOrWhiteSpace(cp.Type)) throw new ArgumentException("Component must have a type before adding.");
-
-            cp.Id = NewId();
-            _entityIdsToComponents[entityId].Add(cp);
-        }
-
         public long CreateEntity()
         {
             long id = NewId();
-            _entityIdsToComponents.Add(id, new List<EcsComponent>());
+            _entityIdsToEntityParts.Add(id, new List<EcsEntityPart>());
+
+            return id;
+        }
+
+        /// <summary>
+        /// Loads a new entity into the registry from serialized parts, returning new entity Id.
+        /// </summary>
+        public long CreateEntity(string serializedEntityParts)
+        {
+            var entityParts = JsonConvert.DeserializeObject<List<EcsEntityPart>>(serializedEntityParts);
+
+            long id = NewId();
+            _entityIdsToEntityParts.Add(id, entityParts);
 
             return id;
         }
 
         public void DestroyEntity(long entityId)
         {
-            _entityIdsToComponents.Remove(entityId);
+            _entityIdsToEntityParts.Remove(entityId);
         }
 
-        public List<EcsComponent> GetAllComponents(long entityId)
+        public List<EcsEntityPart> GetAllParts(long entityId)
         {
-            return _entityIdsToComponents[entityId];
+            return _entityIdsToEntityParts[entityId];
         }
 
-        public IEnumerable<EcsComponent> GetComponentsOfType(long entityId, string componentType)
+        public IEnumerable<T> GetPartsOfType<T>(long entityId) where T : EcsEntityPart
         {
-            return GetAllComponents(entityId).Where(cp => cp.Type == componentType);
+            return GetAllParts(entityId).OfType<T>();
         }
 
-        public EcsComponent GetComponentById(long entityId, long componentId)
+        public EcsEntityPart GetComponentById(long entityId, long componentId)
         {
-            return _entityIdsToComponents[entityId].Single(cp => cp.Id == componentId);
+            return _entityIdsToEntityParts[entityId].Single(cp => cp.Id == componentId);
         }
+
+        public string SerializeEntityParts(long entityId)
+        {
+            return JsonConvert.SerializeObject(_entityIdsToEntityParts[entityId]);
+        }
+
+        public string SerializeRegistry()
+        {
+            return JsonConvert.SerializeObject(_entityIdsToEntityParts);
+        }
+
     }
 }
