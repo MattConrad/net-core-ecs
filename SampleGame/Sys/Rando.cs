@@ -1,10 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace SampleGame
+namespace SampleGame.Sys
 {
-    internal static class RandomSystem
+    /*
+     * System.Random is a bit bugged: https://connect.microsoft.com/VisualStudio/feedback/details/634761/system-random-serious-bug#tabs 
+     * could use reflector and fix, or maybe https://www.codeproject.com/Articles/25172/Simple-Random-Number-Generation
+     */
+    internal class Rando
     {
         private static Random _rand = new Random();
 
@@ -32,6 +34,5 @@ namespace SampleGame
         {
             return _rand.Next(100) + 1;
         }
-
     }
 }

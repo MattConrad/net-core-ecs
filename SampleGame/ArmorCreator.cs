@@ -9,12 +9,12 @@ namespace SampleGame
     {
         internal static long Armor(EcsRegistrar rgs, string generalName, string shortDescription, long defenseValue)
         {
-            long agentId = rgs.CreateEntity();
+            long armorId = rgs.CreateEntity();
 
-            rgs.AddComponent(agentId, CpPhysicalObject.Create());
-            rgs.AddComponent(agentId, CpEntityName.Create(properName: "", generalName: generalName, shortDescription: shortDescription));
+            rgs.AddComponent(armorId, new Parts.PhysicalObject());
+            rgs.AddComponent(armorId, new Parts.EntityName { ProperName = "", GeneralName = generalName, ShortDescription = shortDescription });
 
-            return agentId;
+            return armorId;
         }
 
     }

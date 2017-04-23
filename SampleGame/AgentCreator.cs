@@ -4,6 +4,7 @@ using EntropyEcsCore;
 
 namespace SampleGame
 {
+    //MWCTODO: eventually, creators will incorporate blueprints, and only modify a few properties. maybe randomlyish.
     /// <summary>
     /// Baby's first entity creator. An agent is an entity that has:
     /// PhysicalObject, EntityName, Container (Inventory), and Faction.
@@ -17,10 +18,12 @@ namespace SampleGame
         {
             long agentId = rgs.CreateEntity();
 
-            rgs.AddComponent(agentId, CpPhysicalObject.Create());
-            rgs.AddComponent(agentId, CpEntityName.Create(properName: properName, generalName: generalName, shortDescription: shortDescription));
-            rgs.AddComponent(agentId, CpContainer.Create(inventoryIds, inventoryContainerDescription));
-            rgs.AddComponent(agentId, CpFaction.Create(factionName));
+            rgs.AddComponent(agentId, new Parts.PhysicalObject());
+            rgs.AddComponent(agentId, new Parts.EntityName { ProperName = properName, GeneralName = generalName, ShortDescription = shortDescription });
+            //MWCTODO: weapons and armor soon!
+            rgs.AddComponent(agentId, new Parts.Container());
+            //handle nulls here.
+            rgs.AddComponent(agentId, new Parts.Faction { FactionReputations = new Dictionary<string, int> { [factionName] = 100 } });
 
             return agentId;
         }

@@ -34,7 +34,7 @@ namespace SampleGame
             bool combatFinished = false;
             while (!combatFinished)
             {
-                var actionResults = CombatSystem.HerosAction(this.Rgs, this.HeroId, this.VillainId, out combatFinished);
+                var actionResults = Sys.Combat.HerosAction(this.Rgs, this.HeroId, this.VillainId, out combatFinished);
                 results.AddRange(actionResults);
             }
 
