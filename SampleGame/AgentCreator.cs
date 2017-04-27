@@ -20,9 +20,10 @@ namespace SampleGame
 
             rgs.AddComponent(agentId, new Parts.PhysicalObject());
             rgs.AddComponent(agentId, new Parts.EntityName { ProperName = properName, GeneralName = generalName, ShortDescription = shortDescription });
-            //MWCTODO: weapons and armor soon!
-            rgs.AddComponent(agentId, new Parts.Container());
-            //handle nulls here.
+
+            rgs.AddComponent(agentId, new Parts.Container() {
+                ContainedEntityIds = new HashSet<long>(inventoryIds ?? new long[] { }), ContainerDescription = inventoryContainerDescription
+            });
             rgs.AddComponent(agentId, new Parts.Faction { FactionReputations = new Dictionary<string, int> { [factionName] = 100 } });
 
             return agentId;

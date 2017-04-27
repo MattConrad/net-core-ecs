@@ -24,8 +24,14 @@ namespace SampleGame
         public Game()
         {
             this.Rgs = new EcsRegistrar();
-            this.HeroId = AgentCreator.Agent(this.Rgs, "The Hero", "person", "The hero, who must emerge from battle victorious.", null, "pack", Parts.Faction.Vals.FactionName.Heroes);
-            this.VillainId = AgentCreator.Agent(this.Rgs, "Gruk", "orc", "A nasty orc who must surely die upon the hero's blade.", null, "pack", Parts.Faction.Vals.FactionName.Villians);
+
+            long weaponId = WeaponCreator.Weapon(this.Rgs, "sword", "sword", Parts.SingleTargetDamager.Vals.DamageType.MechanicalSlashing, 2000);
+            long armorId = ArmorCreator.Armor(this.Rgs, "leather armor", "leather", 1.0m, 1000);
+
+            //for right now, both combatants will magically share the same equipment . . .
+            var equipmentIds = new[] { weaponId, armorId };
+            this.HeroId = AgentCreator.Agent(this.Rgs, "The Hero", "person", "The hero, who must emerge from battle victorious.", equipmentIds, "pack", Parts.Faction.Vals.FactionName.Heroes);
+            this.VillainId = AgentCreator.Agent(this.Rgs, "Gruk", "orc", "A nasty orc who must surely die upon the hero's blade.", equipmentIds, "pack", Parts.Faction.Vals.FactionName.Villians);
         }
 
         public List<string> ProcessInput(string input)

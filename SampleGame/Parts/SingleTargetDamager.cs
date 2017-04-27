@@ -1,8 +1,11 @@
 ﻿
 namespace SampleGame.Parts
 {
-    internal class Weapon : EntropyEcsCore.EcsEntityPart
+    internal class SingleTargetDamager : EntropyEcsCore.EcsEntityPart
     {
+        //these are what make weapons (or other entities) deal damage.
+        // there might be a bunch of these on the same weapon (or spell, or whatever)
+
         /// <summary>
         /// Defined string value
         /// </summary>

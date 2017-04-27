@@ -18,7 +18,8 @@ namespace SampleGame.Parts
         /// </summary>
         internal int Condition { get; set; } = 10000;
 
-        //MWCTOOD: probably these next two shouldn't exist, and should only be specified in Armor. this would mean entities can have layers of armor (natural + worn, at least) but we probably want this anyway.
+        //i have waffled about whether objects, or only damage preventers, should have damage threshold and multiplier.
+        //  presently i think if it has a condition, it's reasonable to have a default for these without necessarily having a damagepreventer part.
 
         //eventually there will be damage-specific thresholds and multipliers, probably a dict with a key for each different damage type. not yet though.
         /// <summary>
@@ -43,6 +44,8 @@ namespace SampleGame.Parts
         /// Defined string value.
         /// </summary>
         internal string Size { get; set; }
+
+        //wieldabliity is something we probably do want here, but I haven't figured it out yet. maybe a long enum with all the size permuations...nah. probably a list of allowed sizes.
 
         //can we spec the universe with only seven sizes? maybe.
         internal static class Vals
