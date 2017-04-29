@@ -16,15 +16,10 @@ TODO: pretty text descriptions
 TODO: timing system: events fire off on a clock
 
 
-
-
-
+logic that goes with a part? put it the part? or in a system. not sure.
 
 
 http://ripplega.me/development/ecs-ez/ is talking to me at a level that is easy to understand.
-
-So I find that what I am doing with Cp... for naming component static classes is strongly frowned upon. I could refactor so all components live in a "Cp" namespace instead.
-However, I'm not convinced this would be an improvement. Will keep thinking about this.
 
 I'm wondering if I want a special string class just to indicate that this value is supposed to be from a string enum.
 http://stackoverflow.com/questions/3436101/create-custom-string-class

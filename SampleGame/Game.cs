@@ -30,8 +30,8 @@ namespace SampleGame
 
             //for right now, both combatants will magically share the same equipment . . .
             var equipmentIds = new[] { weaponId, armorId };
-            this.HeroId = AgentCreator.Agent(this.Rgs, "The Hero", "person", "The hero, who must emerge from battle victorious.", equipmentIds, "pack", Parts.Faction.Vals.FactionName.Heroes);
-            this.VillainId = AgentCreator.Agent(this.Rgs, "Gruk", "orc", "A nasty orc who must surely die upon the hero's blade.", equipmentIds, "pack", Parts.Faction.Vals.FactionName.Villians);
+            this.HeroId = AgentCreator.Agent(this.Rgs, "The Hero", "person", "The hero, who must emerge from battle victorious.", equipmentIds, "pack", 3, Parts.Faction.Vals.FactionName.Heroes);
+            this.VillainId = AgentCreator.Agent(this.Rgs, "Gruk", "orc", "A nasty orc who must surely die upon the hero's blade.", equipmentIds, "pack", 2, Parts.Faction.Vals.FactionName.Villians);
         }
 
         public List<string> ProcessInput(string input)

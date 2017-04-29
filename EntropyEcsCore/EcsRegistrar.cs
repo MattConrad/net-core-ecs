@@ -23,7 +23,7 @@ namespace EntropyEcsCore
         }
 
         /// <summary>
-        /// This can be used for both entities and components.
+        /// This can be used for both entities and parts.
         /// </summary>
         public long NewId()
         {
@@ -33,7 +33,7 @@ namespace EntropyEcsCore
         /// <summary>
         /// Add an entity part to an entity. If the part doesn't have an Id yet, a new Id will be assigned.
         /// </summary>
-        public void AddComponent(long entityId, EcsEntityPart cp)
+        public void AddPart(long entityId, EcsEntityPart cp)
         {
             if (cp.Id == 0L) cp.Id = NewId();
 
@@ -79,9 +79,9 @@ namespace EntropyEcsCore
             return GetAllParts(entityId).OfType<T>();
         }
 
-        public EcsEntityPart GetComponentById(long entityId, long componentId)
+        public EcsEntityPart GetPartById(long entityId, long partId)
         {
-            return _entityIdsToEntityParts[entityId].Single(cp => cp.Id == componentId);
+            return _entityIdsToEntityParts[entityId].Single(cp => cp.Id == partId);
         }
 
         public string SerializeEntityParts(long entityId)

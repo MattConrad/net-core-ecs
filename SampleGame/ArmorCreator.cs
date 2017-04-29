@@ -8,9 +8,9 @@ namespace SampleGame
         {
             long armorId = rgs.CreateEntity();
 
-            rgs.AddComponent(armorId, new Parts.PhysicalObject());
-            rgs.AddComponent(armorId, new Parts.EntityName { ProperName = "", GeneralName = generalName, ShortDescription = shortDescription });
-            rgs.AddComponent(armorId, new Parts.DamagePreventer { DamageMultiplier = defaultDamageMultiplier, DamageThreshold = defaultDamageThreshold });
+            rgs.AddPart(armorId, new Parts.PhysicalObject());
+            rgs.AddPart(armorId, new Parts.EntityName { ProperName = "", GeneralName = generalName, ShortDescription = shortDescription });
+            rgs.AddPart(armorId, new Parts.DamagePreventer { DamageMultiplier = defaultDamageMultiplier, DamageThreshold = defaultDamageThreshold });
 
             return armorId;
         }

@@ -24,11 +24,22 @@ namespace SampleGame.Sys
             combatFinished = false;
             var results = new List<string>();
 
+            var attackerNames = rgs.GetPartsOfType<Parts.EntityName>(attackerId).Single();
+            var targetNames = rgs.GetPartsOfType<Parts.EntityName>(targetId).Single();
+            string attackerProperName = attackerNames.ProperName;
+            string targetProperName = targetNames.ProperName;
+
             int attackRoll = random0to5();
-            results.Add($"Attacker rolled a {attackRoll}.");
+            decimal damageMultiplier = GetDamageMultiplierFromRange5(attackRoll);
+            string rollAdjective = GetRollAdjectiveFromRange5(attackRoll);
+            results.Add($"{attackerProperName} makes {rollAdjective} attack.");
+
+            var attackerSkills = rgs.GetPartsOfType<Parts.Skillset>(attackerId).Single();
+            int meleeSkill = attackerSkills.Skills[Parts.Skillset.Vals.Physical.Melee];
+            //later, this will match against dodge.
+            damageMultiplier = (attackRoll + meleeSkill > 0) ? damageMultiplier : 0;
 
             var targetPhysicalObject = rgs.GetPartsOfType<Parts.PhysicalObject>(targetId).Single();
-
             //ew, magic strings, fix this.
             var targetEquipment = Container.GetEntityIdsFromFirstContainerByDesc(rgs, targetId, "pack");
             //for this simple game, there's only one piece of armor, but we'll use SelectMany over the entire inventory anyhow.
@@ -42,32 +53,15 @@ namespace SampleGame.Sys
             //and here, this needs to be wielded weapons only. perhaps equipped will do intermediately.
             var attackerWeapon = targetEquipment.SelectMany(eid => rgs.GetPartsOfType<Parts.SingleTargetDamager>(eid)).FirstOrDefault();
 
-            var damageAttempted = (attackerWeapon?.DamageAmount ?? 0) * GetDamageMultiplierFromRange5(Math.Max(0, attackRoll));
-            var damageDealt = damageAttempted - Math.Min(0, (targetArmor?.DamageThreshold ?? 0));
-
-            //we will need to rethink dodging. for now, there is no defense roll.
-            //int defenseRoll = random0to5();
-            //results.Add($"Defender rolled a {defenseRoll}.");
-
-            ////eventually we'll want to watch for crits and fumbles
-            ////there will be a variety of modifiers, temp and perm, that can apply here.
-            //var modifiedDefenseRoll = Math.Max(defenseRoll, 0);
-            //var netAttack = Math.Max(attackRoll - modifiedDefenseRoll, 0);
-
-            ////for now, we'll just multiply base roll by 1000, so doing 0-10 points damage in a turn, modified.
-            //var damageDealt = ((netAttack * 1000) - targetPhysicalObject.DefaultDamageThreshold) 
-            //    * targetPhysicalObject.DefaultDamageMultiplier;
+            var damageAttempted = (attackerWeapon?.DamageAmount ?? 0) * damageMultiplier;
+            var damagePrevented = targetArmor?.DamageThreshold ?? 0;
+            var damageDealt = Math.Max(0, damageAttempted - damagePrevented);
 
             targetPhysicalObject.Condition = targetPhysicalObject.Condition - (int)damageDealt;
 
-            results.Add($"Adjusted damage: {damageDealt}.");
+            results.Add($"Adjusted damage: {damageDealt}. New condition: {targetPhysicalObject.Condition}");
 
-            var attackerNames = rgs.GetPartsOfType<Parts.EntityName>(attackerId).Single();
-            var targetNames = rgs.GetPartsOfType<Parts.EntityName>(targetId).Single();
-
-            var attackerProperName = attackerNames.ProperName;
-            var targetProperName = targetNames.ProperName;
-            var targetConditionString = Sys.PhysicalObject.GetLivingThingConditionDesc(targetPhysicalObject.Condition);
+            var targetConditionString = PhysicalObject.GetLivingThingConditionDesc(targetPhysicalObject.Condition);
 
             var attackResultsMessage = damageDealt > 0
                 ? $"{attackerProperName} swings and hits {targetProperName}. {targetProperName} is {targetConditionString}."
@@ -80,18 +74,30 @@ namespace SampleGame.Sys
             return results;
         }
 
+        private static string GetRollAdjectiveFromRange5(int roll)
+        {
+            switch(roll)
+            {
+                case 5: return "an amazing";
+                case 4: return "an excellent";
+                case -4: return "a poor";
+                case -5: return "a miserable";
+                default: return "an undistinguished";
+            }
+        }
+
         //this is just some made up stuff, i have no idea how to design a combat system.
         private static decimal GetDamageMultiplierFromRange5(int roll)
         {
-            return (roll == 5)
-                ? 4m
-                : (roll == 4)
-                    ? 2m
-                    : (roll > 1)
-                        ? 1m
-                        : (roll == 1)
-                            ? 0.5m
-                            : 0m;
+            //someday crits and fumbles will be more interesting, applying debilities to target or self.
+            switch (roll)
+            {
+                case 5: return 4;
+                case 4: return 2;
+                case -4: 
+                case -5: return 0;
+                default: return 1;
+            }
         }
 
 

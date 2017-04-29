@@ -8,9 +8,9 @@ namespace SampleGame
         {
             long weaponId = rgs.CreateEntity();
 
-            rgs.AddComponent(weaponId, new Parts.PhysicalObject());
-            rgs.AddComponent(weaponId, new Parts.EntityName { ProperName = "", GeneralName = generalName, ShortDescription = shortDescription });
-            rgs.AddComponent(weaponId, new Parts.SingleTargetDamager { DamageType = damageType, DamageAmount = damageAmount });
+            rgs.AddPart(weaponId, new Parts.PhysicalObject());
+            rgs.AddPart(weaponId, new Parts.EntityName { ProperName = "", GeneralName = generalName, ShortDescription = shortDescription });
+            rgs.AddPart(weaponId, new Parts.SingleTargetDamager { DamageType = damageType, DamageAmount = damageAmount });
 
             return weaponId;
         }
