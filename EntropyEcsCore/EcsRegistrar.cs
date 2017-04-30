@@ -13,7 +13,9 @@ namespace EntropyEcsCore
         {
             JsonConvert.DefaultSettings = () => new JsonSerializerSettings
             {
-                TypeNameHandling = TypeNameHandling.Auto
+                TypeNameHandling = TypeNameHandling.Auto,
+                //TypeNameHandling = TypeNameHandling.All,
+                Formatting = Formatting.Indented
             };
         }
 
@@ -52,16 +54,29 @@ namespace EntropyEcsCore
         }
 
         /// <summary>
-        /// Loads a new entity into the registry from serialized parts, returning new entity Id.
+        /// Loads a new entity into the registry from "simple" serialized parts, returning new entity Id.
+        /// Automatically assigns new, valid Ids for each deserialized part, ignoring previous serialized Id.
+        /// Works on single-level, simple part sets only. Any part containing a id reference to 
+        /// other entities or parts will NOT work here, and will corrupt the registry.
         /// </summary>
         public long CreateEntity(string serializedEntityParts)
         {
-            var entityParts = JsonConvert.DeserializeObject<List<EcsEntityPart>>(serializedEntityParts);
+            long entityId = NewId();
 
-            long id = NewId();
-            _entityIdsToEntityParts.Add(id, entityParts);
+            var entityParts = DeserializeParts(serializedEntityParts);
+            foreach(var part in entityParts)
+            {
+                part.Id = NewId();
+            }
 
-            return id;
+            _entityIdsToEntityParts.Add(entityId, entityParts);
+
+            return entityId;
+        }
+
+        public List<EcsEntityPart> DeserializeParts(string serializedEntityParts)
+        {
+            return JsonConvert.DeserializeObject<List<EcsEntityPart>>(serializedEntityParts);
         }
 
         public void DestroyEntity(long entityId)
@@ -84,11 +99,25 @@ namespace EntropyEcsCore
             return _entityIdsToEntityParts[entityId].Single(cp => cp.Id == partId);
         }
 
+        /// <summary>
+        /// Serialize entity parts, leaving all Ids as-is.
+        /// </summary>
         public string SerializeEntityParts(long entityId)
         {
-            return JsonConvert.SerializeObject(_entityIdsToEntityParts[entityId]);
+            return SerializeEntityParts(_entityIdsToEntityParts[entityId]);
         }
 
+        /// <summary>
+        /// Serialize entity parts, leaving all Ids as-is.
+        /// </summary>
+        public string SerializeEntityParts(List<EcsEntityPart> entityParts)
+        {
+            return JsonConvert.SerializeObject(entityParts);
+        }
+
+        /// <summary>
+        /// Serialize entire registry, leaving all Ids as-is.
+        /// </summary>
         public string SerializeRegistry()
         {
             return JsonConvert.SerializeObject(_entityIdsToEntityParts);

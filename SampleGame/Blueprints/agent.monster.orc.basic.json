@@ -1,0 +1,46 @@
+[
+  {
+    "$type": "SampleGame.Parts.PhysicalObject, SampleGame",
+    "Corporeal": true,
+    "Moveable": true,
+    "Condition": 10000,
+    "DefaultDamageThreshold": 0,
+    "DefaultDamageMultiplier": 1.0,
+    "Weight": 0.0,
+    "Size": null,
+    "Id": 0
+  },
+  {
+    "$type": "SampleGame.Parts.EntityName, SampleGame",
+    "ProperName": "Gruk",
+    "GeneralName": "orc",
+    "ObscuredName": null,
+    "ShortDescription": "A nasty orc who must surely die upon the hero's blade.",
+    "LongDescription": null,
+    "Pronoun": null,
+    "Id": 0
+  },
+  {
+    "$type": "SampleGame.Parts.Skillset, SampleGame",
+    "Skills": {
+      "Melee": 2
+    },
+    "Id": 0
+  },
+  {
+    "$type": "SampleGame.Parts.Container, SampleGame",
+    "ContainedEntityIds": [],
+    "ContainerDescription": "pack",
+    "ItemsAreVisible": false,
+    "Containment": null,
+    "Id": 0
+  },
+  {
+    "$type": "SampleGame.Parts.Faction, SampleGame",
+    "FactionReputations": {
+      "Villians": 100,
+      "Heroes": -100
+    },
+    "Id": 0
+  }
+]

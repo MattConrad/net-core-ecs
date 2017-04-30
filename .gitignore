@@ -27,6 +27,7 @@ _UpgradeReport_Files/
 ###############
 # Directories #
 ###############
+.vs/
 bin/
 obj/
 TestResults/

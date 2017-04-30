@@ -1,0 +1,29 @@
+[
+  {
+    "$type": "SampleGame.Parts.PhysicalObject, SampleGame",
+    "Corporeal": true,
+    "Moveable": true,
+    "Condition": 10000,
+    "DefaultDamageThreshold": 0,
+    "DefaultDamageMultiplier": 1.0,
+    "Weight": 0.0,
+    "Size": null,
+    "Id": 0
+  },
+  {
+    "$type": "SampleGame.Parts.EntityName, SampleGame",
+    "ProperName": "",
+    "GeneralName": "sword",
+    "ObscuredName": null,
+    "ShortDescription": "sword",
+    "LongDescription": null,
+    "Pronoun": null,
+    "Id": 0
+  },
+  {
+    "$type": "SampleGame.Parts.SingleTargetDamager, SampleGame",
+    "DamageType": "MechanicalSlashing",
+    "DamageAmount": 2000,
+    "Id": 0
+  }
+]

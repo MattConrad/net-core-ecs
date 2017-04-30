@@ -1,0 +1,46 @@
+[
+  {
+    "$type": "SampleGame.Parts.PhysicalObject, SampleGame",
+    "Corporeal": true,
+    "Moveable": true,
+    "Condition": 10000,
+    "DefaultDamageThreshold": 0,
+    "DefaultDamageMultiplier": 1.0,
+    "Weight": 0.0,
+    "Size": null,
+    "Id": 0
+  },
+  {
+    "$type": "SampleGame.Parts.EntityName, SampleGame",
+    "ProperName": "The Hero",
+    "GeneralName": "person",
+    "ObscuredName": null,
+    "ShortDescription": "The hero, who must emerge from battle victorious.",
+    "LongDescription": null,
+    "Pronoun": null,
+    "Id": 0
+  },
+  {
+    "$type": "SampleGame.Parts.Skillset, SampleGame",
+    "Skills": {
+      "Melee": 3
+    },
+    "Id": 0
+  },
+  {
+    "$type": "SampleGame.Parts.Container, SampleGame",
+    "ContainedEntityIds": [],
+    "ContainerDescription": "pack",
+    "ItemsAreVisible": false,
+    "Containment": null,
+    "Id": 0
+  },
+  {
+    "$type": "SampleGame.Parts.Faction, SampleGame",
+    "FactionReputations": {
+      "Heroes": 100,
+      "Villians": -100
+    },
+    "Id": 0
+  }
+]
