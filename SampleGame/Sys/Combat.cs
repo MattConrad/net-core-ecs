@@ -24,8 +24,12 @@ namespace SampleGame.Sys
             combatFinished = false;
             var results = new List<string>();
 
-            var attackerNames = rgs.GetPartsOfType<Parts.EntityName>(attackerId).Single();
-            var targetNames = rgs.GetPartsOfType<Parts.EntityName>(targetId).Single();
+            var attackerParts = rgs.GetAllParts(attackerId);
+            var targetParts = rgs.GetAllParts(targetId);
+
+            var attackerNames = attackerParts.OfType<Parts.EntityName>().Single();
+            var targetNames = targetParts.OfType<Parts.EntityName>().Single();
+
             string attackerProperName = attackerNames.ProperName;
             string targetProperName = targetNames.ProperName;
 
@@ -34,22 +38,22 @@ namespace SampleGame.Sys
             string rollAdjective = GetRollAdjectiveFromRange5(attackRoll);
             results.Add($"{attackerProperName} makes {rollAdjective} attack.");
 
-            var attackerSkills = rgs.GetPartsOfType<Parts.Skillset>(attackerId).Single();
+            var attackerSkills = attackerParts.OfType<Parts.Skillset>().Single();
             int meleeSkill = attackerSkills.Skills[Parts.Skillset.Vals.Physical.Melee];
             //later, this will match against dodge.
             damageMultiplier = (attackRoll + meleeSkill > 0) ? damageMultiplier : 0;
 
-            var targetPhysicalObject = rgs.GetPartsOfType<Parts.PhysicalObject>(targetId).Single();
-            //ew, magic strings, fix this.
-            var targetEquipment = Container.GetEntityIdsFromFirstContainerByDesc(rgs, targetId, "pack");
-            //for this simple game, there's only one piece of armor, but we'll use SelectMany over the entire inventory anyhow.
+            var targetPhysicalObject = targetParts.OfType<Parts.PhysicalObject>().Single();
+            var targetEquipment = Container.GetEntityIdsFromFirstTagged(rgs, targetId, Parts.Container.Vals.Tag.Equipped);
+
+            //for this simple game, there's only one piece of armor, but we'll use SelectMany over the entire equipment anyhow.
+            // later this is certainly true, maybe over more than equipment. lots of things can be damage preventers. eeeps.
             // later, this needs to be equipped only. not sure how we're doing equipped right now.
             var targetArmor = targetEquipment.SelectMany(eid => rgs.GetPartsOfType<Parts.DamagePreventer>(eid)).FirstOrDefault();
 
             //later, we will have natural weapons and whatever you're wielding, and you probably only get one attack at a time.
             //  this relates to the clock/timer, however that ends up working.
-            //there you go with that magic string talk again.
-            var attackerEquipment = Container.GetEntityIdsFromFirstContainerByDesc(rgs, attackerId, "pack");
+            var attackerEquipment = Container.GetEntityIdsFromFirstTagged(rgs, attackerId, Parts.Container.Vals.Tag.Equipped);
             //and here, this needs to be wielded weapons only. perhaps equipped will do intermediately.
             var attackerWeapon = targetEquipment.SelectMany(eid => rgs.GetPartsOfType<Parts.SingleTargetDamager>(eid)).FirstOrDefault();
 

@@ -14,16 +14,33 @@ namespace SampleGame.Parts
         /// <summary>
         /// Entity ids in this container.
         /// </summary>
-        public HashSet<long> ContainedEntityIds { get; set; } = new HashSet<long>();
-        //MWCTODO: maybe this wants to be an enum, or maybe we want to set up static strings like before. . . . static strings allow some flexibility.
+        public HashSet<long> EntityIds { get; set; } = new HashSet<long>();
+        
+        /// <summary>
+        /// This is the tag used as a filter when trying to find a specific container.
+        /// </summary>
+        public string Tag { get; set; }
+        
         /// <summary>
         /// If the entity with this part isn't primarily a container, this is the description for the container part of the entity. e.g., "pack" for a person, or "trunk" for a car.
         /// </summary>
-        public string ContainerDescription { get; set; }
-        public bool ItemsAreVisible { get; set; }
+        public string Description { get; set; }
+
+        public bool ItemsAreVisible { get; set; } = false;
+        
         /// <summary>
         /// String. Usually "in", but could be "on", or "equipped".
         /// </summary>
-        public string Containment { get; set; }
+        public string Preposition { get; set; }
+
+        public static class Vals
+        {
+            public static class Tag
+            {
+                public const string Inventory = nameof(Inventory);
+                public const string Equipped = nameof(Equipped);
+            }
+        }
+
     }
 }

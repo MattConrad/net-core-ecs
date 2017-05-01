@@ -14,7 +14,6 @@ namespace EntropyEcsCore
             JsonConvert.DefaultSettings = () => new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.Auto,
-                //TypeNameHandling = TypeNameHandling.All,
                 Formatting = Formatting.Indented
             };
         }

@@ -30,12 +30,11 @@ namespace SampleGame.Sys
             return AddOrRemove(Action.AddEntity, rgs, ownerId, toRemoveId);
         }
 
-        //MWCTODO: this probably isn't good, since containerDescription isn't even a defined game string at the moment.
-        internal static HashSet<long> GetEntityIdsFromFirstContainerByDesc(EcsRegistrar rgs, long ownerId, string containerDescription)
+        internal static HashSet<long> GetEntityIdsFromFirstTagged(EcsRegistrar rgs, long ownerId, string tag)
         {
-            var container = rgs.GetPartsOfType<Parts.Container>(ownerId).FirstOrDefault(c => c.ContainerDescription == containerDescription);
+            var container = rgs.GetPartsOfType<Parts.Container>(ownerId).FirstOrDefault(c => c.Tag == tag);
 
-            return container?.ContainedEntityIds ?? new HashSet<long>();
+            return container?.EntityIds ?? new HashSet<long>();
         }
 
         internal static AlterContainerContentsResultsMessage AddOrRemove(Action action, EcsRegistrar rgs, long ownerId, long itemAddOrRemoveId)
@@ -45,7 +44,7 @@ namespace SampleGame.Sys
 
             if (containerPart == null) return new AlterContainerContentsResultsMessage { Succeeded = false, Output = "Container not found." };
 
-            var ids = containerPart.ContainedEntityIds;
+            var ids = containerPart.EntityIds;
 
             if (action == Action.AddEntity && !ids.Contains(itemAddOrRemoveId))
             {
@@ -67,7 +66,7 @@ namespace SampleGame.Sys
                 ? $"adds {itemNamePart.GeneralName} to"
                 : $"removes {itemNamePart.GeneralName} from";
 
-            string actionPhrase = $"{ownerNamePart.ProperName} {verbPhrase} {ownerNamePart.Pronoun} {containerPart.ContainerDescription}.";
+            string actionPhrase = $"{ownerNamePart.ProperName} {verbPhrase} {ownerNamePart.Pronoun} {containerPart.Tag}.";
 
             return new AlterContainerContentsResultsMessage { Succeeded = true, Output = actionPhrase };
         }

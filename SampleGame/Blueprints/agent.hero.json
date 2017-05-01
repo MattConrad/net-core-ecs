@@ -30,7 +30,7 @@
   {
     "$type": "SampleGame.Parts.Container, SampleGame",
     "ContainedEntityIds": [],
-    "ContainerDescription": "pack",
+    "Tag": "Equipped",
     "ItemsAreVisible": false,
     "Containment": null,
     "Id": 0

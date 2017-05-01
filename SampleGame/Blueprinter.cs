@@ -42,7 +42,7 @@ namespace SampleGame
             foreach (var part in revisedPartsList)
             {
                 part.Id = 0;
-                if (part is Parts.Container) ((Parts.Container)part).ContainedEntityIds.Clear();
+                if (part is Parts.Container) ((Parts.Container)part).EntityIds.Clear();
             }
 
             return rgs.SerializeEntityParts(revisedPartsList);

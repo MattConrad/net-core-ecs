@@ -1,8 +1,5 @@
 ﻿Consider unit testing. How important is it? How well can we test the static classes?
 
-TODO: serialize/deserialize game state.
-http://stackoverflow.com/questions/8513042/json-net-serialize-deserialize-derived-types
-
 TODO: Fancy text interpolation for messages. Forget tracery, see https://github.com/TheBerkin/Rant instead.
 TODO: arena (battlefield? or just "combat"? entity with one container for actors and ...?)
 TODO: locations for physical objects.
@@ -11,12 +8,18 @@ TODO: weapons/armor damageable
 TODO: combat/noncombat modes
 TODO: emit list of supported actions for specified (and/or current) mode
 
-
 TODO: pretty text descriptions
 TODO: timing system: events fire off on a clock
 
 
-logic that goes with a part? put it the part? or in a system. not sure.
+
+
+
+don't put logic in parts. sometimes it could plausibly go there, but then there would be some logic in parts and others in systems, and you'd have to guess where the logic was this time.
+parts are data. only data.
+
+on the question of defined strings vs enums. there is a good case for enums. they do serialize just fine. however, if you add a new enum property (or any other non-nullable property) to a part, deserializing the old blueprint will explode. if you add a new defined string property, it won't. this is only a convenience, but one that I noticed just playing around with serialized enums. (we will still have to deal with adding other non null properties, ofc) (well, we can probably work around this for enums after all by using JSON.NET DefaultValueHandling and setting to Populate or something like that.)
+
 
 
 http://ripplega.me/development/ecs-ez/ is talking to me at a level that is easy to understand.

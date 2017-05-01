@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using EntropyEcsCore;
 
 namespace SampleGame
@@ -25,13 +23,6 @@ namespace SampleGame
         {
             this.Rgs = new EcsRegistrar();
 
-            long weaponId = WeaponCreator.Weapon(this.Rgs, "sword", "sword", Parts.SingleTargetDamager.Vals.DamageType.MechanicalSlashing, 2000);
-            long armorId = ArmorCreator.Armor(this.Rgs, "leather armor", "leather", 1.0m, 1000);
-
-            //for right now, both combatants will magically share the same equipment . . .
-            var equipmentIds = new[] { weaponId, armorId };
-            //this.HeroId = AgentCreator.Agent(this.Rgs, "The Hero", "person", "The hero, who must emerge from battle victorious.", equipmentIds, "pack", 3, Parts.Faction.Vals.FactionName.Heroes);
-            //this.VillainId = AgentCreator.Agent(this.Rgs, "Gruk", "orc", "A nasty orc who must surely die upon the hero's blade.", equipmentIds, "pack", 2, Parts.Faction.Vals.FactionName.Villians);
             this.HeroId = AgentCreator.Agent(this.Rgs, "agent.hero", "obj.armor.leather-armor", "obj.weapon.sword");
             this.VillainId = AgentCreator.Agent(this.Rgs, "agent.monster.orc.basic", "obj.armor.leather-armor", "obj.weapon.sword");
         }
