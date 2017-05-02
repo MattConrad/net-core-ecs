@@ -33,15 +33,29 @@ namespace SampleGame.Sys
             string attackerProperName = attackerNames.ProperName;
             string targetProperName = targetNames.ProperName;
 
-            int attackRoll = random0to5();
-            decimal damageMultiplier = GetDamageMultiplierFromRange5(attackRoll);
-            string rollAdjective = GetRollAdjectiveFromRange5(attackRoll);
-            results.Add($"{attackerProperName} makes {rollAdjective} attack.");
-
             var attackerSkills = attackerParts.OfType<Parts.Skillset>().Single();
-            int meleeSkill = attackerSkills.Skills[Parts.Skillset.Vals.Physical.Melee];
-            //later, this will match against dodge.
-            damageMultiplier = (attackRoll + meleeSkill > 0) ? damageMultiplier : 0;
+            var targetSkills = targetParts.OfType<Parts.Skillset>().Single();
+
+            int attackRoll = random0to5();
+            decimal critDamageMultiplier = GetDamageMultiplierFromRange5(attackRoll);
+            string attackRollAdjective = GetRollAdjectiveFromRange5(attackRoll);
+            int attackerMeleeSkill = attackerSkills.Skills[Parts.Skillset.Vals.Physical.Melee];
+            int adjustedAttackRoll = attackRoll + attackerMeleeSkill;
+
+            int targetDodgeRoll = random0to5();
+            string targetDodgeRollAdjective = GetRollAdjectiveFromRange5(targetDodgeRoll);
+            int targetDodgeSkill = targetSkills.Skills[Parts.Skillset.Vals.Physical.Dodge];
+            //dodge is a difficult skill and always reduced by 1.
+            int adjustedDodgeRoll = Math.Max(0, targetDodgeRoll + targetDodgeSkill - 1);
+
+            int netAttack = Math.Max(0, adjustedAttackRoll - adjustedDodgeRoll);
+
+            results.Add($"{attackerProperName} makes {attackRollAdjective} attack, and {targetProperName} responds with a {targetDodgeRollAdjective} dodge.");
+
+            //a good attack gets whatever the crit damage multiplier is, a barely-attack gets a .5, and less gets a 0.
+            decimal finalDamageMultiplier = (netAttack > 1) ? critDamageMultiplier 
+                : (netAttack == 1) ? 0.5m
+                : 0m;
 
             var targetPhysicalObject = targetParts.OfType<Parts.PhysicalObject>().Single();
             var targetEquipment = Container.GetEntityIdsFromFirstTagged(rgs, targetId, Parts.Container.Vals.Tag.Equipped);
@@ -55,9 +69,11 @@ namespace SampleGame.Sys
             //  this relates to the clock/timer, however that ends up working.
             var attackerEquipment = Container.GetEntityIdsFromFirstTagged(rgs, attackerId, Parts.Container.Vals.Tag.Equipped);
             //and here, this needs to be wielded weapons only. perhaps equipped will do intermediately.
-            var attackerWeapon = targetEquipment.SelectMany(eid => rgs.GetPartsOfType<Parts.SingleTargetDamager>(eid)).FirstOrDefault();
+            var attackerWeapon = targetEquipment.SelectMany(eid => rgs.GetPartsOfType<Parts.Damager>(eid)).FirstOrDefault();
 
-            var damageAttempted = (attackerWeapon?.DamageAmount ?? 0) * damageMultiplier;
+            //what about default damage threshold/multiplier?
+
+            var damageAttempted = (attackerWeapon?.DamageAmount ?? 0) * finalDamageMultiplier;
             var damagePrevented = targetArmor?.DamageThreshold ?? 0;
             var damageDealt = Math.Max(0, damageAttempted - damagePrevented);
 

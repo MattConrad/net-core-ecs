@@ -16,6 +16,7 @@ namespace SampleGame.Parts
             public static class Physical
             {
                 public const string Melee = nameof(Melee);
+                public const string Dodge = nameof(Dodge);
             }
         }
     }

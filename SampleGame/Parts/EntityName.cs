@@ -36,6 +36,7 @@ namespace SampleGame.Parts
                 public const string She = "she";
                 public const string It = "it";
                 public const string They = "they";
+                public const string You = "you";
             }
         }
     }
