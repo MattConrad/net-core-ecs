@@ -7,13 +7,29 @@ namespace SampleGame.Sys
 {
     internal static class Combat
     {
-        internal static List<string> HerosAction(EcsRegistrar rgs, long heroId, long villianId, out bool combatFinished)
+        internal static class Actions
+        {
+            internal const string AttackMelee = "attack-melee";
+            internal const string StanceDefensive = "stance-defensive";
+            internal const string StanceStandGround = "stance-stand-ground";
+            internal const string StanceAggressive = "stance-aggressive";
+        }
+
+        internal static List<string> HerosAction(EcsRegistrar rgs, long heroId, long targetId, string heroAction, out bool combatFinished)
         {
             List<string> results = new List<string>();
 
-            results.AddRange(ResolveAction(rgs, heroId, villianId, Rando.GetRange5, out combatFinished));
+            if (heroAction == Actions.AttackMelee)
+            {
+                results.AddRange(ResolveAction(rgs, heroId, targetId, Rando.GetRange5, out combatFinished));
 
-            if (!combatFinished) results.AddRange(ResolveAction(rgs, villianId, heroId, Rando.GetRange5, out combatFinished));
+                if (!combatFinished) results.AddRange(ResolveAction(rgs, targetId, heroId, Rando.GetRange5, out combatFinished));
+            }
+            else
+            {
+                combatFinished = false;
+                results.Add($"Sorry, heroes can't {heroAction} yet.");
+            }
 
             return results;
         }

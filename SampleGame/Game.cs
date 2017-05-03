@@ -27,15 +27,12 @@ namespace SampleGame
             this.VillainId = AgentCreator.Agent(this.Rgs, "agent.monster.orc.basic", "obj.armor.leather-armor", "obj.weapon.sword");
         }
 
-        public List<string> ProcessInput(string input)
+        public List<string> ProcessInput(string heroAction, out bool combatFinished)
         {
             List<string> results = new List<string>();
-            bool combatFinished = false;
-            while (!combatFinished)
-            {
-                var actionResults = Sys.Combat.HerosAction(this.Rgs, this.HeroId, this.VillainId, out combatFinished);
-                results.AddRange(actionResults);
-            }
+
+            var actionResults = Sys.Combat.HerosAction(this.Rgs, this.HeroId, this.VillainId, heroAction, out combatFinished);
+            results.AddRange(actionResults);
 
             return results;
         }

@@ -12,13 +12,18 @@ namespace NetCoreEcsConsole
             var heroActionDict = Switchboard.HerosActions();
             var actionInputSet = GetKeysToActions(heroActionDict);
             //this might not even happen until the game has started and presented the player with an initial scenario.
-            var nextHeroAction = GetHeroAction(actionInputSet);
-            Console.WriteLine(nextHeroAction);
 
-            var lines = game.ProcessInput("nothing");
-            foreach (string line in lines)
+            bool combatFinished = false;
+            while(!combatFinished)
             {
-                Console.WriteLine(line);
+                var nextHeroAction = GetHeroAction(actionInputSet);
+                Console.WriteLine(nextHeroAction);
+
+                var lines = game.ProcessInput(nextHeroAction, out combatFinished);
+                foreach (string line in lines)
+                {
+                    Console.WriteLine(line);
+                }
             }
         }
 
@@ -27,9 +32,9 @@ namespace NetCoreEcsConsole
             Dictionary<char, TextActionPair> keyToTAP = new Dictionary<char, TextActionPair>();
 
             int i = 49;
-            foreach (string action in heroActionDict.Keys)
+            foreach (string text in heroActionDict.Keys)
             {
-                string text = heroActionDict[action];
+                string action = heroActionDict[text];
                 char letter = Convert.ToChar(i);
                 i++;
 
@@ -53,7 +58,7 @@ namespace NetCoreEcsConsole
             ConsoleKeyInfo cki;
             while (!keyToTextActionPair.ContainsKey(cki.KeyChar))
             {
-                cki = Console.ReadKey();
+                cki = Console.ReadKey(true);
             }
 
             return keyToTextActionPair[cki.KeyChar].Action;

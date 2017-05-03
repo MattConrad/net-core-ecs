@@ -14,8 +14,10 @@ namespace SampleGame
         {
             return new Dictionary<string, string>
             {
-                ["Attack (Melee)"] = "attack-melee",                  ["Stance (Defensive)"] = "stance-defensive",                  ["Stance (Stand Ground)"] = "stance-stand-ground",  
-                ["Stance (Aggressive)"] = "stance-aggressive"
+                ["Attack (Melee)"] = Sys.Combat.Actions.AttackMelee,  
+                ["Stance (Defensive)"] = Sys.Combat.Actions.StanceDefensive,  
+                ["Stance (Stand Ground)"] = Sys.Combat.Actions.StanceStandGround,  
+                ["Stance (Aggressive)"] = Sys.Combat.Actions.StanceAggressive
             };
         }
     }

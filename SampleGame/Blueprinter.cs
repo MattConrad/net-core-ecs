@@ -10,8 +10,7 @@ namespace SampleGame
     /// </summary>
     internal class Blueprinter
     {
-        //this is totally unsuitable for sharing, of course.
-        private static string _blueprintFolder = @"C:\work\fooling\NetCoreEcs\SampleGame\Blueprints\";
+        private static string _blueprintFolder = System.AppContext.BaseDirectory + @"\Blueprints\";
         private static string _blueprintSuffix = ".json";
 
         /// <summary>

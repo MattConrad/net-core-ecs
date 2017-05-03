@@ -21,7 +21,7 @@
     "Id": 0
   },
   {
-    "$type": "SampleGame.Parts.SingleTargetDamager, SampleGame",
+    "$type": "SampleGame.Parts.Damager, SampleGame",
     "DamageType": "MechanicalSlashing",
     "DamageAmount": 2000,
     "Id": 0

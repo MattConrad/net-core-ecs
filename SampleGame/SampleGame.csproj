@@ -8,4 +8,19 @@
     <ProjectReference Include="..\EntropyEcsCore\EntropyEcsCore.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Blueprints\agent.hero.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Blueprints\agent.monster.orc.basic.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Blueprints\obj.armor.leather-armor.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Blueprints\obj.weapon.sword.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
