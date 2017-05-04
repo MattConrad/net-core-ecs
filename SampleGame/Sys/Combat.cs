@@ -10,6 +10,7 @@ namespace SampleGame.Sys
         internal static class Actions
         {
             internal const string AttackMelee = "attack-melee";
+            internal const string AttackMeleeContinously = "attack-continuously";
             internal const string StanceDefensive = "stance-defensive";
             internal const string StanceStandGround = "stance-stand-ground";
             internal const string StanceAggressive = "stance-aggressive";
@@ -19,17 +20,20 @@ namespace SampleGame.Sys
         {
             List<string> results = new List<string>();
 
-            if (heroAction == Actions.AttackMelee)
+            do
             {
-                results.AddRange(ResolveAction(rgs, heroId, targetId, Rando.GetRange5, out combatFinished));
+                if (heroAction == Actions.AttackMelee || heroAction == Actions.AttackMeleeContinously)
+                {
+                    results.AddRange(ResolveAction(rgs, heroId, targetId, Rando.GetRange5, out combatFinished));
 
-                if (!combatFinished) results.AddRange(ResolveAction(rgs, targetId, heroId, Rando.GetRange5, out combatFinished));
-            }
-            else
-            {
-                combatFinished = false;
-                results.Add($"Sorry, heroes can't {heroAction} yet.");
-            }
+                    if (!combatFinished) results.AddRange(ResolveAction(rgs, targetId, heroId, Rando.GetRange5, out combatFinished));
+                }
+                else
+                {
+                    combatFinished = false;
+                    results.Add($"Sorry, heroes can't {heroAction} yet.");
+                }
+            } while (!combatFinished && heroAction == Actions.AttackMeleeContinously);
 
             return results;
         }
@@ -53,7 +57,7 @@ namespace SampleGame.Sys
             var targetSkills = targetParts.OfType<Parts.Skillset>().Single();
 
             int attackRoll = random0to5();
-            decimal critDamageMultiplier = GetDamageMultiplierFromRange5(attackRoll);
+            decimal attackCritMultiplier = GetDamageMultiplierFromRange5(attackRoll);
             string attackRollAdjective = GetRollAdjectiveFromRange5(attackRoll);
             int attackerMeleeSkill = attackerSkills.Skills[Parts.Skillset.Vals.Physical.Melee];
             int adjustedAttackRoll = attackRoll + attackerMeleeSkill;
@@ -69,7 +73,7 @@ namespace SampleGame.Sys
             results.Add($"{attackerProperName} makes {attackRollAdjective} attack, and {targetProperName} responds with a {targetDodgeRollAdjective} dodge.");
 
             //a good attack gets whatever the crit damage multiplier is, a barely-attack gets a .5, and less gets a 0.
-            decimal finalDamageMultiplier = (netAttack > 1) ? critDamageMultiplier 
+            decimal finalAttackMultiplier = (netAttack > 1) ? attackCritMultiplier 
                 : (netAttack == 1) ? 0.5m
                 : 0m;
 
@@ -87,11 +91,11 @@ namespace SampleGame.Sys
             //and here, this needs to be wielded weapons only. perhaps equipped will do intermediately.
             var attackerWeapon = targetEquipment.SelectMany(eid => rgs.GetPartsOfType<Parts.Damager>(eid)).FirstOrDefault();
 
-            //what about default damage threshold/multiplier?
-
-            var damageAttempted = (attackerWeapon?.DamageAmount ?? 0) * finalDamageMultiplier;
-            var damagePrevented = targetArmor?.DamageThreshold ?? 0;
-            var damageDealt = Math.Max(0, damageAttempted - damagePrevented);
+            var damageAttempted = (attackerWeapon?.DamageAmount ?? 0) * finalAttackMultiplier;
+            var damagePrevented = targetPhysicalObject.DefaultDamageThreshold + targetArmor?.DamageThreshold ?? 0;
+            //so we apply crit/attack multipliers first, then we subtract damage prevention, then we apply default damage multiplier and armor multiplier. whew!
+            var damageDealt = Math.Max(0, 
+                (damageAttempted - damagePrevented) * targetPhysicalObject.DefaultDamageMultiplier * targetArmor.DamageMultiplier);
 
             targetPhysicalObject.Condition = targetPhysicalObject.Condition - (int)damageDealt;
 

@@ -23,6 +23,7 @@ namespace SampleGame
         {
             this.Rgs = new EcsRegistrar();
 
+            //MWCTODO: ummm, Gruk (and presumably hero) actually have two weapons, not a weapona and an armor....oh, crap, blueprint is broken. doh.
             this.HeroId = AgentCreator.Agent(this.Rgs, "agent.hero", "obj.armor.leather-armor", "obj.weapon.sword");
             this.VillainId = AgentCreator.Agent(this.Rgs, "agent.monster.orc.basic", "obj.armor.leather-armor", "obj.weapon.sword");
         }

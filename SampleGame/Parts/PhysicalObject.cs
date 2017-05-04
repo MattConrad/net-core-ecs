@@ -28,7 +28,7 @@ namespace SampleGame.Parts
         /// Something immune to weak attacks might have a DDT of 1000. A diamond wall might have a DDT of 8000 (and a low multiplier too).
         /// </summary>
         public int DefaultDamageThreshold { get; set; } = 0;
-        //MWCTODO: maybe this should be divisor instead of multiplier. what is least confusing in conjunction with damage threshold?
+
         /// <summary>
         /// A general multiplier altering the default damage of all otherwise-unspecified types. The player character represents the baseline
         /// with a default damage multiplier of 1.0. An undistinguished NPC maybe 2.0 (the player character has extra survivability). 
@@ -36,10 +36,12 @@ namespace SampleGame.Parts
         /// A heavy stone door would have something like 0.01.
         /// </summary>
         public decimal DefaultDamageMultiplier { get; set; } = 1.0m;
+        
         /// <summary>
         /// Weight in pounds.
         /// </summary>
         public decimal Weight { get; set; }
+        
         /// <summary>
         /// Defined string value.
         /// </summary>

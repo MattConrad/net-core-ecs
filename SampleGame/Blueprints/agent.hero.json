@@ -5,7 +5,7 @@
     "Moveable": true,
     "Condition": 10000,
     "DefaultDamageThreshold": 0,
-    "DefaultDamageMultiplier": 1.0,
+    "DefaultDamageMultiplier": 0.66,
     "Weight": 0.0,
     "Size": null,
     "Id": 0

@@ -25,6 +25,10 @@ namespace NetCoreEcsConsole
                     Console.WriteLine(line);
                 }
             }
+
+            Console.WriteLine();
+            Console.WriteLine("GAME OVER");
+            Console.ReadLine();
         }
 
         static Dictionary<char, TextActionPair> GetKeysToActions(Dictionary<string, string> heroActionDict)
