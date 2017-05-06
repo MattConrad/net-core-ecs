@@ -26,19 +26,9 @@ namespace EntropyEcsCore
         /// <summary>
         /// This can be used for both entities and parts.
         /// </summary>
-        public long NewId()
+        private long NewId()
         {
             return _currentId++;
-        }
-
-        /// <summary>
-        /// Add an entity part to an entity. If the part doesn't have an Id yet, a new Id will be assigned.
-        /// </summary>
-        public void AddPart(long entityId, EcsEntityPart cp)
-        {
-            if (cp.Id == 0L) cp.Id = NewId();
-
-            _entityIdsToEntityParts[entityId].Add(cp);
         }
 
         /// <summary>
@@ -73,14 +63,24 @@ namespace EntropyEcsCore
             return entityId;
         }
 
-        public List<EcsEntityPart> DeserializeParts(string serializedEntityParts)
-        {
-            return JsonConvert.DeserializeObject<List<EcsEntityPart>>(serializedEntityParts);
-        }
-
         public void DestroyEntity(long entityId)
         {
             _entityIdsToEntityParts.Remove(entityId);
+        }
+
+        /// <summary>
+        /// Add an entity part to an entity. If the part doesn't have an Id yet, a new Id will be assigned.
+        /// </summary>
+        public void AddPart(long entityId, EcsEntityPart part)
+        {
+            if (part.Id == 0L) part.Id = NewId();
+
+            _entityIdsToEntityParts[entityId].Add(part);
+        }
+
+        public List<EcsEntityPart> DeserializeParts(string serializedEntityParts)
+        {
+            return JsonConvert.DeserializeObject<List<EcsEntityPart>>(serializedEntityParts);
         }
 
         public List<EcsEntityPart> GetAllParts(long entityId)
@@ -96,6 +96,19 @@ namespace EntropyEcsCore
         public EcsEntityPart GetPartById(long entityId, long partId)
         {
             return _entityIdsToEntityParts[entityId].Single(cp => cp.Id == partId);
+        }
+
+        public void RemoveParts(long entityId, IEnumerable<EcsEntityPart> parts)
+        {
+            foreach(var part in parts)
+            {
+                RemovePart(entityId, part);
+            }
+        }
+
+        public void RemovePart(long entityId, EcsEntityPart part)
+        {
+            _entityIdsToEntityParts[entityId].Remove(part);
         }
 
         /// <summary>

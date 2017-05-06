@@ -16,17 +16,26 @@ namespace SampleGame.Sys
             internal const string StanceAggressive = "stance-aggressive";
         }
 
+        internal static readonly string[] Stances = new string[] { Actions.StanceAggressive, Actions.StanceDefensive, Actions.StanceStandGround };
+
         internal static List<string> HerosAction(EcsRegistrar rgs, long heroId, long targetId, string heroAction, out bool combatFinished)
         {
             List<string> results = new List<string>();
 
             do
             {
-                if (heroAction == Actions.AttackMelee || heroAction == Actions.AttackMeleeContinously)
+                if (Stances.Contains(heroAction))
                 {
-                    results.AddRange(ResolveAction(rgs, heroId, targetId, Rando.GetRange5, out combatFinished));
+                    results.AddRange(ApplyStance(rgs, heroId, heroAction));
 
-                    if (!combatFinished) results.AddRange(ResolveAction(rgs, targetId, heroId, Rando.GetRange5, out combatFinished));
+                    //taking a stance is an action, so the bad guys get their turn next.
+                    results.AddRange(ResolveSingleTargetMelee(rgs, targetId, heroId, Rando.GetRange5, out combatFinished));
+                }
+                else if (heroAction == Actions.AttackMelee || heroAction == Actions.AttackMeleeContinously)
+                {
+                    results.AddRange(ResolveSingleTargetMelee(rgs, heroId, targetId, Rando.GetRange5, out combatFinished));
+
+                    if (!combatFinished) results.AddRange(ResolveSingleTargetMelee(rgs, targetId, heroId, Rando.GetRange5, out combatFinished));
                 }
                 else
                 {
@@ -38,8 +47,51 @@ namespace SampleGame.Sys
             return results;
         }
 
+        internal static List<string> ApplyStance(EcsRegistrar rgs, long agentId, string stance)
+        {
+            List<string> results = new List<string>();
+
+            var stances = rgs.GetPartsOfType<Parts.SkillsModifier>(agentId).Where(p => Stances.Contains(p.Tag));
+            rgs.RemoveParts(agentId, stances);
+
+            if (stance == Actions.StanceAggressive)
+            {
+                rgs.AddPart(agentId, new Parts.SkillsModifier {
+                    Tag = Actions.StanceAggressive,
+                    SkillDeltas = new Dictionary<string, int> {
+                        [Parts.Skillset.Vals.Physical.Melee] = 1,
+                        [Parts.Skillset.Vals.Physical.Dodge] = -1
+                    }
+                });
+                results.Add($"[Agent] assumes an aggressive stance.");
+            }
+            else if (stance == Actions.StanceDefensive)
+            {
+                rgs.AddPart(agentId, new Parts.SkillsModifier
+                {
+                    Tag = Actions.StanceDefensive,
+                    SkillDeltas = new Dictionary<string, int>
+                    {
+                        [Parts.Skillset.Vals.Physical.Melee] = -1,
+                        [Parts.Skillset.Vals.Physical.Dodge] = 1
+                    }
+                });
+                results.Add($"[Agent] assumes a defensive stance.");
+            }
+            else if (stance == Actions.StanceStandGround)
+            {
+                results.Add($"[Agent] stands [its] ground.");
+            }
+            else
+            {
+                results.Add($"Sorry, agents can't take stance {stance} yet.");
+            }
+
+            return results;
+        }
+
         // do we want to pass in the random function for better testing? not sure, but let's try it.
-        private static List<string> ResolveAction(EcsRegistrar rgs, long attackerId, long targetId, Func<int> random0to5, out bool combatFinished)
+        private static List<string> ResolveSingleTargetMelee(EcsRegistrar rgs, long attackerId, long targetId, Func<int> random0to5, out bool combatFinished)
         {
             combatFinished = false;
             var results = new List<string>();
@@ -72,7 +124,9 @@ namespace SampleGame.Sys
 
             results.Add($"{attackerProperName} makes {attackRollAdjective} attack, and {targetProperName} responds with a {targetDodgeRollAdjective} dodge.");
 
-            //a good attack gets whatever the crit damage multiplier is, a barely-attack gets a .5, and less gets a 0.
+            //MWCTODO: now stances need to actually do something.
+
+            //a good attack gets whatever the attack crit damage multiplier is, a barely-attack gets a .5, and less gets a 0.
             decimal finalAttackMultiplier = (netAttack > 1) ? attackCritMultiplier 
                 : (netAttack == 1) ? 0.5m
                 : 0m;

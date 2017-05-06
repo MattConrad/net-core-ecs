@@ -13,17 +13,17 @@
   {
     "$type": "SampleGame.Parts.EntityName, SampleGame",
     "ProperName": "",
-    "GeneralName": "sword",
+    "GeneralName": "leather armor",
     "ObscuredName": null,
-    "ShortDescription": "sword",
+    "ShortDescription": "leather armor",
     "LongDescription": null,
     "Pronoun": null,
     "Id": 0
   },
   {
-    "$type": "SampleGame.Parts.Damager, SampleGame",
-    "DamageType": "MechanicalSlashing",
-    "DamageAmount": 2000,
+    "$type": "SampleGame.Parts.DamagePreventer, SampleGame",
+    "DamageThreshold": 1000,
+    "DamageMultiplier": 1.0,
     "Id": 0
   }
 ]

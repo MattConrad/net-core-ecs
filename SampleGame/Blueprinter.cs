@@ -10,17 +10,20 @@ namespace SampleGame
     /// </summary>
     internal class Blueprinter
     {
+        private static string _sourceCodeFolder = @"C:\work\fooling\NetCoreEcs\SampleGame\Blueprints\";
         private static string _blueprintFolder = System.AppContext.BaseDirectory + @"\Blueprints\";
         private static string _blueprintSuffix = ".json";
 
         /// <summary>
-        /// Write (or overwrite) a blueprint for an entity.
+        /// Write (or overwrite) a blueprint for an entity. Only for use during programming, not during play.
         /// </summary>
         internal static void WriteBlueprint(EcsRegistrar rgs, long entityId, string blueprintName)
         {
             string revisedPartsJson = GetBlueprint(rgs, entityId);
 
-            File.WriteAllText(_blueprintFolder + blueprintName + _blueprintSuffix, revisedPartsJson);
+            //we do not want to write a blueprint to the executable folder, that's useless.
+
+            File.WriteAllText(_sourceCodeFolder + blueprintName + _blueprintSuffix, revisedPartsJson);
         }
 
         //as Parts evolve, the blueprints won't keep up. different ways we could handle, one might be to cycle through

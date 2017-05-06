@@ -23,7 +23,7 @@
   {
     "$type": "SampleGame.Parts.Damager, SampleGame",
     "DamageType": "MechanicalSlashing",
-    "DamageAmount": 2000,
+    "DamageAmount": 3000,
     "Id": 0
   }
 ]
