@@ -6,7 +6,7 @@ namespace SampleGame.Sys
 {
     internal static class PhysicalObject
     {
-        //i *think* this belongs here. short term stuff anyway. MWCTODO: maybe it should be part of the part, instead.
+        //i *think* this belongs here. short term stuff anyway.
         internal static string GetLivingThingConditionDesc(long condition)
         {
             if (condition >= 10000) return "untouched";

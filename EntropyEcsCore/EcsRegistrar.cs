@@ -100,10 +100,7 @@ namespace EntropyEcsCore
 
         public void RemoveParts(long entityId, IEnumerable<EcsEntityPart> parts)
         {
-            foreach(var part in parts)
-            {
-                RemovePart(entityId, part);
-            }
+            _entityIdsToEntityParts[entityId].RemoveAll(p => parts.Contains(p));
         }
 
         public void RemovePart(long entityId, EcsEntityPart part)

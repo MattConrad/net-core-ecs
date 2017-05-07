@@ -105,26 +105,24 @@ namespace SampleGame.Sys
             string attackerProperName = attackerNames.ProperName;
             string targetProperName = targetNames.ProperName;
 
-            var attackerSkills = attackerParts.OfType<Parts.Skillset>().Single();
-            var targetSkills = targetParts.OfType<Parts.Skillset>().Single();
+            var attackerAdjustedSkills = Skills.GetAdjustedSkills(rgs, attackerId);
+            var targetAdjustedSkills = Skills.GetAdjustedSkills(rgs, targetId);
 
             int attackRoll = random0to5();
             decimal attackCritMultiplier = GetDamageMultiplierFromRange5(attackRoll);
             string attackRollAdjective = GetRollAdjectiveFromRange5(attackRoll);
-            int attackerMeleeSkill = attackerSkills.Skills[Parts.Skillset.Vals.Physical.Melee];
+            int attackerMeleeSkill = attackerAdjustedSkills[Parts.Skillset.Vals.Physical.Melee];
             int adjustedAttackRoll = attackRoll + attackerMeleeSkill;
 
             int targetDodgeRoll = random0to5();
             string targetDodgeRollAdjective = GetRollAdjectiveFromRange5(targetDodgeRoll);
-            int targetDodgeSkill = targetSkills.Skills[Parts.Skillset.Vals.Physical.Dodge];
+            int targetDodgeSkill = targetAdjustedSkills[Parts.Skillset.Vals.Physical.Dodge];
             //dodge is a difficult skill and always reduced by 1.
             int adjustedDodgeRoll = Math.Max(0, targetDodgeRoll + targetDodgeSkill - 1);
 
             int netAttack = Math.Max(0, adjustedAttackRoll - adjustedDodgeRoll);
 
             results.Add($"{attackerProperName} makes {attackRollAdjective} attack, and {targetProperName} responds with a {targetDodgeRollAdjective} dodge.");
-
-            //MWCTODO: now stances need to actually do something.
 
             //a good attack gets whatever the attack crit damage multiplier is, a barely-attack gets a .5, and less gets a 0.
             decimal finalAttackMultiplier = (netAttack > 1) ? attackCritMultiplier 
