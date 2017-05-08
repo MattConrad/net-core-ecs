@@ -22,27 +22,20 @@ namespace SampleGame.Sys
         {
             List<string> results = new List<string>();
 
-            do
+            if (Stances.Contains(heroAction))
             {
-                if (Stances.Contains(heroAction))
-                {
-                    results.AddRange(ApplyStance(rgs, heroId, heroAction));
-
-                    //taking a stance is an action, so the bad guys get their turn next.
-                    results.AddRange(ResolveSingleTargetMelee(rgs, targetId, heroId, Rando.GetRange5, out combatFinished));
-                }
-                else if (heroAction == Actions.AttackMelee || heroAction == Actions.AttackMeleeContinously)
-                {
-                    results.AddRange(ResolveSingleTargetMelee(rgs, heroId, targetId, Rando.GetRange5, out combatFinished));
-
-                    if (!combatFinished) results.AddRange(ResolveSingleTargetMelee(rgs, targetId, heroId, Rando.GetRange5, out combatFinished));
-                }
-                else
-                {
-                    combatFinished = false;
-                    results.Add($"Sorry, heroes can't {heroAction} yet.");
-                }
-            } while (!combatFinished && heroAction == Actions.AttackMeleeContinously);
+                combatFinished = false;
+                results.AddRange(ApplyStance(rgs, heroId, heroAction));
+            }
+            else if (heroAction == Actions.AttackMelee || heroAction == Actions.AttackMeleeContinously)
+            {
+                results.AddRange(ResolveSingleTargetMelee(rgs, heroId, targetId, out combatFinished));
+            }
+            else
+            {
+                combatFinished = false;
+                results.Add($"Sorry, heroes can't {heroAction} yet.");
+            }
 
             return results;
         }
@@ -90,8 +83,13 @@ namespace SampleGame.Sys
             return results;
         }
 
+        public static List<string> ResolveSingleTargetMelee(EcsRegistrar rgs, long attackerId, long targetId, out bool combatFinished)
+        {
+            return ResolveSingleTargetMelee(rgs, attackerId, targetId, Rando.GetRange5, out combatFinished);
+        }
+
         // do we want to pass in the random function for better testing? not sure, but let's try it.
-        private static List<string> ResolveSingleTargetMelee(EcsRegistrar rgs, long attackerId, long targetId, Func<int> random0to5, out bool combatFinished)
+        public static List<string> ResolveSingleTargetMelee(EcsRegistrar rgs, long attackerId, long targetId, Func<int> random0to5, out bool combatFinished)
         {
             combatFinished = false;
             var results = new List<string>();

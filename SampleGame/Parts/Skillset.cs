@@ -13,6 +13,13 @@ namespace SampleGame.Parts
 
         public static class Vals
         {
+            //"attributes" and skills have the same structure.
+            public static class Attribute
+            {
+                public const string Physical = nameof(Physical);
+                public const string Magical = nameof(Magical);
+            }
+
             public static class Physical
             {
                 public const string Melee = nameof(Melee);

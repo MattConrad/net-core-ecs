@@ -12,7 +12,7 @@
   },
   {
     "$type": "SampleGame.Parts.EntityName, SampleGame",
-    "ProperName": "Gruk",
+    "ProperName": "The orc",
     "GeneralName": "orc",
     "ObscuredName": null,
     "ShortDescription": "A nasty orc who must surely die upon the hero's blade.",
