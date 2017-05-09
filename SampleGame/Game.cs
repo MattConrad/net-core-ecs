@@ -14,9 +14,12 @@ namespace SampleGame
         }
 
         private EcsRegistrar Rgs { get; set; }
+
+        
         //hero is what we call the player's entity. we always know this for single-player context.
         //  if multiplayer, "hero" ids would be different for each player and passed in.
         private long HeroId { get; set; }
+        //MWCTODO: these go away entirely, we only know about villians via the battlefield. probably this is also true of the hero, at least w/in a single combat.
         private List<long> VillainIds { get; set; } = new List<long>();
 
         private long BattlefieldId { get; set; }
@@ -44,7 +47,7 @@ namespace SampleGame
             do
             {
                 //MWCTODO: fix .First() obvs
-                var actionResults = Sys.Combat.HerosAction(this.Rgs, this.HeroId, this.VillainIds.First(), heroAction, out combatFinished);
+                var actionResults = Sys.Combat.PlayerChoiceAction(this.Rgs, this.HeroId, this.VillainIds.First(), heroAction, out combatFinished);
                 results.AddRange(actionResults);
 
                 //this needs to move back in to the Combat system. we need a battlefield entity.

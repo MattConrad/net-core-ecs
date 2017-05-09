@@ -11,6 +11,12 @@
     "Id": 0
   },
   {
+    "$type": "SampleGame.Parts.Agent, SampleGame",
+    "DefaultCombatAI": "MeleeOnly",
+    "ActiveCombatAI": "MeleeOnly",
+    "Id": 0
+  },
+  {
     "$type": "SampleGame.Parts.EntityName, SampleGame",
     "ProperName": "The orc",
     "GeneralName": "orc",
