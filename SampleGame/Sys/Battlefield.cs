@@ -1,18 +1,45 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 using EntropyEcsCore;
 
 namespace SampleGame.Sys
 {
-    public static class Battlefield
+    internal static class Battlefield
     {
-        public static List<string> RunBattlefield(EcsRegistrar rgs, long battlefieldId)
+        internal static IEnumerable<List<string>> RunBattlefield(EcsRegistrar rgs, long battlefieldId)
         {
-            //MWCTODO: not sure if this really returns List<string> or not. maybe return IEnumerable<List<string>> w/ yield. 
-            // i think this is a battefield loop that runs forever until done.
-            // not sure how it pauses for input or returns results.
-            return null;
+            while (true)
+            {
+                var battlefieldEntityIds = rgs.GetPartsOfType<Parts.Container>(battlefieldId)
+                    .Single(p => p.Tag == Parts.Container.Vals.Tag.Battlefield)
+                    .EntityIds;
+
+                foreach(long entityId in battlefieldEntityIds)
+                {
+
+                }
+
+                //eventually, entities may enter or leave the battlefield, so let's recheck every time.
+
+                //var results = GettingStuff();
+
+                //if (results.CombatFinished)
+                //{
+                //    yield return results.Strings();
+                //    yield break;
+                //}
+                //else if (results == "needinput")
+                //{
+                //    string input = this.ReceivePlayerInputFunc();
+                //    this.ApplyInput(input);
+                //}
+                //else
+                //{
+                //    yield return results.Strings();
+                //}
+            }
         }
     }
 }

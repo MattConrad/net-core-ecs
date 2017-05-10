@@ -6,29 +6,44 @@ namespace NetCoreEcsConsole
 {
     class Program
     {
+        //no, i do not like this.
+        static Dictionary<char, TextActionPair> CurrentActionInputSet { get; set; }
+
         static void Main(string[] args)
         {
-            var game = new Game();
+            var game = new Game(SendPlayerInput);
             var heroActionDict = Switchboard.HerosActions();
-            var actionInputSet = GetKeysToActions(heroActionDict);
+            CurrentActionInputSet = GetKeysToActions(heroActionDict);
             //this might not even happen until the game has started and presented the player with an initial scenario.
 
-            bool combatFinished = false;
-            while(!combatFinished)
+            foreach(var lines in game.RunGame())
             {
-                var nextHeroAction = GetHeroAction(actionInputSet);
-                Console.WriteLine(nextHeroAction);
-
-                var lines = game.ProcessInput(nextHeroAction, out combatFinished);
                 foreach (string line in lines)
                 {
                     Console.WriteLine(line);
                 }
             }
+            //bool combatFinished = false;
+            //while(!combatFinished)
+            //{
+            //    var nextHeroAction = GetHeroAction(actionInputSet);
+            //    Console.WriteLine(nextHeroAction);
+
+            //    var lines = game.ProcessInput(nextHeroAction, out combatFinished);
+            //    foreach (string line in lines)
+            //    {
+            //        Console.WriteLine(line);
+            //    }
+            //}
 
             Console.WriteLine();
             Console.WriteLine("GAME OVER");
             Console.ReadLine();
+        }
+
+        public static string SendPlayerInput()
+        {
+            return GetHeroAction(CurrentActionInputSet);
         }
 
         static Dictionary<char, TextActionPair> GetKeysToActions(Dictionary<string, string> heroActionDict)
