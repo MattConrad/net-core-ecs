@@ -12,50 +12,40 @@ namespace SampleGame.Sys
         {
             while (true)
             {
-                //eventually, entities may enter or leave the battlefield, so we requery every iteration.
+                //eventually UPDATE: real soon now!  entities may enter or leave the battlefield, so we requery every iteration.
                 var battlefieldEntityIds = rgs.GetPartsOfType<Parts.Container>(battlefieldId)
                     .Single(p => p.Tag == Parts.Container.Vals.Tag.Battlefield)
                     .EntityIds
                     .ToList();
 
-                foreach(var id in battlefieldEntityIds)
+                foreach(var agentId in battlefieldEntityIds)
                 {
-                    var battlefieldAgent = rgs.GetPartsOfType<Parts.Agent>(id).SingleOrDefault();
+                    var battlefieldAgent = rgs.GetPartsOfType<Parts.Agent>(agentId).SingleOrDefault();
                     if (battlefieldAgent == null) continue;
 
-                    string nextActionSet;
+                    string agentActionSet;
                     if (battlefieldAgent.ActiveCombatAI == Parts.Agent.Vals.AI.PlayerChoice)
                     {
                         //MWCTODO: this step should also include piping the current permitted actions out to the player.
                         // for now these are fixed, but later they'll vary with context (drop your weapon and you're punching not slashing).
-                        nextActionSet = receivePlayerInput();
+                        agentActionSet = receivePlayerInput();
                     }
                     else
                     {
-                        nextActionSet = Sys.Agent.GetCombatAction(battlefieldAgent.ActiveCombatAI, id, battlefieldEntityIds);
+                        agentActionSet = Agent.GetCombatAction(rgs, battlefieldAgent.ActiveCombatAI, agentId, battlefieldEntityIds);
                     }
 
+                    //we cheat a bit here, with knowledge that won't stay true forever.
+                    string[] agentActionStrings = agentActionSet.Split(' ');
+                    long? targetId = agentActionStrings.Length > 1 ? long.Parse(agentActionStrings[1]) : (long?)null;
 
+                    bool combatFinished = false;
+                    var results = Combat.ProcessAgentAction(rgs, agentId, targetId, agentActionStrings[0], out combatFinished);
+
+                    yield return results;
+
+                    if (combatFinished) yield break;
                 }
-
-
-
-                //var results = GettingStuff();
-
-                //if (results.CombatFinished)
-                //{
-                //    yield return results.Strings();
-                //    yield break;
-                //}
-                //else if (results == "needinput")
-                //{
-                //    string input = this.ReceivePlayerInputFunc();
-                //    this.ApplyInput(input);
-                //}
-                //else
-                //{
-                //    yield return results.Strings();
-                //}
             }
         }
     }

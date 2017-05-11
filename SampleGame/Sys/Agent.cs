@@ -40,6 +40,10 @@ namespace SampleGame.Sys
                     factionDeltas.Add(entityId, delta);
                 }
             }
+
+            var targetId = factionDeltas.First(kvp => kvp.Value == factionDeltas.Values.Max()).Key;
+
+            return Combat.Actions.AttackMelee + " " + targetId;
         }
     }
 }

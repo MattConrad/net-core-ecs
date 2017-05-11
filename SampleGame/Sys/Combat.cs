@@ -18,23 +18,23 @@ namespace SampleGame.Sys
 
         internal static readonly string[] Stances = new string[] { Actions.StanceAggressive, Actions.StanceDefensive, Actions.StanceStandGround };
 
-        internal static List<string> PlayerChoiceAction(EcsRegistrar rgs, long heroId, long targetId, string playerChoiceAction, out bool combatFinished)
+        internal static List<string> ProcessAgentAction(EcsRegistrar rgs, long agentId, long? targetId, string action, out bool combatFinished)
         {
             List<string> results = new List<string>();
 
-            if (Stances.Contains(playerChoiceAction))
+            if (Stances.Contains(action))
             {
                 combatFinished = false;
-                results.AddRange(ApplyStance(rgs, heroId, playerChoiceAction));
+                results.AddRange(ApplyStance(rgs, agentId, action));
             }
-            else if (playerChoiceAction == Actions.AttackMelee || playerChoiceAction == Actions.AttackMeleeContinously)
+            else if (action == Actions.AttackMelee || action == Actions.AttackMeleeContinously)
             {
-                results.AddRange(ResolveSingleTargetMelee(rgs, heroId, targetId, out combatFinished));
+                results.AddRange(ResolveSingleTargetMelee(rgs, agentId, targetId.Value, out combatFinished));
             }
             else
             {
                 combatFinished = false;
-                results.Add($"Sorry, player controlled agents can't {playerChoiceAction} yet.");
+                results.Add($"Sorry, player controlled agents can't {action} yet.");
             }
 
             return results;

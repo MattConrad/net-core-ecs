@@ -45,7 +45,7 @@ namespace SampleGame
         public IEnumerable<List<string>> RunGame()
         {
             //for now, running the game and running the battlefield are the same thing.
-            foreach(var lines in Sys.Battlefield.RunBattlefield(this.Rgs, this.BattlefieldId))
+            foreach(var lines in Sys.Battlefield.RunBattlefield(this.Rgs, this.BattlefieldId, this.ReceivePlayerInputFunc))
             {
                 yield return lines;
             }
