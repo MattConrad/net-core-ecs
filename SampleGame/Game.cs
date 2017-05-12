@@ -14,7 +14,7 @@ namespace SampleGame
             public string Examine = nameof(Examine);
         }
 
-        private Func<string> ReceivePlayerInputFunc { get; set; }
+        private Func<Dictionary<string, string>, string> ReceivePlayerInputFunc { get; set; }
         private EcsRegistrar Rgs { get; set; }
 
         //hero is what we call the player's entity. we always know this for single-player context.
@@ -25,7 +25,7 @@ namespace SampleGame
 
         private long BattlefieldId { get; set; }
 
-        public Game(Func<string> receivePlayerInputFunc)
+        public Game(Func<Dictionary<string, string>, string> receivePlayerInputFunc)
         {
             this.ReceivePlayerInputFunc = receivePlayerInputFunc;
             this.Rgs = new EcsRegistrar();

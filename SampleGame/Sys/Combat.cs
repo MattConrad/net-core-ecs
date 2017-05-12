@@ -10,7 +10,7 @@ namespace SampleGame.Sys
         internal static class Actions
         {
             internal const string AttackMelee = "attack-melee";
-            internal const string AttackMeleeContinously = "attack-continuously";
+            internal const string SwitchToAI = "switch-to-ai";
             internal const string StanceDefensive = "stance-defensive";
             internal const string StanceStandGround = "stance-stand-ground";
             internal const string StanceAggressive = "stance-aggressive";
@@ -27,7 +27,7 @@ namespace SampleGame.Sys
                 combatFinished = false;
                 results.AddRange(ApplyStance(rgs, agentId, action));
             }
-            else if (action == Actions.AttackMelee || action == Actions.AttackMeleeContinously)
+            else if (action == Actions.AttackMelee || action == Actions.SwitchToAI)
             {
                 results.AddRange(ResolveSingleTargetMelee(rgs, agentId, targetId.Value, out combatFinished));
             }

@@ -8,7 +8,7 @@ namespace SampleGame.Sys
 {
     internal static class Battlefield
     {
-        internal static IEnumerable<List<string>> RunBattlefield(EcsRegistrar rgs, long battlefieldId, Func<string> receivePlayerInput)
+        internal static IEnumerable<List<string>> RunBattlefield(EcsRegistrar rgs, long battlefieldId, Func<Dictionary<string, string>, string> receivePlayerInput)
         {
             while (true)
             {
@@ -26,19 +26,19 @@ namespace SampleGame.Sys
                     string agentActionSet;
                     if (battlefieldAgent.ActiveCombatAI == Parts.Agent.Vals.AI.PlayerChoice)
                     {
-                        //MWCTODO: this step should also include piping the current permitted actions out to the player.
-                        // for now these are fixed, but later they'll vary with context (drop your weapon and you're punching not slashing).
-                        agentActionSet = receivePlayerInput();
+                        var possibleActions = Agent.GetPossibleActions(rgs, agentId, battlefieldEntityIds);
+                        agentActionSet = receivePlayerInput(possibleActions);
                     }
                     else
                     {
-                        agentActionSet = Agent.GetCombatAction(rgs, battlefieldAgent.ActiveCombatAI, agentId, battlefieldEntityIds);
+                        agentActionSet = Agent.GetAgentCombatAction(rgs, battlefieldAgent.ActiveCombatAI, agentId, battlefieldEntityIds);
                     }
 
                     //we cheat a bit here, with knowledge that won't stay true forever.
                     string[] agentActionStrings = agentActionSet.Split(' ');
                     long? targetId = agentActionStrings.Length > 1 ? long.Parse(agentActionStrings[1]) : (long?)null;
 
+                    //MWCTODO: we need to (for now) remove entities that are killed from the battlefield.
                     bool combatFinished = false;
                     var results = Combat.ProcessAgentAction(rgs, agentId, targetId, agentActionStrings[0], out combatFinished);
 
