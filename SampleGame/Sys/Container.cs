@@ -48,7 +48,7 @@ namespace SampleGame.Sys
 
         internal static HashSet<long> GetEntityIdsFromFirstTagged(EcsRegistrar rgs, long ownerId, string tag)
         {
-            var container = rgs.GetPartsOfType<Parts.Container>(ownerId).FirstOrDefault(c => c.Tag == tag);
+            var container = rgs.GetParts<Parts.Container>(ownerId).FirstOrDefault(c => c.Tag == tag);
 
             return container?.EntityIds ?? new HashSet<long>();
         }
@@ -56,7 +56,7 @@ namespace SampleGame.Sys
         internal static AlterContainerContentsResultsMessage AddOrRemove(Action action, EcsRegistrar rgs, long ownerId, long itemAddOrRemoveId)
         {
             //MWCTODO: we might have many containers for an entity later, so this is temporary only.
-            var containerPart = rgs.GetPartsOfType<Parts.Container>(ownerId).FirstOrDefault();
+            var containerPart = rgs.GetParts<Parts.Container>(ownerId).FirstOrDefault();
 
             if (containerPart == null) return new AlterContainerContentsResultsMessage { Succeeded = false, Output = "Container not found." };
 
@@ -75,8 +75,8 @@ namespace SampleGame.Sys
                 return new AlterContainerContentsResultsMessage { Succeeded = false, Output = "Can't add what already exists, or remove what does not exist." };
             }
 
-            var ownerNamePart = rgs.GetPartsOfType<Parts.EntityName>(ownerId).Single();
-            var itemNamePart = rgs.GetPartsOfType<Parts.EntityName>(itemAddOrRemoveId).SingleOrDefault();
+            var ownerNamePart = rgs.GetParts<Parts.EntityName>(ownerId).Single();
+            var itemNamePart = rgs.GetParts<Parts.EntityName>(itemAddOrRemoveId).SingleOrDefault();
 
             string verbPhrase = (action == Action.AddEntity)
                 ? $"adds {itemNamePart.GeneralName} to"

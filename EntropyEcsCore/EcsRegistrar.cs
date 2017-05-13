@@ -83,14 +83,19 @@ namespace EntropyEcsCore
             return JsonConvert.DeserializeObject<List<EcsEntityPart>>(serializedEntityParts);
         }
 
-        public List<EcsEntityPart> GetAllParts(long entityId)
+        public List<EcsEntityPart> GetParts(long entityId)
         {
             return _entityIdsToEntityParts[entityId];
         }
 
-        public IEnumerable<T> GetPartsOfType<T>(long entityId) where T : EcsEntityPart
+        public T GetPartSingle<T>(long entityId) where T: EcsEntityPart
         {
-            return GetAllParts(entityId).OfType<T>();
+            return GetParts<T>(entityId).Single();
+        }
+
+        public IEnumerable<T> GetParts<T>(long entityId) where T : EcsEntityPart
+        {
+            return GetParts(entityId).OfType<T>();
         }
 
         public EcsEntityPart GetPartById(long entityId, long partId)

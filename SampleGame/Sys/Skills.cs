@@ -8,8 +8,8 @@ namespace SampleGame.Sys
     {
         internal static Dictionary<string, int> GetAdjustedSkills(EcsRegistrar rgs, long entityId )
         {
-            var skillDicts = rgs.GetPartsOfType<Parts.Skillset>(entityId).Select(p => p.Skills);
-            var modifierDicts = rgs.GetPartsOfType<Parts.SkillsModifier>(entityId).Select(p => p.SkillDeltas);
+            var skillDicts = rgs.GetParts<Parts.Skillset>(entityId).Select(p => p.Skills);
+            var modifierDicts = rgs.GetParts<Parts.SkillsModifier>(entityId).Select(p => p.SkillDeltas);
 
             return skillDicts.Union(modifierDicts)
                 .SelectMany(d => d)

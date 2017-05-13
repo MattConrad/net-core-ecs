@@ -18,7 +18,7 @@ namespace SampleGame.Sys
             {
                 if (id == agentId) continue;
 
-                var entityName = rgs.GetPartsOfType<Parts.EntityName>(id).Single();
+                var entityName = rgs.GetParts<Parts.EntityName>(id).Single();
                 targetActions.Add($"Attack Melee {entityName.ProperName}", $"{Combat.Actions.AttackMelee} {id}");
             }
 
@@ -48,7 +48,7 @@ namespace SampleGame.Sys
             string action = "do-nothing";
             var factionDeltas = new Dictionary<long, int>();
 
-            var attackerFaction = rgs.GetPartsOfType<Parts.Faction>(attackerId).SingleOrDefault();
+            var attackerFaction = rgs.GetParts<Parts.Faction>(attackerId).SingleOrDefault();
 
             //this will do for now, but a) faction shouldn't be as important as perceived danger level, b) this is busier than maybe it should be, and c) can you really perceive faction by looking at someone?
             // i am not sure I want numeric factions at all any more. seemed tidy--but are they really useful?
@@ -58,7 +58,7 @@ namespace SampleGame.Sys
                 {
                     if (entityId == attackerId) continue;
 
-                    var entityFactionReputations = rgs.GetPartsOfType<Parts.Faction>(entityId).SingleOrDefault()?.FactionReputations;
+                    var entityFactionReputations = rgs.GetParts<Parts.Faction>(entityId).SingleOrDefault()?.FactionReputations;
                     if (entityFactionReputations == null) continue;
 
                     int delta = attackerFaction

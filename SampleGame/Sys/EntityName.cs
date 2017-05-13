@@ -14,7 +14,7 @@ namespace SampleGame.Sys
         /// </summary>
         internal static void Overwrite(EcsRegistrar rgs, long entityId, Parts.EntityName newNames)
         {
-            var currentNames = rgs.GetPartsOfType<Parts.EntityName>(entityId).Single();
+            var currentNames = rgs.GetParts<Parts.EntityName>(entityId).Single();
             currentNames.LongDescription = newNames.LongDescription ?? currentNames.LongDescription;
             currentNames.ObscuredName = newNames.ObscuredName ?? currentNames.ObscuredName;
             currentNames.Pronoun = newNames.Pronoun ?? currentNames.Pronoun;

@@ -18,6 +18,9 @@ namespace SampleGame.Parts
         public string DefaultCombatAI { get; set; }
         public string ActiveCombatAI { get; set; }
 
+        //this is, for now, same as IsAlive, but later will probably become more complicated.
+        public bool IsCombatActive { get; set; }
+
         public static class Vals
         {
             public static class AI

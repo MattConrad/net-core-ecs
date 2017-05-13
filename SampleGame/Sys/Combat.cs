@@ -18,6 +18,8 @@ namespace SampleGame.Sys
 
         internal static readonly string[] Stances = new string[] { Actions.StanceAggressive, Actions.StanceDefensive, Actions.StanceStandGround };
 
+        //MWCTODO: List<string> won't cut it any more. we need those plus also at least who died so they can be removed from the battlefield
+        //  orrrrr we could make an
         internal static List<string> ProcessAgentAction(EcsRegistrar rgs, long agentId, long? targetId, string action, out bool combatFinished)
         {
             List<string> results = new List<string>();
@@ -44,7 +46,7 @@ namespace SampleGame.Sys
         {
             List<string> results = new List<string>();
 
-            var stances = rgs.GetPartsOfType<Parts.SkillsModifier>(agentId).Where(p => Stances.Contains(p.Tag));
+            var stances = rgs.GetParts<Parts.SkillsModifier>(agentId).Where(p => Stances.Contains(p.Tag));
             rgs.RemoveParts(agentId, stances);
 
             if (stance == Actions.StanceAggressive)
@@ -94,11 +96,8 @@ namespace SampleGame.Sys
             combatFinished = false;
             var results = new List<string>();
 
-            var attackerParts = rgs.GetAllParts(attackerId);
-            var targetParts = rgs.GetAllParts(targetId);
-
-            var attackerNames = attackerParts.OfType<Parts.EntityName>().Single();
-            var targetNames = targetParts.OfType<Parts.EntityName>().Single();
+            var attackerNames = rgs.GetPartSingle<Parts.EntityName>(attackerId);
+            var targetNames = rgs.GetPartSingle<Parts.EntityName>(targetId);
 
             string attackerProperName = attackerNames.ProperName;
             string targetProperName = targetNames.ProperName;
@@ -127,19 +126,19 @@ namespace SampleGame.Sys
                 : (netAttack == 1) ? 0.5m
                 : 0m;
 
-            var targetPhysicalObject = targetParts.OfType<Parts.PhysicalObject>().Single();
+            var targetPhysicalObject = rgs.GetPartSingle<Parts.PhysicalObject>(targetId);
             var targetEquipment = Container.GetEntityIdsFromFirstTagged(rgs, targetId, Parts.Container.Vals.Tag.Equipped);
 
             //for this simple game, there's only one piece of armor, but we'll use SelectMany over the entire equipment anyhow.
             // later this is certainly true, maybe over more than equipment. lots of things can be damage preventers. eeeps.
             // later, this needs to be equipped only. not sure how we're doing equipped right now.
-            var targetArmor = targetEquipment.SelectMany(eid => rgs.GetPartsOfType<Parts.DamagePreventer>(eid)).FirstOrDefault();
+            var targetArmor = targetEquipment.SelectMany(eid => rgs.GetParts<Parts.DamagePreventer>(eid)).FirstOrDefault();
 
             //later, we will have natural weapons and whatever you're wielding, and you probably only get one attack at a time.
             //  this relates to the clock/timer, however that ends up working.
             var attackerEquipment = Container.GetEntityIdsFromFirstTagged(rgs, attackerId, Parts.Container.Vals.Tag.Equipped);
             //and here, this needs to be wielded weapons only. perhaps equipped will do intermediately.
-            var attackerWeapon = targetEquipment.SelectMany(eid => rgs.GetPartsOfType<Parts.Damager>(eid)).FirstOrDefault();
+            var attackerWeapon = targetEquipment.SelectMany(eid => rgs.GetParts<Parts.Damager>(eid)).FirstOrDefault();
 
             var damageAttempted = (attackerWeapon?.DamageAmount ?? 0) * finalAttackMultiplier;
             var damagePrevented = targetPhysicalObject.DefaultDamageThreshold + targetArmor?.DamageThreshold ?? 0;

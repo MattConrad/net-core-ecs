@@ -13,14 +13,14 @@ namespace SampleGame.Sys
             while (true)
             {
                 //eventually UPDATE: real soon now!  entities may enter or leave the battlefield, so we requery every iteration.
-                var battlefieldEntityIds = rgs.GetPartsOfType<Parts.Container>(battlefieldId)
+                var battlefieldEntityIds = rgs.GetParts<Parts.Container>(battlefieldId)
                     .Single(p => p.Tag == Parts.Container.Vals.Tag.Battlefield)
                     .EntityIds
                     .ToList();
 
                 foreach(var agentId in battlefieldEntityIds)
                 {
-                    var battlefieldAgent = rgs.GetPartsOfType<Parts.Agent>(agentId).SingleOrDefault();
+                    var battlefieldAgent = rgs.GetParts<Parts.Agent>(agentId).SingleOrDefault();
                     if (battlefieldAgent == null) continue;
 
                     string agentActionSet;

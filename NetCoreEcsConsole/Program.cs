@@ -6,13 +6,10 @@ namespace NetCoreEcsConsole
 {
     class Program
     {
-        ////no, i do not like this.
-        //static Dictionary<char, TextActionPair> CurrentActionInputSet { get; set; }
-
         static void Main(string[] args)
         {
             var game = new Game(SendPlayerInput);
-            //var heroActionDict = Switchboard.HerosActions();
+
             //this might not even happen until the game has started and presented the player with an initial scenario.
 
             foreach(var lines in game.RunGame())
