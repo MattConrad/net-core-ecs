@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntropyEcsCore", "EntropyEc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleGame", "SampleGame\SampleGame.csproj", "{896A1B02-5C87-4168-BA44-212F0BF41803}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleNarrator", "SampleNarrator\SampleNarrator.csproj", "{23CEB236-2ED4-483E-B090-ECDCCAB94D12}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,10 +27,6 @@ Global
 		{896A1B02-5C87-4168-BA44-212F0BF41803}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{896A1B02-5C87-4168-BA44-212F0BF41803}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{896A1B02-5C87-4168-BA44-212F0BF41803}.Release|Any CPU.Build.0 = Release|Any CPU
-		{23CEB236-2ED4-483E-B090-ECDCCAB94D12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{23CEB236-2ED4-483E-B090-ECDCCAB94D12}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{23CEB236-2ED4-483E-B090-ECDCCAB94D12}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{23CEB236-2ED4-483E-B090-ECDCCAB94D12}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
