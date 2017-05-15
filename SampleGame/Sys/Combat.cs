@@ -18,34 +18,30 @@ namespace SampleGame.Sys
 
         internal static readonly string[] Stances = new string[] { Actions.StanceAggressive, Actions.StanceDefensive, Actions.StanceStandGround };
 
-        //MWCTODO: List<string> won't cut it any more. we need those plus also at least who died so they can be removed from the battlefield
-        //  orrrrr we could make an
-        internal static List<string> ProcessAgentAction(EcsRegistrar rgs, long agentId, long? targetId, string action, out bool combatFinished)
+        internal static Messages.Combat ProcessAgentAction(EcsRegistrar rgs, long agentId, long? targetId, string action)
         {
-            List<string> results = new List<string>();
-
             if (Stances.Contains(action))
             {
-                combatFinished = false;
-                results.AddRange(ApplyStance(rgs, agentId, action));
+                return ApplyStance(rgs, agentId, action);
             }
-            else if (action == Actions.AttackMelee || action == Actions.SwitchToAI)
+            else if (action == Actions.SwitchToAI)
             {
-                results.AddRange(ResolveSingleTargetMelee(rgs, agentId, targetId.Value, out combatFinished));
+                var ai = rgs.GetPartSingle<Parts.Agent>(agentId);
+                ai.ActiveCombatAI = Parts.Agent.Vals.AI.MeleeOnly;
+                return new Messages.Combat { Tick = rgs.NewId(), ActorId = agentId, ActorAction = "MWCTODO: Switch to AI" };
+            }
+            else if (action == Actions.AttackMelee)
+            {
+                return ResolveSingleTargetMelee(rgs, agentId, targetId.Value);
             }
             else
             {
-                combatFinished = false;
-                results.Add($"Sorry, player controlled agents can't {action} yet.");
+                return new Messages.Combat { Tick = rgs.NewId(), ActorId = agentId, ActorAction = Messages.TempActionCategories.Stance };
             }
-
-            return results;
         }
 
-        internal static List<string> ApplyStance(EcsRegistrar rgs, long agentId, string stance)
+        internal static Messages.Combat ApplyStance(EcsRegistrar rgs, long agentId, string stance)
         {
-            List<string> results = new List<string>();
-
             var stances = rgs.GetParts<Parts.SkillsModifier>(agentId).Where(p => Stances.Contains(p.Tag));
             rgs.RemoveParts(agentId, stances);
 
@@ -58,7 +54,8 @@ namespace SampleGame.Sys
                         [Parts.Skillset.Vals.Physical.Dodge] = -1
                     }
                 });
-                results.Add($"[Agent] assumes an aggressive stance.");
+
+                return new Messages.Combat { Tick = rgs.NewId(), ActorId = agentId, ActorAction = Messages.TempActionCategories.Stance };
             }
             else if (stance == Actions.StanceDefensive)
             {
@@ -71,55 +68,57 @@ namespace SampleGame.Sys
                         [Parts.Skillset.Vals.Physical.Dodge] = 1
                     }
                 });
-                results.Add($"[Agent] assumes a defensive stance.");
+
+                return new Messages.Combat { Tick = rgs.NewId(), ActorId = agentId, ActorAction = Messages.TempActionCategories.Stance };
             }
             else if (stance == Actions.StanceStandGround)
             {
-                results.Add($"[Agent] stands [its] ground.");
+                return new Messages.Combat { Tick = rgs.NewId(), ActorId = agentId, ActorAction = Messages.TempActionCategories.Stance };
             }
             else
             {
-                results.Add($"Sorry, agents can't take stance {stance} yet.");
+                return new Messages.Combat { Tick = rgs.NewId(), ActorId = agentId, ActorAction = Messages.TempActionCategories.Stance };
             }
-
-            return results;
         }
 
-        public static List<string> ResolveSingleTargetMelee(EcsRegistrar rgs, long attackerId, long targetId, out bool combatFinished)
+        public static Messages.Combat ResolveSingleTargetMelee(EcsRegistrar rgs, long attackerId, long targetId)
         {
-            return ResolveSingleTargetMelee(rgs, attackerId, targetId, Rando.GetRange5, out combatFinished);
+            return ResolveSingleTargetMelee(rgs, attackerId, targetId, Rando.GetRange5);
         }
 
+        //MWCTODO: we need to (for now) remove entities that are killed from the battlefield.
         // do we want to pass in the random function for better testing? not sure, but let's try it.
-        public static List<string> ResolveSingleTargetMelee(EcsRegistrar rgs, long attackerId, long targetId, Func<int> random0to5, out bool combatFinished)
+        public static Messages.Combat ResolveSingleTargetMelee(EcsRegistrar rgs, long attackerId, long targetId, Func<int> random0to5)
         {
-            combatFinished = false;
-            var results = new List<string>();
-
-            var attackerNames = rgs.GetPartSingle<Parts.EntityName>(attackerId);
-            var targetNames = rgs.GetPartSingle<Parts.EntityName>(targetId);
-
-            string attackerProperName = attackerNames.ProperName;
-            string targetProperName = targetNames.ProperName;
+            //this is only temporary, later we'll have a clock/scheduler.
+            var msg = new Messages.Combat
+            {
+                Tick = rgs.NewId(),
+                ActorId = attackerId,
+                TargetId = targetId,
+                ActorAction = Messages.TempActionCategories.MeleeAttack,
+                TargetAction = Messages.TempActionCategories.Dodge
+            };
 
             var attackerAdjustedSkills = Skills.GetAdjustedSkills(rgs, attackerId);
             var targetAdjustedSkills = Skills.GetAdjustedSkills(rgs, targetId);
 
             int attackRoll = random0to5();
             decimal attackCritMultiplier = GetDamageMultiplierFromRange5(attackRoll);
-            string attackRollAdjective = GetRollAdjectiveFromRange5(attackRoll);
             int attackerMeleeSkill = attackerAdjustedSkills[Parts.Skillset.Vals.Physical.Melee];
-            int adjustedAttackRoll = attackRoll + attackerMeleeSkill;
+            int attackerAdjustedRoll = attackRoll + attackerMeleeSkill;
+            msg.ActorAdjustedSkill = attackerMeleeSkill;
+            msg.ActorAdjustedRoll = attackerAdjustedRoll;
 
             int targetDodgeRoll = random0to5();
-            string targetDodgeRollAdjective = GetRollAdjectiveFromRange5(targetDodgeRoll);
             int targetDodgeSkill = targetAdjustedSkills[Parts.Skillset.Vals.Physical.Dodge];
             //dodge is a difficult skill and always reduced by 1.
-            int adjustedDodgeRoll = Math.Max(0, targetDodgeRoll + targetDodgeSkill - 1);
+            int targetAdjustedDodgeRoll = Math.Max(0, targetDodgeRoll + targetDodgeSkill - 1);
+            msg.TargetAdjustedSkill = targetDodgeSkill;
+            msg.TargetAdjustedRoll = targetAdjustedDodgeRoll;
 
-            int netAttack = Math.Max(0, adjustedAttackRoll - adjustedDodgeRoll);
-
-            results.Add($"{attackerProperName} makes {attackRollAdjective} attack, and {targetProperName} responds with a {targetDodgeRollAdjective} dodge.");
+            int netAttack = Math.Max(0, attackerAdjustedRoll - targetAdjustedDodgeRoll);
+            msg.NetActorRoll = netAttack;
 
             //a good attack gets whatever the attack crit damage multiplier is, a barely-attack gets a .5, and less gets a 0.
             decimal finalAttackMultiplier = (netAttack > 1) ? attackCritMultiplier 
@@ -142,25 +141,18 @@ namespace SampleGame.Sys
 
             var damageAttempted = (attackerWeapon?.DamageAmount ?? 0) * finalAttackMultiplier;
             var damagePrevented = targetPhysicalObject.DefaultDamageThreshold + targetArmor?.DamageThreshold ?? 0;
+            msg.AttemptedDamage = damageAttempted;
+
             //so we apply crit/attack multipliers first, then we subtract damage prevention, then we apply default damage multiplier and armor multiplier. whew!
             var damageDealt = Math.Max(0, 
                 (damageAttempted - damagePrevented) * targetPhysicalObject.DefaultDamageMultiplier * targetArmor.DamageMultiplier);
+            msg.NetDamage = damageDealt;
 
             targetPhysicalObject.Condition = targetPhysicalObject.Condition - (int)damageDealt;
+            msg.TargetCondition = targetPhysicalObject.Condition;
 
-            results.Add($"Adjusted damage: {damageDealt}. New condition: {targetPhysicalObject.Condition}");
 
-            var targetConditionString = PhysicalObject.GetLivingThingConditionDesc(targetPhysicalObject.Condition);
-
-            var attackResultsMessage = damageDealt > 0
-                ? $"{attackerProperName} swings and hits {targetProperName}. {targetProperName} is {targetConditionString}."
-                : $"{attackerProperName} blunders about ineffectually, and {targetProperName} takes heart.";
-
-            results.Add(attackResultsMessage);
-
-            if (targetConditionString == "dead") combatFinished = true;
-
-            return results;
+            return msg;
         }
 
         private static string GetRollAdjectiveFromRange5(int roll)

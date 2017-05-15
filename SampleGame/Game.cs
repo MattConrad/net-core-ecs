@@ -33,12 +33,12 @@ namespace SampleGame
             this.BattlefieldId = Sys.Container.CreateBattlefield(this.Rgs, new long[] { heroId, villian1Id, villian2Id });
         }
 
-        public IEnumerable<List<string>> RunGame()
+        public IEnumerable<List<Output>> RunGame()
         {
             //for now, running the game and running the battlefield are the same thing.
-            foreach(var lines in Sys.Battlefield.RunBattlefield(this.Rgs, this.BattlefieldId, this.ReceivePlayerInputFunc))
+            foreach(var outputs in Sys.Battlefield.RunBattlefield(this.Rgs, this.BattlefieldId, this.ReceivePlayerInputFunc))
             {
-                yield return lines;
+                yield return outputs;
             }
         }
     }

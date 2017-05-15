@@ -6,18 +6,25 @@ namespace SampleGame.Vals
 {
     public class GameValueString
     {
-        private string _val;
+        private string _string;
 
         public GameValueString(string val)
         {
-            _val = val;
+            _string = val;
         }
 
-        public static implicit operator GameValueString(string val)
+        public static implicit operator String(GameValueString gvString)
         {
-            if (val == null) return null;
+            if (gvString == null) return null;
 
-            return new GameValueString(val);
+            return gvString._string;
+        }
+
+        public static implicit operator GameValueString(string sysString)
+        {
+            if (sysString == null) return null;
+
+            return new GameValueString(sysString);
         }
     }
 }

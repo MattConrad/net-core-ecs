@@ -8,15 +8,12 @@ namespace SampleGame.Sys
 {
     internal static class Battlefield
     {
-        internal static IEnumerable<List<string>> RunBattlefield(EcsRegistrar rgs, long battlefieldId, Func<Dictionary<string, string>, string> receivePlayerInput)
+        internal static IEnumerable<List<Output>> RunBattlefield(EcsRegistrar rgs, long battlefieldId, Func<Dictionary<string, string>, string> receivePlayerInput)
         {
             while (true)
             {
-                //eventually UPDATE: real soon now!  entities may enter or leave the battlefield, so we requery every iteration.
-                var battlefieldEntityIds = rgs.GetParts<Parts.Container>(battlefieldId)
-                    .Single(p => p.Tag == Parts.Container.Vals.Tag.Battlefield)
-                    .EntityIds
-                    .ToList();
+                var battlefieldContainer = rgs.GetPartSingle<Parts.Container>(battlefieldId);
+                var battlefieldEntityIds = battlefieldContainer.EntityIds.ToList();
 
                 foreach(var agentId in battlefieldEntityIds)
                 {
@@ -38,11 +35,19 @@ namespace SampleGame.Sys
                     string[] agentActionStrings = agentActionSet.Split(' ');
                     long? targetId = agentActionStrings.Length > 1 ? long.Parse(agentActionStrings[1]) : (long?)null;
 
-                    //MWCTODO: we need to (for now) remove entities that are killed from the battlefield.
-                    bool combatFinished = false;
-                    var results = Combat.ProcessAgentAction(rgs, agentId, targetId, agentActionStrings[0], out combatFinished);
+                    //in due course this will return a list of results, not a single.
+                    var results = Combat.ProcessAgentAction(rgs, agentId, targetId, agentActionStrings[0]);
 
-                    yield return results;
+                    //eventually we will leave dead bodies on the field, they just won't act any more.
+                    if (results.TargetCondition <= 0) battlefieldContainer.EntityIds.Remove(results.TargetId);
+
+                    //MWCTODO: shouldn't be applying List here, upstream should be emitting List instead..
+                    var output = Narrator.OutputForCombatMessages(rgs, new List<Messages.Combat> { results });
+
+                    yield return output;
+
+                    //MWCTODO: ummm, this needs to be a LITTLE fancier.
+                    bool combatFinished = !battlefieldContainer.EntityIds.Any();
 
                     if (combatFinished) yield break;
                 }

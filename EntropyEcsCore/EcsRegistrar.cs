@@ -26,7 +26,7 @@ namespace EntropyEcsCore
         /// <summary>
         /// This can be used for both entities and parts.
         /// </summary>
-        private long NewId()
+        public long NewId()
         {
             return _currentId++;
         }

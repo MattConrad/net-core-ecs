@@ -12,11 +12,11 @@ namespace NetCoreEcsConsole
 
             //this might not even happen until the game has started and presented the player with an initial scenario.
 
-            foreach(var lines in game.RunGame())
+            foreach(var outputs in game.RunGame())
             {
-                foreach (string line in lines)
+                foreach (var output in outputs)
                 {
-                    Console.WriteLine(line);
+                    Console.WriteLine(output.Data);
                 }
             }
 
