@@ -18,7 +18,7 @@ namespace SampleGame.Sys
 
         internal static readonly string[] Stances = new string[] { Actions.StanceAggressive, Actions.StanceDefensive, Actions.StanceStandGround };
 
-        internal static Messages.Combat ProcessAgentAction(EcsRegistrar rgs, long agentId, long? targetId, string action)
+        internal static List<Messages.Combat> ProcessAgentAction(EcsRegistrar rgs, long agentId, long? targetId, string action)
         {
             if (Stances.Contains(action))
             {
@@ -28,7 +28,9 @@ namespace SampleGame.Sys
             {
                 var ai = rgs.GetPartSingle<Parts.Agent>(agentId);
                 ai.ActiveCombatAI = Parts.Agent.Vals.AI.MeleeOnly;
-                return new Messages.Combat { Tick = rgs.NewId(), ActorId = agentId, ActorAction = "MWCTODO: Switch to AI" };
+                return new List<Messages.Combat> {
+                    new Messages.Combat { Tick = rgs.NewId(), ActorId = agentId, ActorAction = "Switched to AI." }
+                };
             }
             else if (action == Actions.AttackMelee)
             {
@@ -36,12 +38,13 @@ namespace SampleGame.Sys
             }
             else
             {
-                return new Messages.Combat { Tick = rgs.NewId(), ActorId = agentId, ActorAction = Messages.TempActionCategories.Stance };
+                throw new ArgumentException($"Action '{action}' not supported.");
             }
         }
 
-        internal static Messages.Combat ApplyStance(EcsRegistrar rgs, long agentId, string stance)
+        internal static List<Messages.Combat> ApplyStance(EcsRegistrar rgs, long agentId, string stance)
         {
+            var result = new Messages.Combat { Tick = rgs.NewId(), ActorId = agentId };
             var stances = rgs.GetParts<Parts.SkillsModifier>(agentId).Where(p => Stances.Contains(p.Tag));
             rgs.RemoveParts(agentId, stances);
 
@@ -55,7 +58,7 @@ namespace SampleGame.Sys
                     }
                 });
 
-                return new Messages.Combat { Tick = rgs.NewId(), ActorId = agentId, ActorAction = Messages.TempActionCategories.Stance };
+                result.ActorAction = Messages.TempActionCategories.Stance;
             }
             else if (stance == Actions.StanceDefensive)
             {
@@ -69,26 +72,28 @@ namespace SampleGame.Sys
                     }
                 });
 
-                return new Messages.Combat { Tick = rgs.NewId(), ActorId = agentId, ActorAction = Messages.TempActionCategories.Stance };
+                result.ActorAction = Messages.TempActionCategories.Stance;
             }
             else if (stance == Actions.StanceStandGround)
             {
-                return new Messages.Combat { Tick = rgs.NewId(), ActorId = agentId, ActorAction = Messages.TempActionCategories.Stance };
+                result.ActorAction = Messages.TempActionCategories.Stance;
             }
             else
             {
-                return new Messages.Combat { Tick = rgs.NewId(), ActorId = agentId, ActorAction = Messages.TempActionCategories.Stance };
+                throw new ArgumentException($"Invalid stance {stance}.");
             }
+
+            return new List<Messages.Combat> { result };
         }
 
-        public static Messages.Combat ResolveSingleTargetMelee(EcsRegistrar rgs, long attackerId, long targetId)
+        public static List<Messages.Combat> ResolveSingleTargetMelee(EcsRegistrar rgs, long attackerId, long targetId)
         {
             return ResolveSingleTargetMelee(rgs, attackerId, targetId, Rando.GetRange5);
         }
 
         //MWCTODO: we need to (for now) remove entities that are killed from the battlefield.
         // do we want to pass in the random function for better testing? not sure, but let's try it.
-        public static Messages.Combat ResolveSingleTargetMelee(EcsRegistrar rgs, long attackerId, long targetId, Func<int> random0to5)
+        public static List<Messages.Combat> ResolveSingleTargetMelee(EcsRegistrar rgs, long attackerId, long targetId, Func<int> random0to5)
         {
             //this is only temporary, later we'll have a clock/scheduler.
             var msg = new Messages.Combat
@@ -151,8 +156,7 @@ namespace SampleGame.Sys
             targetPhysicalObject.Condition = targetPhysicalObject.Condition - (int)damageDealt;
             msg.TargetCondition = targetPhysicalObject.Condition;
 
-
-            return msg;
+            return new List<Messages.Combat> { msg };
         }
 
         private static string GetRollAdjectiveFromRange5(int roll)

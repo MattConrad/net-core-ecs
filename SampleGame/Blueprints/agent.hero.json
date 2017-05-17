@@ -23,7 +23,7 @@
     "ObscuredName": null,
     "ShortDescription": "The hero, who must emerge from battle victorious.",
     "LongDescription": null,
-    "Pronoun": null,
+    "Pronoun": "you",
     "Id": 0
   },
   {

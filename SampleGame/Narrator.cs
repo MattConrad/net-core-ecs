@@ -61,8 +61,14 @@ namespace SampleGame
                         sb.Append($" . . . momentarily. {tgtNames.ProperName} would have laughed at a strike like this earlier, but this time {tgtNames.Pronoun} watches in horror as the point slides home. {tgtNames.ProperName} dies.");
                     }
                 }
+                else if (msg.NetDamage > 0)
+                {
+                    sb.Append($"It doesn't amount to much, though. Barely a scratch. It will take a lot of these to wear down {tgtNames.ProperName}.");
+                }
 
                 result.Data = sb.ToString();
+
+                results.Add(result);
             }
 
             return results;
@@ -80,7 +86,6 @@ namespace SampleGame
 
             return "dead";
         }
-
 
     }
 }

@@ -6,7 +6,8 @@ namespace EntropyEcsCore
 {
     public class EcsRegistrar
     {
-        private long _currentId = 0L;
+        //we don't want any entities at 0, just in case a default Int64 gets passed in by accident.
+        private long _currentId = 1L;
         private Dictionary<long, List<EcsEntityPart>> _entityIdsToEntityParts = new Dictionary<long, List<EcsEntityPart>>();
 
         public EcsRegistrar()

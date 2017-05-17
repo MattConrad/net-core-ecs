@@ -39,10 +39,14 @@ namespace SampleGame.Sys
                     var results = Combat.ProcessAgentAction(rgs, agentId, targetId, agentActionStrings[0]);
 
                     //eventually we will leave dead bodies on the field, they just won't act any more.
-                    if (results.TargetCondition <= 0) battlefieldContainer.EntityIds.Remove(results.TargetId);
+                    foreach(var result in results)
+                    {
+                        //eventually, we have to be smarter about filtering to appropriate results
+                        if (result.TargetId == 0) continue;
+                        if (result.TargetCondition <= 0) battlefieldContainer.EntityIds.Remove(result.TargetId);
+                    }
 
-                    //MWCTODO: shouldn't be applying List here, upstream should be emitting List instead..
-                    var output = Narrator.OutputForCombatMessages(rgs, new List<Messages.Combat> { results });
+                    var output = Narrator.OutputForCombatMessages(rgs, results);
 
                     yield return output;
 
