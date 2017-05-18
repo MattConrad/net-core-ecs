@@ -20,14 +20,5 @@ namespace SampleGame.Parts
 
         //this is, for now, same as IsAlive, but later will probably become more complicated.
         public bool IsCombatActive { get; set; }
-
-        public static class Vals
-        {
-            public static class AI
-            {
-                public const string PlayerChoice = nameof(PlayerChoice);
-                public const string MeleeOnly = nameof(MeleeOnly);
-            }
-        }
     }
 }

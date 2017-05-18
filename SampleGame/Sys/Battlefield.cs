@@ -15,13 +15,19 @@ namespace SampleGame.Sys
                 var battlefieldContainer = rgs.GetPartSingle<Parts.Container>(battlefieldId);
                 var battlefieldEntityIds = battlefieldContainer.EntityIds.ToList();
 
+                //sometimes an entity gets cancelled (killed) in the middle of the loop by an earlier entity.
+                // for now, that will cancel the entity's action. later, with the scheduler, it won't.
+                var cancelledEntityIds = new HashSet<long>();
+
                 foreach(var agentId in battlefieldEntityIds)
                 {
+                    if (cancelledEntityIds.Contains(agentId)) continue;
+
                     var battlefieldAgent = rgs.GetParts<Parts.Agent>(agentId).SingleOrDefault();
                     if (battlefieldAgent == null) continue;
 
                     string agentActionSet;
-                    if (battlefieldAgent.ActiveCombatAI == Parts.Agent.Vals.AI.PlayerChoice)
+                    if (battlefieldAgent.ActiveCombatAI == Vals.AI.PlayerChoice)
                     {
                         var possibleActions = Agent.GetPossibleActions(rgs, agentId, battlefieldEntityIds);
                         agentActionSet = receivePlayerInput(possibleActions);
@@ -43,19 +49,34 @@ namespace SampleGame.Sys
                     {
                         //eventually, we have to be smarter about filtering to appropriate results
                         if (result.TargetId == 0) continue;
-                        if (result.TargetCondition <= 0) battlefieldContainer.EntityIds.Remove(result.TargetId);
+                        if (result.TargetCondition <= 0)
+                        {
+                            battlefieldContainer.EntityIds.Remove(result.TargetId);
+                            cancelledEntityIds.Add(result.TargetId);
+                        }
                     }
 
                     var output = Narrator.OutputForCombatMessages(rgs, results);
 
                     yield return output;
-
-                    //MWCTODO: ummm, this needs to be a LITTLE fancier.
-                    bool combatFinished = !battlefieldContainer.EntityIds.Any();
-
-                    if (combatFinished) yield break;
                 }
+
+                var bailoutOutput = new Output() { Category = OutputCategory.Text };
+                if (!battlefieldEntityIds.Any())
+                {
+                    bailoutOutput.Data = "Somehow everyone died. Oops.";
+                    yield return new List<Output> { bailoutOutput };
+                    yield break;
+                }
+                else if (battlefieldEntityIds.Count == 1)
+                {
+                    bailoutOutput.Data = "One man^H^H^H entity standing. The end.";
+                    yield return new List<Output> { bailoutOutput };
+                    yield break;
+                }
+
             }
         }
+
     }
 }

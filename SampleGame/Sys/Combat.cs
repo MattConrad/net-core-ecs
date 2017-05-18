@@ -7,16 +7,7 @@ namespace SampleGame.Sys
 {
     internal static class Combat
     {
-        internal static class Actions
-        {
-            internal const string AttackMelee = "attack-melee";
-            internal const string SwitchToAI = "switch-to-ai";
-            internal const string StanceDefensive = "stance-defensive";
-            internal const string StanceStandGround = "stance-stand-ground";
-            internal const string StanceAggressive = "stance-aggressive";
-        }
-
-        internal static readonly string[] Stances = new string[] { Actions.StanceAggressive, Actions.StanceDefensive, Actions.StanceStandGround };
+        internal static readonly string[] Stances = new string[] { Vals.CombatActions.StanceAggressive, Vals.CombatActions.StanceDefensive, Vals.CombatActions.StanceStandGround };
 
         internal static List<Messages.Combat> ProcessAgentAction(EcsRegistrar rgs, long agentId, long? targetId, string action)
         {
@@ -24,17 +15,24 @@ namespace SampleGame.Sys
             {
                 return ApplyStance(rgs, agentId, action);
             }
-            else if (action == Actions.SwitchToAI)
+            else if (action == Vals.CombatActions.SwitchToAI)
             {
                 var ai = rgs.GetPartSingle<Parts.Agent>(agentId);
-                ai.ActiveCombatAI = Parts.Agent.Vals.AI.MeleeOnly;
+                ai.ActiveCombatAI = Vals.AI.MeleeOnly;
                 return new List<Messages.Combat> {
                     new Messages.Combat { Tick = rgs.NewId(), ActorId = agentId, ActorAction = "Switched to AI." }
                 };
             }
-            else if (action == Actions.AttackMelee)
+            else if (action == Vals.CombatActions.AttackMelee)
             {
                 return ResolveSingleTargetMelee(rgs, agentId, targetId.Value);
+            }
+            else if (action == Vals.CombatActions.DoNothing)
+            {
+                var agentNames = rgs.GetPartSingle<Parts.EntityName>(agentId);
+                return new List<Messages.Combat> {
+                    new Messages.Combat { Tick = rgs.NewId(), ActorId = agentId, ActorAction = $"{agentNames.ProperName} stands still and looks around in confusion. Probably some programmer failed to give him a good action in this scenario." }
+                };
             }
             else
             {
@@ -48,10 +46,10 @@ namespace SampleGame.Sys
             var stances = rgs.GetParts<Parts.SkillsModifier>(agentId).Where(p => Stances.Contains(p.Tag));
             rgs.RemoveParts(agentId, stances);
 
-            if (stance == Actions.StanceAggressive)
+            if (stance == Vals.CombatActions.StanceAggressive)
             {
                 rgs.AddPart(agentId, new Parts.SkillsModifier {
-                    Tag = Actions.StanceAggressive,
+                    Tag = Vals.CombatActions.StanceAggressive,
                     SkillDeltas = new Dictionary<string, int> {
                         [Parts.Skillset.Vals.Physical.Melee] = 1,
                         [Parts.Skillset.Vals.Physical.Dodge] = -1
@@ -60,11 +58,11 @@ namespace SampleGame.Sys
 
                 result.ActorAction = Messages.TempActionCategories.Stance;
             }
-            else if (stance == Actions.StanceDefensive)
+            else if (stance == Vals.CombatActions.StanceDefensive)
             {
                 rgs.AddPart(agentId, new Parts.SkillsModifier
                 {
-                    Tag = Actions.StanceDefensive,
+                    Tag = Vals.CombatActions.StanceDefensive,
                     SkillDeltas = new Dictionary<string, int>
                     {
                         [Parts.Skillset.Vals.Physical.Melee] = -1,
@@ -74,7 +72,7 @@ namespace SampleGame.Sys
 
                 result.ActorAction = Messages.TempActionCategories.Stance;
             }
-            else if (stance == Actions.StanceStandGround)
+            else if (stance == Vals.CombatActions.StanceStandGround)
             {
                 result.ActorAction = Messages.TempActionCategories.Stance;
             }
@@ -91,7 +89,6 @@ namespace SampleGame.Sys
             return ResolveSingleTargetMelee(rgs, attackerId, targetId, Rando.GetRange5);
         }
 
-        //MWCTODO: we need to (for now) remove entities that are killed from the battlefield.
         // do we want to pass in the random function for better testing? not sure, but let's try it.
         public static List<Messages.Combat> ResolveSingleTargetMelee(EcsRegistrar rgs, long attackerId, long targetId, Func<int> random0to5)
         {

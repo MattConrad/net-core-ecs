@@ -7,8 +7,7 @@ namespace SampleGame.Sys
 {
     internal static class Agent
     {
-        //MWCTODO: this step should also include piping the current permitted actions out to the player.
-        // for now these are fixed, but later they'll vary with context (drop your weapon and you're punching not slashing).
+        //MWCTODO: for now these are fixed, but later they'll vary with context (drop your weapon and you're punching not slashing).
         public static Dictionary<string, string> GetPossibleActions(EcsRegistrar rgs, long agentId, List<long> battlefieldEnttiyIds)
         {
             var targetActions = new Dictionary<string, string>();
@@ -19,15 +18,15 @@ namespace SampleGame.Sys
                 if (id == agentId) continue;
 
                 var entityName = rgs.GetParts<Parts.EntityName>(id).Single();
-                targetActions.Add($"Attack Melee {entityName.ProperName}", $"{Combat.Actions.AttackMelee} {id}");
+                targetActions.Add($"Attack Melee {entityName.ProperName}", $"{Vals.CombatActions.AttackMelee} {id}");
             }
 
             var standardActions = new Dictionary<string, string>
             {
-                ["Switch To AI (for testing)"] = Sys.Combat.Actions.SwitchToAI,
-                ["Stance (Defensive)"] = Sys.Combat.Actions.StanceDefensive,
-                ["Stance (Stand Ground)"] = Sys.Combat.Actions.StanceStandGround,
-                ["Stance (Aggressive)"] = Sys.Combat.Actions.StanceAggressive
+                ["Switch To AI (for testing)"] = Vals.CombatActions.SwitchToAI,
+                ["Stance (Defensive)"] = Vals.CombatActions.StanceDefensive,
+                ["Stance (Stand Ground)"] = Vals.CombatActions.StanceStandGround,
+                ["Stance (Aggressive)"] = Vals.CombatActions.StanceAggressive
             };
 
             return targetActions
@@ -38,14 +37,14 @@ namespace SampleGame.Sys
 
         internal static string GetAgentCombatAction(EcsRegistrar rgs, string attackerAI, long attackerId, List<long> battlefieldEntityIds)
         {
-            if (attackerAI == Parts.Agent.Vals.AI.MeleeOnly) return CombatActionMeleeOnly(rgs, attackerId, battlefieldEntityIds);
+            if (attackerAI == Vals.AI.MeleeOnly) return CombatActionMeleeOnly(rgs, attackerId, battlefieldEntityIds);
 
             throw new ArgumentException($"Attacker AI {attackerAI} not supported.");
         }
 
         private static string CombatActionMeleeOnly(EcsRegistrar rgs, long attackerId, List<long> battlefieldEntityIds)
         {
-            string action = "do-nothing";
+            string action = Vals.CombatActions.DoNothing;
             var factionDeltas = new Dictionary<long, int>();
 
             var attackerFaction = rgs.GetParts<Parts.Faction>(attackerId).SingleOrDefault();
@@ -70,9 +69,16 @@ namespace SampleGame.Sys
                 }
             }
 
-            var targetId = factionDeltas.First(kvp => kvp.Value == factionDeltas.Values.Max()).Key;
+            if (factionDeltas.Any())
+            {
+                var targetId = factionDeltas.First(kvp => kvp.Value == factionDeltas.Values.Max()).Key;
 
-            return Combat.Actions.AttackMelee + " " + targetId;
+                return Vals.CombatActions.AttackMelee + " " + targetId;
+            }
+            else
+            {
+                return action;
+            }
         }
     }
 }

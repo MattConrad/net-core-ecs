@@ -15,6 +15,13 @@ namespace SampleGame
             {
                 var result = new Output { Category = OutputCategory.Text };
 
+                if (msg.TargetId == 0)
+                {
+                    result.Data = "MWCTODO: stances etc " + msg.ActorAction;
+                    results.Add(result);
+                    continue;
+                }
+
                 var sb = new StringBuilder();
 
                 var attNames = rgs.GetPartSingle<Parts.EntityName>(msg.ActorId);
@@ -42,29 +49,14 @@ namespace SampleGame
                 }
                 else if (msg.NetDamage > 1900)
                 {
-                    sb.Append($"A hit . . . hard enough to notice");
-
-                    if (msg.TargetCondition > 4000)
-                    {
-                        sb.Append($", but not enough to seriously injure. {tgtNames.ProperName} is {tgtConditionString}.");
-                    }
-                    else if (msg.TargetCondition > 2000)
-                    {
-                        sb.Append($". {tgtNames.ProperName} is {tgtConditionString}.");
-                    }
-                    else if (msg.TargetCondition > 0)
-                    {
-                        sb.Append($", and at this point, that means trouble. {tgtNames.ProperName} is {tgtConditionString}.");
-                    }
-                    else
-                    {
-                        sb.Append($" . . . momentarily. {tgtNames.ProperName} would have laughed at a strike like this earlier, but this time {tgtNames.Pronoun} watches in horror as the point slides home. {tgtNames.ProperName} dies.");
-                    }
+                    sb.Append($"A hit . . . hard enough to notice.");
                 }
                 else if (msg.NetDamage > 0)
                 {
                     sb.Append($"It doesn't amount to much, though. Barely a scratch. It will take a lot of these to wear down {tgtNames.ProperName}.");
                 }
+
+                sb.Append($"{tgtNames.ProperName} is {tgtConditionString}.");
 
                 result.Data = sb.ToString();
 
