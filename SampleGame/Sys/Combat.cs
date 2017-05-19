@@ -46,17 +46,16 @@ namespace SampleGame.Sys
             var stances = rgs.GetParts<Parts.SkillsModifier>(agentId).Where(p => Stances.Contains(p.Tag));
             rgs.RemoveParts(agentId, stances);
 
+            result.ActorAction = stance;
             if (stance == Vals.CombatActions.StanceAggressive)
             {
                 rgs.AddPart(agentId, new Parts.SkillsModifier {
                     Tag = Vals.CombatActions.StanceAggressive,
                     SkillDeltas = new Dictionary<string, int> {
-                        [Parts.Skillset.Vals.Physical.Melee] = 1,
-                        [Parts.Skillset.Vals.Physical.Dodge] = -1
+                        [Vals.EntitySkillPhysical.Melee] = 1,
+                        [Vals.EntitySkillPhysical.Dodge] = -1
                     }
                 });
-
-                result.ActorAction = Messages.TempActionCategories.Stance;
             }
             else if (stance == Vals.CombatActions.StanceDefensive)
             {
@@ -65,16 +64,15 @@ namespace SampleGame.Sys
                     Tag = Vals.CombatActions.StanceDefensive,
                     SkillDeltas = new Dictionary<string, int>
                     {
-                        [Parts.Skillset.Vals.Physical.Melee] = -1,
-                        [Parts.Skillset.Vals.Physical.Dodge] = 1
+                        [Vals.EntitySkillPhysical.Melee] = -1,
+                        [Vals.EntitySkillPhysical.Dodge] = 1
                     }
                 });
 
-                result.ActorAction = Messages.TempActionCategories.Stance;
             }
             else if (stance == Vals.CombatActions.StanceStandGround)
             {
-                result.ActorAction = Messages.TempActionCategories.Stance;
+                //default stance, so the removal of previous ones means we're done.
             }
             else
             {
@@ -98,8 +96,8 @@ namespace SampleGame.Sys
                 Tick = rgs.NewId(),
                 ActorId = attackerId,
                 TargetId = targetId,
-                ActorAction = Messages.TempActionCategories.MeleeAttack,
-                TargetAction = Messages.TempActionCategories.Dodge
+                ActorAction = Vals.CombatActions.AttackMelee,
+                TargetAction = Vals.CombatActions.Dodge
             };
 
             var attackerAdjustedSkills = Skills.GetAdjustedSkills(rgs, attackerId);
@@ -107,13 +105,13 @@ namespace SampleGame.Sys
 
             int attackRoll = random0to5();
             decimal attackCritMultiplier = GetDamageMultiplierFromRange5(attackRoll);
-            int attackerMeleeSkill = attackerAdjustedSkills[Parts.Skillset.Vals.Physical.Melee];
+            int attackerMeleeSkill = attackerAdjustedSkills[Vals.EntitySkillPhysical.Melee];
             int attackerAdjustedRoll = attackRoll + attackerMeleeSkill;
             msg.ActorAdjustedSkill = attackerMeleeSkill;
             msg.ActorAdjustedRoll = attackerAdjustedRoll;
 
             int targetDodgeRoll = random0to5();
-            int targetDodgeSkill = targetAdjustedSkills[Parts.Skillset.Vals.Physical.Dodge];
+            int targetDodgeSkill = targetAdjustedSkills[Vals.EntitySkillPhysical.Dodge];
             //dodge is a difficult skill and always reduced by 1.
             int targetAdjustedDodgeRoll = Math.Max(0, targetDodgeRoll + targetDodgeSkill - 1);
             msg.TargetAdjustedSkill = targetDodgeSkill;
@@ -128,7 +126,7 @@ namespace SampleGame.Sys
                 : 0m;
 
             var targetPhysicalObject = rgs.GetPartSingle<Parts.PhysicalObject>(targetId);
-            var targetEquipment = Container.GetEntityIdsFromFirstTagged(rgs, targetId, Parts.Container.Vals.Tag.Equipped);
+            var targetEquipment = Container.GetEntityIdsFromFirstTagged(rgs, targetId, Vals.ContainerTag.Equipped);
 
             //for this simple game, there's only one piece of armor, but we'll use SelectMany over the entire equipment anyhow.
             // later this is certainly true, maybe over more than equipment. lots of things can be damage preventers. eeeps.
@@ -137,7 +135,7 @@ namespace SampleGame.Sys
 
             //later, we will have natural weapons and whatever you're wielding, and you probably only get one attack at a time.
             //  this relates to the clock/timer, however that ends up working.
-            var attackerEquipment = Container.GetEntityIdsFromFirstTagged(rgs, attackerId, Parts.Container.Vals.Tag.Equipped);
+            var attackerEquipment = Container.GetEntityIdsFromFirstTagged(rgs, attackerId, Vals.ContainerTag.Equipped);
             //and here, this needs to be wielded weapons only. perhaps equipped will do intermediately.
             var attackerWeapon = targetEquipment.SelectMany(eid => rgs.GetParts<Parts.Damager>(eid)).FirstOrDefault();
 

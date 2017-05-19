@@ -28,16 +28,5 @@ namespace SampleGame.Parts
         /// </summary>
         public string Pronoun { get; set; }
 
-        public static class Vals
-        {
-            public static class Pronoun
-            {
-                public const string He = "he";
-                public const string She = "she";
-                public const string It = "it";
-                public const string They = "they";
-                public const string You = "you";
-            }
-        }
     }
 }

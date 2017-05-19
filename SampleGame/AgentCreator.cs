@@ -17,7 +17,7 @@ namespace SampleGame
             long armorId = Blueprinter.GetEntityFromBlueprint(rgs, armorBlueprintName);
             long weaponId = Blueprinter.GetEntityFromBlueprint(rgs, weaponBlueprintName);
 
-            var packPart = rgs.GetParts<Parts.Container>(agentId).Single(p => p.Tag == Parts.Container.Vals.Tag.Equipped);
+            var packPart = rgs.GetParts<Parts.Container>(agentId).Single(p => p.Tag == Vals.ContainerTag.Equipped);
             packPart.EntityIds.Add(armorId);
             packPart.EntityIds.Add(weaponId);
 

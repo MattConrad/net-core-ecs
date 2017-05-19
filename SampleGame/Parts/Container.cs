@@ -31,16 +31,6 @@ namespace SampleGame.Parts
         /// String. Usually "in", but could be "on", or "equipped".
         /// </summary>
         public string Preposition { get; set; }
-
-        public static class Vals
-        {
-            public static class Tag
-            {
-                public const string Inventory = nameof(Inventory);
-                public const string Equipped = nameof(Equipped);
-                public const string Battlefield = nameof(Battlefield);
-            }
-        }
-
+ 
     }
 }

@@ -12,6 +12,13 @@ namespace SampleGame.Vals
         public const string StanceDefensive = "stance-defensive";
         public const string StanceStandGround = "stance-stand-ground";
         public const string StanceAggressive = "stance-aggressive";
+        public const string Dodge = "dodge";
+    }
+
+    public static class DamageType
+    {
+        public const string MechanicalPiercing = nameof(MechanicalPiercing);
+        public const string MechanicalSlashing = nameof(MechanicalSlashing);
     }
 
 }
