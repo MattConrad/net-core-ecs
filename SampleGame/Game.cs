@@ -16,12 +16,15 @@ namespace SampleGame
         private Func<Dictionary<string, string>, string> ReceivePlayerInputFunc { get; set; }
         private EcsRegistrar Rgs { get; set; }
 
+        private long GlobalId { get; set; }
         private long BattlefieldId { get; set; }
 
         public Game(Func<Dictionary<string, string>, string> receivePlayerInputFunc)
         {
             this.ReceivePlayerInputFunc = receivePlayerInputFunc;
             this.Rgs = new EcsRegistrar();
+
+            this.GlobalId = Blueprinter.GetEntityFromBlueprint(this.Rgs, "global");
 
             long heroId = AgentCreator.Agent(this.Rgs, "agent.hero", "obj.armor.leather-armor", "obj.weapon.sword");
             long villian1Id = AgentCreator.Agent(this.Rgs, "agent.monster.orc.basic", "obj.armor.leather-armor", "obj.weapon.sword");
@@ -35,7 +38,7 @@ namespace SampleGame
         public IEnumerable<List<Output>> RunGame()
         {
             //for now, running the game and running the battlefield are the same thing.
-            foreach(var outputs in Sys.Battlefield.RunBattlefield(this.Rgs, this.BattlefieldId, this.ReceivePlayerInputFunc))
+            foreach(var outputs in Sys.Battlefield.RunBattlefield(this.Rgs, this.GlobalId, this.BattlefieldId, this.ReceivePlayerInputFunc))
             {
                 yield return outputs;
             }

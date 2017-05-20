@@ -66,6 +66,18 @@ namespace SampleGame
             return results;
         }
 
+        private static string DEADGetRollAdjectiveFromRange5(int roll)
+        {
+            switch (roll)
+            {
+                case 5: return "an amazing";
+                case 4: return "an excellent";
+                case -4: return "a poor";
+                case -5: return "a miserable";
+                default: return "an undistinguished";
+            }
+        }
+
         //i *think* this belongs here. short term stuff anyway.
         private static string GetLivingThingConditionDesc(long condition)
         {

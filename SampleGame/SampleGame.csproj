@@ -9,6 +9,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Blueprints\global.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Blueprints\agent.hero.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

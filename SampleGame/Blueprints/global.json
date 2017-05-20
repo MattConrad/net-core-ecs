@@ -1,0 +1,18 @@
+[
+  {
+    "$type": "SampleGame.Parts.FactionInteractionSet, SampleGame",
+    "Interactions": [
+      {
+        "SourceFaction": "Heroes",
+        "TargetFaction": "Villians",
+        "Disposition": -100
+      },
+      {
+        "SourceFaction": "Villians",
+        "TargetFaction": "Heroes",
+        "Disposition": -100
+      }
+    ],
+    "Id": 0
+  }
+]

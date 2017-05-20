@@ -37,16 +37,4 @@ namespace SampleGame.Messages
         internal decimal NetDamage { get; set; }
     }
 
-    //// These tags are kind of redundant with other declarations.
-    ////  I do not think I want this redundancy forever. Somehow those declarations should be shared.
-    ////  Maybe we need a Constants folder.
-
-    //public static class TempActionCategories
-    //{
-    //    public const string Stance = nameof(Stance);
-    //    public const string MeleeAttack = nameof(MeleeAttack);
-    //    public const string Dodge = nameof(Dodge);
-    //}
-
-
 }

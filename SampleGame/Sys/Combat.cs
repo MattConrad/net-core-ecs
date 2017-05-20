@@ -8,6 +8,7 @@ namespace SampleGame.Sys
     internal static class Combat
     {
         internal static readonly string[] Stances = new string[] { Vals.CombatActions.StanceAggressive, Vals.CombatActions.StanceDefensive, Vals.CombatActions.StanceStandGround };
+        internal static readonly string[] Incapacitations = new string[] { Vals.CombatStatusTag.Dead };
 
         internal static List<Messages.Combat> ProcessAgentAction(EcsRegistrar rgs, long agentId, long? targetId, string action)
         {
@@ -17,11 +18,7 @@ namespace SampleGame.Sys
             }
             else if (action == Vals.CombatActions.SwitchToAI)
             {
-                var ai = rgs.GetPartSingle<Parts.Agent>(agentId);
-                ai.ActiveCombatAI = Vals.AI.MeleeOnly;
-                return new List<Messages.Combat> {
-                    new Messages.Combat { Tick = rgs.NewId(), ActorId = agentId, ActorAction = "Switched to AI." }
-                };
+                return SwitchToAI(rgs, agentId);
             }
             else if (action == Vals.CombatActions.AttackMelee)
             {
@@ -154,16 +151,13 @@ namespace SampleGame.Sys
             return new List<Messages.Combat> { msg };
         }
 
-        private static string GetRollAdjectiveFromRange5(int roll)
+        private static List<Messages.Combat> SwitchToAI(EcsRegistrar rgs, long agentId)
         {
-            switch(roll)
-            {
-                case 5: return "an amazing";
-                case 4: return "an excellent";
-                case -4: return "a poor";
-                case -5: return "a miserable";
-                default: return "an undistinguished";
-            }
+            var ai = rgs.GetPartSingle<Parts.Agent>(agentId);
+            ai.ActiveCombatAI = Vals.AI.MeleeOnly;
+            return new List<Messages.Combat> {
+                    new Messages.Combat { Tick = rgs.NewId(), ActorId = agentId, ActorAction = "Switched to AI." }
+            };
         }
 
         //this is just some made up stuff, i have no idea how to design a combat system.

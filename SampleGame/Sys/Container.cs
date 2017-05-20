@@ -36,14 +36,14 @@ namespace SampleGame.Sys
         }
 
         //eventually entities bearing containers may have weight, size, inventory count, or other limits. for now, simple.
-        internal static AlterContainerContentsResultsMessage Add(EcsRegistrar rgs, long ownerId, long toAddId, long? containerId = null)
+        internal static AlterContainerContentsResultsMessage AddToInventory(EcsRegistrar rgs, long ownerId, long toAddId, long? containerId = null)
         {
-            return AddOrRemove(Action.AddEntity, rgs, ownerId, toAddId);
+            return AddOrRemoveInventory(Action.AddEntity, rgs, ownerId, toAddId);
         }
 
-        internal static AlterContainerContentsResultsMessage Remove(EcsRegistrar rgs, long ownerId, long toRemoveId, long? containerId = null)
+        internal static AlterContainerContentsResultsMessage RemoveFromInventory(EcsRegistrar rgs, long ownerId, long toRemoveId, long? containerId = null)
         {
-            return AddOrRemove(Action.AddEntity, rgs, ownerId, toRemoveId);
+            return AddOrRemoveInventory(Action.AddEntity, rgs, ownerId, toRemoveId);
         }
 
         internal static HashSet<long> GetEntityIdsFromFirstTagged(EcsRegistrar rgs, long ownerId, string tag)
@@ -53,12 +53,9 @@ namespace SampleGame.Sys
             return container?.EntityIds ?? new HashSet<long>();
         }
 
-        internal static AlterContainerContentsResultsMessage AddOrRemove(Action action, EcsRegistrar rgs, long ownerId, long itemAddOrRemoveId)
+        internal static AlterContainerContentsResultsMessage AddOrRemoveInventory(Action action, EcsRegistrar rgs, long ownerId, long itemAddOrRemoveId)
         {
-            //MWCTODO: we might have many containers for an entity later, so this is temporary only.
-            var containerPart = rgs.GetParts<Parts.Container>(ownerId).FirstOrDefault();
-
-            if (containerPart == null) return new AlterContainerContentsResultsMessage { Succeeded = false, Output = "Container not found." };
+            var containerPart = rgs.GetParts<Parts.Container>(ownerId).Single(c => c.Tag == Vals.ContainerTag.Inventory);
 
             var ids = containerPart.EntityIds;
 

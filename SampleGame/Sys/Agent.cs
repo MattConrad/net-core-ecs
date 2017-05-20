@@ -35,19 +35,21 @@ namespace SampleGame.Sys
                 .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
         }
 
-        internal static string GetAgentCombatAction(EcsRegistrar rgs, string attackerAI, long attackerId, List<long> battlefieldEntityIds)
+        internal static string GetAgentCombatAction(EcsRegistrar rgs, Parts.FactionInteractionSet factionInteractions, string attackerAI, long attackerId, List<long> battlefieldEntityIds)
         {
-            if (attackerAI == Vals.AI.MeleeOnly) return CombatActionMeleeOnly(rgs, attackerId, battlefieldEntityIds);
+            if (attackerAI == Vals.AI.MeleeOnly) return CombatActionMeleeOnly(rgs, factionInteractions, attackerId, battlefieldEntityIds);
 
             throw new ArgumentException($"Attacker AI {attackerAI} not supported.");
         }
 
-        private static string CombatActionMeleeOnly(EcsRegistrar rgs, long attackerId, List<long> battlefieldEntityIds)
+        //MWCTODO: ugh, faction interactions.
+        private static string CombatActionMeleeOnly(EcsRegistrar rgs, Parts.FactionInteractionSet factionInteractions, long attackerId, List<long> battlefieldEntityIds)
         {
             string action = Vals.CombatActions.DoNothing;
             var factionDeltas = new Dictionary<long, int>();
 
             var attackerFaction = rgs.GetParts<Parts.Faction>(attackerId).SingleOrDefault();
+
 
             //this will do for now, but a) faction shouldn't be as important as perceived danger level, b) this is busier than maybe it should be, and c) can you really perceive faction by looking at someone?
             // i am not sure I want numeric factions at all any more. seemed tidy--but are they really useful?
@@ -57,11 +59,11 @@ namespace SampleGame.Sys
                 {
                     if (entityId == attackerId) continue;
 
-                    var entityFactionReputations = rgs.GetParts<Parts.Faction>(entityId).SingleOrDefault()?.FactionReputations;
+                    var entityFactionReputations = rgs.GetParts<Parts.Faction>(entityId).SingleOrDefault()?.PublicFactionReputations;
                     if (entityFactionReputations == null) continue;
 
                     int delta = attackerFaction
-                        .FactionReputations
+                        .PublicFactionReputations
                         .Select(kvp => (entityFactionReputations.ContainsKey(kvp.Key) ? kvp.Value - entityFactionReputations[kvp.Key] : 0))
                         .Sum(d => Math.Abs(d));
 

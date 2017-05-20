@@ -44,9 +44,10 @@
   },
   {
     "$type": "SampleGame.Parts.Faction, SampleGame",
-    "FactionReputations": {
-      "Heroes": 100,
-      "Villians": -100
+    "PrimaryPublicFaction": "Heroes",
+    "CurrentPublicFaction": "Heroes",
+    "PublicFactionReputations": {
+      "Heroes": 100
     },
     "Id": 0
   }

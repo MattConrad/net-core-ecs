@@ -15,6 +15,13 @@ namespace SampleGame.Vals
         public const string Dodge = "dodge";
     }
 
+    public static class CombatStatusTag
+    {
+        public static string[] IncapacitatingStatuses = new string[] { Dead };
+
+        public const string Dead = nameof(Dead);
+    }
+
     public static class DamageType
     {
         public const string MechanicalPiercing = nameof(MechanicalPiercing);
