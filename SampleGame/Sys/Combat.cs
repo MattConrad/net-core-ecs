@@ -151,7 +151,12 @@ namespace SampleGame.Sys
             if (targetPhysicalObject.Condition <= 0)
             {
                 var targetAgent = rgs.GetPartSingle<Parts.Agent>(targetId);
-                targetAgent.CombatStatusTags.Add(Vals.CombatStatusTag.Dead);
+
+                if (!targetAgent.CombatStatusTags.Contains(Vals.CombatStatusTag.Dead))
+                {
+                    targetAgent.CombatStatusTags.Add(Vals.CombatStatusTag.Dead);
+                    msg.NewTargetCombatTags.Add(Vals.CombatStatusTag.Dead);
+                }
             }
 
             return new List<Messages.Combat> { msg };

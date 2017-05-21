@@ -6,6 +6,8 @@ namespace SampleGame.Vals
 {
     public static class CombatActions
     {
+        public static string[] AllStances = new string[] { StanceDefensive, StanceStandGround, StanceAggressive };
+
         public const string DoNothing = "do-nothing";
         public const string AttackMelee = "attack-melee";
         public const string SwitchToAI = "switch-to-ai";
