@@ -8,5 +8,6 @@ namespace SampleGame.Vals
     {
         public const string Heroes = nameof(Heroes);
         public const string Villians = nameof(Villians);
+        public const string Unaffiliated = nameof(Unaffiliated);
     }
 }

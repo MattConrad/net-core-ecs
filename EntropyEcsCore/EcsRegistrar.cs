@@ -94,14 +94,19 @@ namespace EntropyEcsCore
             return GetParts<T>(entityId).Single();
         }
 
+        public T GetPartSingleOrDefault<T>(long entityId) where T : EcsEntityPart
+        {
+            return GetParts<T>(entityId).SingleOrDefault();
+        }
+
         public IEnumerable<T> GetParts<T>(long entityId) where T : EcsEntityPart
         {
             return GetParts(entityId).OfType<T>();
         }
 
-        public EcsEntityPart GetPartById(long entityId, long partId)
+        public bool HasPartSingle<T>(long entityId) where T : EcsEntityPart
         {
-            return _entityIdsToEntityParts[entityId].Single(cp => cp.Id == partId);
+            return GetParts(entityId).OfType<T>().Count() == 1;
         }
 
         public void RemoveParts(long entityId, IEnumerable<EcsEntityPart> parts)

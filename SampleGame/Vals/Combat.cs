@@ -17,7 +17,7 @@ namespace SampleGame.Vals
 
     public static class CombatStatusTag
     {
-        public static string[] IncapacitatingStatuses = new string[] { Dead };
+        public static string[] CombatTerminalStatuses = new string[] { Dead };
 
         public const string Dead = nameof(Dead);
     }

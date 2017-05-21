@@ -148,6 +148,12 @@ namespace SampleGame.Sys
             targetPhysicalObject.Condition = targetPhysicalObject.Condition - (int)damageDealt;
             msg.TargetCondition = targetPhysicalObject.Condition;
 
+            if (targetPhysicalObject.Condition <= 0)
+            {
+                var targetAgent = rgs.GetPartSingle<Parts.Agent>(targetId);
+                targetAgent.CombatStatusTags.Add(Vals.CombatStatusTag.Dead);
+            }
+
             return new List<Messages.Combat> { msg };
         }
 

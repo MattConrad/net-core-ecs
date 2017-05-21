@@ -35,52 +35,45 @@ namespace SampleGame.Sys
                 .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
         }
 
-        internal static string GetAgentCombatAction(EcsRegistrar rgs, Parts.FactionInteractionSet factionInteractions, string attackerAI, long attackerId, List<long> battlefieldEntityIds)
+        internal static string GetAgentCombatAction(EcsRegistrar rgs, long globalId, string attackerAI, long attackerId, List<long> battlefieldEntityIds)
         {
-            if (attackerAI == Vals.AI.MeleeOnly) return CombatActionMeleeOnly(rgs, factionInteractions, attackerId, battlefieldEntityIds);
+            if (attackerAI == Vals.AI.MeleeOnly) return CombatActionMeleeOnly(rgs, globalId, attackerId, battlefieldEntityIds);
 
             throw new ArgumentException($"Attacker AI {attackerAI} not supported.");
         }
 
-        //MWCTODO: ugh, faction interactions.
-        private static string CombatActionMeleeOnly(EcsRegistrar rgs, Parts.FactionInteractionSet factionInteractions, long attackerId, List<long> battlefieldEntityIds)
+        private static string CombatActionMeleeOnly(EcsRegistrar rgs, long globalId, long attackerId, List<long> battlefieldEntityIds)
         {
             string action = Vals.CombatActions.DoNothing;
-            var factionDeltas = new Dictionary<long, int>();
 
-            var attackerFaction = rgs.GetParts<Parts.Faction>(attackerId).SingleOrDefault();
+            var targetIdsToWeights = battlefieldEntityIds
+                .Select(id => new { Id = id, Agent = rgs.GetPartSingleOrDefault<Parts.Agent>(id) })
+                .Where(a => a.Id != attackerId && a.Agent != null && !Vals.CombatStatusTag.CombatTerminalStatuses.Intersect(a.Agent.CombatStatusTags).Any())
+                .ToDictionary(a => a.Id, a => 0);
 
+            var attackerFaction = rgs.GetPartSingle<Parts.Faction>(attackerId);
+            var factionInteractions = rgs.GetPartSingle<Parts.FactionInteractionSet>(globalId);
 
-            //this will do for now, but a) faction shouldn't be as important as perceived danger level, b) this is busier than maybe it should be, and c) can you really perceive faction by looking at someone?
-            // i am not sure I want numeric factions at all any more. seemed tidy--but are they really useful?
-            if (attackerFaction != null)
+            //eventually we have to figure out how to weight faction relative to everything else.
+            var possibleTargetIds = targetIdsToWeights.Keys.ToArray();
+            foreach(var possibleTargetId in possibleTargetIds)
             {
-                foreach(long entityId in battlefieldEntityIds)
-                {
-                    if (entityId == attackerId) continue;
-
-                    var entityFactionReputations = rgs.GetParts<Parts.Faction>(entityId).SingleOrDefault()?.PublicFactionReputations;
-                    if (entityFactionReputations == null) continue;
-
-                    int delta = attackerFaction
-                        .PublicFactionReputations
-                        .Select(kvp => (entityFactionReputations.ContainsKey(kvp.Key) ? kvp.Value - entityFactionReputations[kvp.Key] : 0))
-                        .Sum(d => Math.Abs(d));
-
-                    factionDeltas.Add(entityId, delta);
-                }
+                var targetFaction = rgs.GetPartSingle<Parts.Faction>(possibleTargetId);
+                targetIdsToWeights[possibleTargetId] = factionInteractions.Interactions
+                    .SingleOrDefault(i => i.SourceFaction == attackerFaction.CurrentPublicFaction && i.TargetFaction == targetFaction.CurrentPublicFaction)
+                    ?.Disposition ?? 0;
             }
 
-            if (factionDeltas.Any())
-            {
-                var targetId = factionDeltas.First(kvp => kvp.Value == factionDeltas.Values.Max()).Key;
+            var minWeight = targetIdsToWeights.Values.Any() ? targetIdsToWeights.Values.Min() : 0;
 
-                return Vals.CombatActions.AttackMelee + " " + targetId;
-            }
-            else
+            if (minWeight < 0)
             {
-                return action;
+                var targetId = targetIdsToWeights.First(kvp => kvp.Value == minWeight).Key;
+
+                action = Vals.CombatActions.AttackMelee + " " + targetId;
             }
+
+            return action;
         }
     }
 }
