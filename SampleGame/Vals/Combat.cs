@@ -4,9 +4,9 @@ using System.Text;
 
 namespace SampleGame.Vals
 {
-    public static class CombatActions
+    public static class CombatAction
     {
-        public static string[] AllStances = new string[] { StanceDefensive, StanceStandGround, StanceAggressive };
+        public static readonly string[] AllStances = new string[] { StanceDefensive, StanceStandGround, StanceAggressive };
 
         public const string DoNothing = "do-nothing";
         public const string AttackMelee = "attack-melee";
@@ -19,7 +19,7 @@ namespace SampleGame.Vals
 
     public static class CombatStatusTag
     {
-        public static string[] CombatTerminalStatuses = new string[] { Dead };
+        public static readonly string[] CombatTerminalStatuses = new string[] { Dead };
 
         public const string Dead = nameof(Dead);
     }

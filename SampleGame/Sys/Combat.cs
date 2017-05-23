@@ -7,7 +7,7 @@ namespace SampleGame.Sys
 {
     internal static class Combat
     {
-        internal static readonly string[] Stances = new string[] { Vals.CombatActions.StanceAggressive, Vals.CombatActions.StanceDefensive, Vals.CombatActions.StanceStandGround };
+        internal static readonly string[] Stances = new string[] { Vals.CombatAction.StanceAggressive, Vals.CombatAction.StanceDefensive, Vals.CombatAction.StanceStandGround };
         internal static readonly string[] Incapacitations = new string[] { Vals.CombatStatusTag.Dead };
 
         internal static List<Messages.Combat> ProcessAgentAction(EcsRegistrar rgs, long agentId, long? targetId, string action)
@@ -16,15 +16,15 @@ namespace SampleGame.Sys
             {
                 return ApplyStance(rgs, agentId, action);
             }
-            else if (action == Vals.CombatActions.SwitchToAI)
+            else if (action == Vals.CombatAction.SwitchToAI)
             {
                 return SwitchToAI(rgs, agentId);
             }
-            else if (action == Vals.CombatActions.AttackMelee)
+            else if (action == Vals.CombatAction.AttackMelee)
             {
                 return ResolveSingleTargetMelee(rgs, agentId, targetId.Value);
             }
-            else if (action == Vals.CombatActions.DoNothing)
+            else if (action == Vals.CombatAction.DoNothing)
             {
                 var agentNames = rgs.GetPartSingle<Parts.EntityName>(agentId);
                 return new List<Messages.Combat> {
@@ -44,21 +44,21 @@ namespace SampleGame.Sys
             rgs.RemoveParts(agentId, stances);
 
             result.ActorAction = stance;
-            if (stance == Vals.CombatActions.StanceAggressive)
+            if (stance == Vals.CombatAction.StanceAggressive)
             {
                 rgs.AddPart(agentId, new Parts.SkillsModifier {
-                    Tag = Vals.CombatActions.StanceAggressive,
+                    Tag = Vals.CombatAction.StanceAggressive,
                     SkillDeltas = new Dictionary<string, int> {
                         [Vals.EntitySkillPhysical.Melee] = 1,
                         [Vals.EntitySkillPhysical.Dodge] = -1
                     }
                 });
             }
-            else if (stance == Vals.CombatActions.StanceDefensive)
+            else if (stance == Vals.CombatAction.StanceDefensive)
             {
                 rgs.AddPart(agentId, new Parts.SkillsModifier
                 {
-                    Tag = Vals.CombatActions.StanceDefensive,
+                    Tag = Vals.CombatAction.StanceDefensive,
                     SkillDeltas = new Dictionary<string, int>
                     {
                         [Vals.EntitySkillPhysical.Melee] = -1,
@@ -67,7 +67,7 @@ namespace SampleGame.Sys
                 });
 
             }
-            else if (stance == Vals.CombatActions.StanceStandGround)
+            else if (stance == Vals.CombatAction.StanceStandGround)
             {
                 //default stance, so the removal of previous ones means we're done.
             }
@@ -93,8 +93,8 @@ namespace SampleGame.Sys
                 Tick = rgs.NewId(),
                 ActorId = attackerId,
                 TargetId = targetId,
-                ActorAction = Vals.CombatActions.AttackMelee,
-                TargetAction = Vals.CombatActions.Dodge
+                ActorAction = Vals.CombatAction.AttackMelee,
+                TargetAction = Vals.CombatAction.Dodge
             };
 
             var attackerAdjustedSkills = Skills.GetAdjustedSkills(rgs, attackerId);

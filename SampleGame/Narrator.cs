@@ -22,7 +22,7 @@ namespace SampleGame
 
                 if (msg.TargetId == 0)
                 {
-                    if (Vals.CombatActions.AllStances.Contains(msg.ActorAction))
+                    if (Vals.CombatAction.AllStances.Contains(msg.ActorAction))
                     {
                         result.Data = $"{actorNames.ProperName} assumes a {msg.ActorAction} stance.";
                     }

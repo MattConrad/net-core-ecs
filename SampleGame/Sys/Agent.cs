@@ -18,15 +18,15 @@ namespace SampleGame.Sys
                 if (id == agentId) continue;
 
                 var entityName = rgs.GetParts<Parts.EntityName>(id).Single();
-                targetActions.Add($"Attack Melee {entityName.ProperName}", $"{Vals.CombatActions.AttackMelee} {id}");
+                targetActions.Add($"Attack Melee {entityName.ProperName}", $"{Vals.CombatAction.AttackMelee} {id}");
             }
 
             var standardActions = new Dictionary<string, string>
             {
-                ["Switch To AI (for testing)"] = Vals.CombatActions.SwitchToAI,
-                ["Stance (Defensive)"] = Vals.CombatActions.StanceDefensive,
-                ["Stance (Stand Ground)"] = Vals.CombatActions.StanceStandGround,
-                ["Stance (Aggressive)"] = Vals.CombatActions.StanceAggressive
+                ["Switch To AI (for testing)"] = Vals.CombatAction.SwitchToAI,
+                ["Stance (Defensive)"] = Vals.CombatAction.StanceDefensive,
+                ["Stance (Stand Ground)"] = Vals.CombatAction.StanceStandGround,
+                ["Stance (Aggressive)"] = Vals.CombatAction.StanceAggressive
             };
 
             return targetActions
@@ -44,7 +44,7 @@ namespace SampleGame.Sys
 
         private static string CombatActionMeleeOnly(EcsRegistrar rgs, long globalId, long attackerId, List<long> battlefieldEntityIds)
         {
-            string action = Vals.CombatActions.DoNothing;
+            string action = Vals.CombatAction.DoNothing;
 
             var targetIdsToWeights = battlefieldEntityIds
                 .Select(id => new { Id = id, Agent = rgs.GetPartSingleOrDefault<Parts.Agent>(id) })
@@ -70,7 +70,7 @@ namespace SampleGame.Sys
             {
                 var targetId = targetIdsToWeights.First(kvp => kvp.Value == minWeight).Key;
 
-                action = Vals.CombatActions.AttackMelee + " " + targetId;
+                action = Vals.CombatAction.AttackMelee + " " + targetId;
             }
 
             return action;

@@ -1,6 +1,6 @@
 ﻿Consider unit testing. How important is it? How well can we test the static classes?
 
-TODO: battlefield should check for potentially actable actors.
+TODO: emit list of supported actions for specified (and/or current) mode
 TODO: weapons/armor droppable
 TODO: weapons/armor damageable
 
@@ -11,8 +11,6 @@ TODO: pretty text descriptions
 
 TODO: Fancy text interpolation for messages. Forget tracery, see https://github.com/TheBerkin/Rant instead.
 TODO: combat/noncombat modes
-TODO: emit list of supported actions for specified (and/or current) mode
-
 
 
 
