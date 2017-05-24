@@ -8,13 +8,13 @@ namespace SampleGame.Vals
     {
         public static readonly string[] AllStances = new string[] { StanceDefensive, StanceStandGround, StanceAggressive };
 
-        public const string DoNothing = "do-nothing";
-        public const string AttackMelee = "attack-melee";
-        public const string SwitchToAI = "switch-to-ai";
-        public const string StanceDefensive = "stance-defensive";
-        public const string StanceStandGround = "stance-stand-ground";
-        public const string StanceAggressive = "stance-aggressive";
-        public const string Dodge = "dodge";
+        public const string DoNothing = nameof(DoNothing);
+        public const string AttackMelee = nameof(AttackMelee);
+        public const string SwitchToAI = nameof(SwitchToAI);
+        public const string StanceDefensive = nameof(StanceDefensive);
+        public const string StanceStandGround = nameof(StanceStandGround);
+        public const string StanceAggressive = nameof(StanceAggressive);
+        public const string Dodge = nameof(Dodge);
     }
 
     public static class CombatStatusTag

@@ -14,5 +14,6 @@ namespace SampleGame.Vals
         public const string Goliath = nameof(Goliath);
         public const string Smaug = nameof(Smaug);
         public const string Mountain = nameof(Mountain);
+        public const string Special = nameof(Special);
     }
 }
