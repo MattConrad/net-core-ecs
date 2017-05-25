@@ -30,8 +30,8 @@ namespace SampleGame.Parts
         public int DefaultDamageThreshold { get; set; } = 0;
 
         /// <summary>
-        /// A general multiplier altering the default damage of all otherwise-unspecified types. The player character represents the baseline
-        /// with a default damage multiplier of 1.0. An undistinguished NPC maybe 2.0 (the player character has extra survivability). 
+        /// A general multiplier altering the default damage of all otherwise-unspecified types. A standard issue human represents the baseline
+        /// with a default damage multiplier of 1.0. The player character has extra survivability, and so has a multiplier of 0.66. 
         /// Something small and frail like a housecat might be a 6 or 7 (but with good evasion). A hill giant might have something like 0.3.
         /// A heavy stone door would have something like 0.01.
         /// </summary>
@@ -47,6 +47,17 @@ namespace SampleGame.Parts
         /// </summary>
         public string Size { get; set; }
 
-        public string WielderSize { get; set; }
+        //MWCTODO: maybe this should be equippable size.
+        /// <summary>
+        /// Any object might be wielded as a weapon or a shield. Wieldable size tells us what size of being can wield/equip the object one-handed.
+        /// The equipment system has default rules on how deviations from this size will work.
+        /// </summary>
+        public string WieldableSize { get; set; }
+
+        /// <summary>
+        /// For explicitly equippable items, in what (default humanoid) slot the item is equippable/wieldable.
+        /// This couples Parts.PhysicalObject to Parts.Anatomy, which I don't like, but don't have a better idea about right now.
+        /// </summary>
+        public string EquippableSlot { get; set; }
     }
 }

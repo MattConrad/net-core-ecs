@@ -19,7 +19,7 @@ namespace SampleGame
         /// </summary>
         internal static void WriteBlueprint(EcsRegistrar rgs, long entityId, string blueprintName)
         {
-            string revisedPartsJson = GetBlueprint(rgs, entityId);
+            string revisedPartsJson = GetBlueprintForEntity(rgs, entityId);
 
             //we do not want to write a blueprint to the executable folder, that's useless.
 
@@ -31,11 +31,11 @@ namespace SampleGame
 
         /// <summary>
         /// Get a blueprint for an entity. Blueprint part Ids are all forced to 0 (to reduce possible
-        /// confusion when reading by hand). This method has a limited exception to the no-references 
-        /// rule--an entity with Container parts will automatically have those Containers emptied 
+        /// confusion when reading by hand). This method has a limited exception to the no-references rule
+        /// --an entity with Container or Anatomy parts will automatically have the entity related values emptied 
         /// before writing (which makes them safe).
         /// </summary>
-        internal static string GetBlueprint(EcsRegistrar rgs, long entityId)
+        internal static string GetBlueprintForEntity(EcsRegistrar rgs, long entityId)
         {
             //make a copy before changing anything, just in case the user wants to continue working with original.
             string originalPartsJson = rgs.SerializeEntityParts(entityId);
@@ -45,6 +45,11 @@ namespace SampleGame
             {
                 part.Id = 0;
                 if (part is Parts.Container) ((Parts.Container)part).EntityIds.Clear();
+                if (part is Parts.Anatomy)
+                {
+                    ((Parts.Anatomy)part).SlotsEquipped.Clear();
+                    ((Parts.Anatomy)part).SlotsWielding.Clear();
+                }
             }
 
             return rgs.SerializeEntityParts(revisedPartsList);

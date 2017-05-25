@@ -6,9 +6,6 @@ namespace SampleGame.Vals
 {
     public static class BodyPlan
     {
-        //we know which body plans include what parts, and we know what body plans are bilateral. i don't think we need to spell this out with vals.
-        // we might want more detailed anatomy like wrists, knees, or hindleg/foreleg, though.
-
         public const string Humanoid = nameof(Humanoid);
         public const string Quadruped = nameof(Quadruped);
         public const string Avian = nameof(Avian);
@@ -38,6 +35,27 @@ namespace SampleGame.Vals
         public const string Wing = nameof(Wing);
 
         public const string Thorax = nameof(Thorax);
-
     }
+
+    /// <summary>
+    /// These are based on a humanoid body plan. We may want a xlation table for non humanoids, 
+    /// but I don't have a clear idea of how that would work, especially for hexapodes/octopodes/etc.
+    /// Notice that wielding hands and armor hand are different slots. Wielding is just a
+    /// a specialized form of equipping. This is kind of a hack, not sure it will hold up, but trying it.
+    /// </summary>
+    public static class EquipmentSlot
+    {
+        public const string Head = nameof(Head);
+        public const string Neck = nameof(Neck);
+        public const string Body = nameof(Body);
+        public const string WieldingHandPrimary = nameof(WieldingHandPrimary);
+        public const string WieldingHandSecondary = nameof(WieldingHandSecondary);
+        public const string Hands = nameof(Hands);
+        public const string FingerPrimary = nameof(FingerPrimary);
+        public const string FingerSecondary = nameof(FingerSecondary);
+        public const string Foot = nameof(Foot);
+        //not sure what, if anything, this does yet.
+        public const string Special = nameof(Special);
+    }
+
 }
