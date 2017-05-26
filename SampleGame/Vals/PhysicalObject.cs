@@ -9,14 +9,14 @@ namespace SampleGame.Vals
     {
         public static Dictionary<string, int> SizeToInt = new Dictionary<string, int>
         {
-            [Gnat] = 0,
-            [Rabbit] = 1,
-            [Gnome] = 2,
-            [Human] = 3,
-            [Goliath] = 4,
-            [StormGiant] = 5,
-            [Smaug] = 6,
-            [Mountain] = 7
+            [Gnat] = 1,
+            [Rabbit] = 2,
+            [Gnome] = 3,
+            [Human] = 4,
+            [Goliath] = 5,
+            [StormGiant] = 6,
+            [Smaug] = 7,
+            [Mountain] = 8
         };
 
         public const string Gnat = nameof(Gnat);
@@ -29,6 +29,7 @@ namespace SampleGame.Vals
         public const string Mountain = nameof(Mountain);
         public const string Special = nameof(Special);
         public const string None = nameof(None);
+        public const string AnySize = nameof(AnySize);
     }
 
 }

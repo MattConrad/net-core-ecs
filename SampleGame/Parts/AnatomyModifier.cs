@@ -13,6 +13,6 @@ namespace SampleGame.Parts
     /// </summary>
     public class AnatomyModifier : EntropyEcsCore.EcsEntityPart
     {
-        public string SlotDisabled { get; set; }
+        public string BodyPlanEquipmentSlotDisabled { get; set; }
     }
 }

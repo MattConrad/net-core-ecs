@@ -10,6 +10,45 @@ namespace SampleGame.Vals
         public const string Quadruped = nameof(Quadruped);
         public const string Avian = nameof(Avian);
         public const string Insect = nameof(Insect);
+
+        //if there are multiple mappings for a slot, the highest priority should always come first, and descending from there.
+        public static readonly Dictionary<string, Dictionary<string, string[]>> EquipmentSlotMapping = new Dictionary<string, Dictionary<string, string[]>>
+        {
+            [Humanoid] = new Dictionary<string, string[]>
+            {
+                [EquipmentSlots.Head] = new string[] { EquipmentSlotsHumanoid.Head },
+                [EquipmentSlots.Neck] = new string[] { EquipmentSlotsHumanoid.Neck },
+                [EquipmentSlots.Body] = new string[] { EquipmentSlotsHumanoid.Body },
+                [EquipmentSlots.WieldingHands] = new string[] { EquipmentSlotsHumanoid.WieldingHandPrimary, EquipmentSlotsHumanoid.WieldingHandOffhand },
+                [EquipmentSlots.GauntletHands] = new string[] { EquipmentSlotsHumanoid.GauntletHands },
+                [EquipmentSlots.RingFingers] = new string[] { EquipmentSlotsHumanoid.RingFingerPrimary, EquipmentSlotsHumanoid.RingFingerSecondary },
+                [EquipmentSlots.BootFeet] = new string[] { EquipmentSlotsHumanoid.BootFeet }
+            },
+            [Quadruped] = new Dictionary<string, string[]>
+            {
+                [EquipmentSlots.Head] = new string[] { EquipmentSlotsQuadruped.Head },
+                [EquipmentSlots.Neck] = new string[] { EquipmentSlotsQuadruped.Neck }
+            }
+        };
+
+        public static class EquipmentSlotsHumanoid
+        {
+            public const string Head = nameof(Head);
+            public const string Neck = nameof(Neck);
+            public const string Body = nameof(Body);
+            public const string GauntletHands = nameof(GauntletHands);
+            public const string BootFeet = nameof(BootFeet);
+            public const string WieldingHandPrimary = nameof(WieldingHandPrimary);
+            public const string WieldingHandOffhand = nameof(WieldingHandOffhand);
+            public const string RingFingerPrimary = nameof(RingFingerPrimary);
+            public const string RingFingerSecondary = nameof(RingFingerSecondary);
+        }
+
+        public static class EquipmentSlotsQuadruped
+        {
+            public const string Head = nameof(Head);
+            public const string Neck = nameof(Neck);
+        }
     }
 
     public static class BodyParts
@@ -35,27 +74,6 @@ namespace SampleGame.Vals
         public const string Wing = nameof(Wing);
 
         public const string Thorax = nameof(Thorax);
-    }
-
-    /// <summary>
-    /// These are based on a humanoid body plan. We may want a xlation table for non humanoids, 
-    /// but I don't have a clear idea of how that would work, especially for hexapodes/octopodes/etc.
-    /// Notice that wielding hands and armor hand are different slots. Wielding is just a
-    /// a specialized form of equipping. This is kind of a hack, not sure it will hold up, but trying it.
-    /// </summary>
-    public static class EquipmentSlotsHumanoid
-    {
-        public const string Head = nameof(Head);
-        public const string Neck = nameof(Neck);
-        public const string Body = nameof(Body);
-        public const string WieldingHandPrimary = nameof(WieldingHandPrimary);
-        public const string WieldingHandOffhand = nameof(WieldingHandOffhand);
-        public const string Hands = nameof(Hands);
-        public const string FingerPrimary = nameof(FingerPrimary);
-        public const string FingerSecondary = nameof(FingerSecondary);
-        public const string Foot = nameof(Foot);
-        //not sure what, if anything, this does yet.
-        public const string Special = nameof(Special);
     }
 
 }

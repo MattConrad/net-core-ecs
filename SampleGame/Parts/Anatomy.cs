@@ -9,7 +9,7 @@ namespace SampleGame.Parts
         /// <summary>
         /// Humanoid, quadruped, avian, insect, etc.
         /// </summary>
-        public static string BodyPlan { get; set; }
+        public string BodyPlan { get; set; }
 
         /// <summary>
         /// Equipped includes wielding, but this does get a little complicated. See Equipment system.

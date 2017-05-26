@@ -7,13 +7,19 @@
     "DefaultDamageThreshold": 0,
     "DefaultDamageMultiplier": 0.66,
     "Weight": 0.0,
-    "Size": null,
+    "Size": "Human",
     "Id": 0
   },
   {
     "$type": "SampleGame.Parts.Agent, SampleGame",
     "DefaultCombatAI": "MeleeOnly",
     "ActiveCombatAI": "PlayerChoice",
+    "Id": 0
+  },
+  {
+    "$type": "SampleGame.Parts.Anatomy, SampleGame",
+    "BodyPlan": "Humanoid",
+    "SlotsEquipped": {},
     "Id": 0
   },
   {

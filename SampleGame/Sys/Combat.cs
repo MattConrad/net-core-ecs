@@ -123,18 +123,22 @@ namespace SampleGame.Sys
                 : 0m;
 
             var targetPhysicalObject = rgs.GetPartSingle<Parts.PhysicalObject>(targetId);
-            var targetEquipment = Container.GetEntityIdsFromFirstTagged(rgs, targetId, Vals.ContainerTag.Equipped);
+            var targetEquipment = rgs.GetPartSingle<Parts.Anatomy>(targetId).SlotsEquipped;
+            //var targetEquipment = Container.GetEntityIdsFromFirstTagged(rgs, targetId, Vals.ContainerTag.Equipped);
 
-            //for this simple game, there's only one piece of armor, but we'll use SelectMany over the entire equipment anyhow.
-            // later this is certainly true, maybe over more than equipment. lots of things can be damage preventers. eeeps.
-            // later, this needs to be equipped only. not sure how we're doing equipped right now.
-            var targetArmor = targetEquipment.SelectMany(eid => rgs.GetParts<Parts.DamagePreventer>(eid)).FirstOrDefault();
+            // MWCTODO: this don't cut it any more, we need to work with multiple slots at once.
+            var targetArmor = targetEquipment.Values.SelectMany(eid => rgs.GetParts<Parts.DamagePreventer>(eid)).FirstOrDefault();
 
             //later, we will have natural weapons and whatever you're wielding, and you probably only get one attack at a time.
             //  this relates to the clock/timer, however that ends up working.
-            var attackerEquipment = Container.GetEntityIdsFromFirstTagged(rgs, attackerId, Vals.ContainerTag.Equipped);
-            //and here, this needs to be wielded weapons only. perhaps equipped will do intermediately.
-            var attackerWeapon = targetEquipment.SelectMany(eid => rgs.GetParts<Parts.Damager>(eid)).FirstOrDefault();
+            var attackerEquipment = rgs.GetPartSingle<Parts.Anatomy>(attackerId).SlotsEquipped;
+            //var attackerEquipment = Container.GetEntityIdsFromFirstTagged(rgs, attackerId, Vals.ContainerTag.Equipped);
+
+            //MWCTODO: no, this is human centric again.
+            long attackerWeaponId = attackerEquipment.GetValueOrDefault(Vals.BodyPlan.EquipmentSlotsHumanoid.WieldingHandPrimary, 0L);
+
+            //MWCTODO: no, a weapon might have multiple damagers attached.
+            Parts.Damager attackerWeapon = attackerWeaponId == 0L ? null : rgs.GetParts<Parts.Damager>(attackerWeaponId).FirstOrDefault();
 
             var damageAttempted = (attackerWeapon?.DamageAmount ?? 0) * finalAttackMultiplier;
             var damagePrevented = targetPhysicalObject.DefaultDamageThreshold + targetArmor?.DamageThreshold ?? 0;
@@ -142,7 +146,7 @@ namespace SampleGame.Sys
 
             //so we apply crit/attack multipliers first, then we subtract damage prevention, then we apply default damage multiplier and armor multiplier. whew!
             var damageDealt = Math.Max(0, 
-                (damageAttempted - damagePrevented) * targetPhysicalObject.DefaultDamageMultiplier * targetArmor.DamageMultiplier);
+                (damageAttempted - damagePrevented) * targetPhysicalObject.DefaultDamageMultiplier * (targetArmor?.DamageMultiplier ?? 1m));
             msg.NetDamage = damageDealt;
 
             targetPhysicalObject.Condition = targetPhysicalObject.Condition - (int)damageDealt;

@@ -42,7 +42,7 @@ namespace SampleGame.Sys
 
             var handsRequired = GetWeaponHandsRequired(wielderPhysicalObject, weaponPhysicalObject);
 
-            //MWCTODO: "to wield", what if it's a shield?
+            //MWCTODO: "to wield", what if it's a shield? also, shields should always go in the off-hand. that keeps things simple.
             if (handsRequired == WeaponHandsRequired.WeaponTooBig) output.Data = $"The {weaponEntityName.GeneralName} is too big for {wielderEntityName.Pronoun} to wield.";
             if (handsRequired == WeaponHandsRequired.WeaponTooSmall) output.Data = $"The {weaponEntityName.GeneralName} is too small for {wielderEntityName.Pronoun} to wield.";
 
@@ -51,11 +51,12 @@ namespace SampleGame.Sys
                 return output;
             }
 
-            //so human-centric! eventually this has to be fixed.
-            var humanoidHandSlots = new List<string> { Vals.EquipmentSlotsHumanoid.WieldingHandPrimary, Vals.EquipmentSlotsHumanoid.WieldingHandOffhand };
+            var wielderHandSlots = Vals.BodyPlan.EquipmentSlotMapping.GetValueOrDefault(wielderAnatomy.BodyPlan, null)
+                ?.GetValueOrDefault(Vals.EquipmentSlots.WieldingHands, null) 
+                ?? new string[] { };
 
-            var wielderBlockedSlots = wielderAnatomyModifications.Select(m => m.SlotDisabled).ToList();
-            var wielderActiveHandSlots = humanoidHandSlots.Except(wielderBlockedSlots).ToList();
+            var wielderBlockedSlots = wielderAnatomyModifications.Select(m => m.BodyPlanEquipmentSlotDisabled).ToList();
+            var wielderActiveHandSlots = wielderHandSlots.Except(wielderBlockedSlots).ToList();
 
             if ((int)handsRequired > wielderActiveHandSlots.Count())
             {
@@ -66,25 +67,26 @@ namespace SampleGame.Sys
                 return output;
             }
 
-            var wielderFreeHandSlots = wielderActiveHandSlots.Except(wielderAnatomy.SlotsEquipped.Keys.Intersect(humanoidHandSlots)).ToList();
+            var wielderFreeHandSlots = wielderActiveHandSlots.Except(wielderAnatomy.SlotsEquipped.Keys.Intersect(wielderHandSlots)).ToList();
 
+            //MWCTODO: no, no, no from here down is all human centric again. i did all the easy stuff and didn't do the harder stuff!
             if (wielderFreeHandSlots.Count < (int)handsRequired && autoUnwieldExisting)
             {
-                //MWCTODO: stuff that is unequipped should go into the inventory, or onto the ground, but not just disappear.
+                //MWCTODO: stuff that is unequipped should go into the inventory, or onto the ground, but not just disappear. probably calling inventory system method.
 
-                if (handsRequired == WeaponHandsRequired.Two && wielderAnatomy.SlotsEquipped.Keys.Contains((Vals.EquipmentSlotsHumanoid.WieldingHandOffhand)))
+                if (handsRequired == WeaponHandsRequired.Two && wielderAnatomy.SlotsEquipped.Keys.Contains((Vals.BodyPlan.EquipmentSlotsHumanoid.WieldingHandOffhand)))
                 {
-                    wielderAnatomy.SlotsEquipped.Remove(Vals.EquipmentSlotsHumanoid.WieldingHandOffhand);
+                    wielderAnatomy.SlotsEquipped.Remove(Vals.BodyPlan.EquipmentSlotsHumanoid.WieldingHandOffhand);
                 }
 
-                if (wielderAnatomy.SlotsEquipped.Keys.Contains((Vals.EquipmentSlotsHumanoid.WieldingHandOffhand)))
+                if (wielderAnatomy.SlotsEquipped.Keys.Contains((Vals.BodyPlan.EquipmentSlotsHumanoid.WieldingHandOffhand)))
                 {
-                    wielderAnatomy.SlotsEquipped.Remove(Vals.EquipmentSlotsHumanoid.WieldingHandPrimary);
+                    wielderAnatomy.SlotsEquipped.Remove(Vals.BodyPlan.EquipmentSlotsHumanoid.WieldingHandPrimary);
                 }
 
                 //there should be some output to the user here, maybe not super important given autoUnwieldExisting probably going away.
 
-                wielderFreeHandSlots = wielderActiveHandSlots.Except(wielderAnatomy.SlotsEquipped.Keys.Intersect(humanoidHandSlots)).ToList();
+                wielderFreeHandSlots = wielderActiveHandSlots.Except(wielderAnatomy.SlotsEquipped.Keys.Intersect(wielderHandSlots)).ToList();
             }
 
             //for now, we will assume the wielder always wants to equip in the primary hand slot--but this is only a temporary simplification.
@@ -92,8 +94,8 @@ namespace SampleGame.Sys
             {
                 if (handsRequired == WeaponHandsRequired.Two)
                 {
-                    wielderAnatomy.SlotsEquipped[Vals.EquipmentSlotsHumanoid.WieldingHandPrimary] = weaponId;
-                    wielderAnatomy.SlotsEquipped[Vals.EquipmentSlotsHumanoid.WieldingHandOffhand] = weaponId;
+                    wielderAnatomy.SlotsEquipped[Vals.BodyPlan.EquipmentSlotsHumanoid.WieldingHandPrimary] = weaponId;
+                    wielderAnatomy.SlotsEquipped[Vals.BodyPlan.EquipmentSlotsHumanoid.WieldingHandOffhand] = weaponId;
                     output.Data = $"{wielderEntityName.ProperName} grips the {weaponEntityName.GeneralName} firmly in both hands.";
 
                     return output;
@@ -101,11 +103,11 @@ namespace SampleGame.Sys
                 else if (handsRequired == WeaponHandsRequired.One)
                 {
                     //we already know they've got enough total slots, so if the primary slot is already full, they have to have a secondary slot open.
-                    if (wielderAnatomy.SlotsEquipped.ContainsKey(Vals.EquipmentSlotsHumanoid.WieldingHandPrimary))
+                    if (wielderAnatomy.SlotsEquipped.ContainsKey(Vals.BodyPlan.EquipmentSlotsHumanoid.WieldingHandPrimary))
                     {
-                        wielderAnatomy.SlotsEquipped[Vals.EquipmentSlotsHumanoid.WieldingHandOffhand] = 
-                            wielderAnatomy.SlotsEquipped[Vals.EquipmentSlotsHumanoid.WieldingHandPrimary];
-                        wielderAnatomy.SlotsEquipped[Vals.EquipmentSlotsHumanoid.WieldingHandPrimary] = weaponId;
+                        wielderAnatomy.SlotsEquipped[Vals.BodyPlan.EquipmentSlotsHumanoid.WieldingHandOffhand] = 
+                            wielderAnatomy.SlotsEquipped[Vals.BodyPlan.EquipmentSlotsHumanoid.WieldingHandPrimary];
+                        wielderAnatomy.SlotsEquipped[Vals.BodyPlan.EquipmentSlotsHumanoid.WieldingHandPrimary] = weaponId;
 
                         output.Data = $"{wielderEntityName.ProperName} swaps gear to {wielderEntityName.Pronoun}[poss-adj] offhand and wields {weaponEntityName.GeneralName} in his primary hand.";
 
@@ -113,7 +115,7 @@ namespace SampleGame.Sys
                     }
                     else
                     {
-                        wielderAnatomy.SlotsEquipped[Vals.EquipmentSlotsHumanoid.WieldingHandPrimary] = weaponId;
+                        wielderAnatomy.SlotsEquipped[Vals.BodyPlan.EquipmentSlotsHumanoid.WieldingHandPrimary] = weaponId;
 
                         output.Data = $"{wielderEntityName.ProperName} wields {weaponEntityName.GeneralName} in his primary hand.";
 
@@ -136,11 +138,10 @@ namespace SampleGame.Sys
         /// </summary>
         internal static WeaponHandsRequired GetWeaponHandsRequired(Parts.PhysicalObject wielderPhysicalObject, Parts.PhysicalObject weaponPhysicalObject)
         {
-            int wielderSizeInt = _defaultWielderSizeInt;
-            Vals.Size.SizeToInt.TryGetValue(wielderPhysicalObject.Size, out wielderSizeInt);
+            //MWCTODO: deal with pobjs of "none" or "anysize". will need to extend WeaponHandsRequired
 
-            int weaponWieldSizeInt = _defaultWeaponWieldSizeInt;
-            Vals.Size.SizeToInt.TryGetValue(weaponPhysicalObject.Size, out weaponWieldSizeInt);
+            int wielderSizeInt = Vals.Size.SizeToInt.GetValueOrDefault(wielderPhysicalObject.Size ?? "", _defaultWielderSizeInt);
+            int weaponWieldSizeInt = Vals.Size.SizeToInt.GetValueOrDefault(weaponPhysicalObject.Size ?? "", _defaultWeaponWieldSizeInt);
 
             int delta = weaponWieldSizeInt - wielderSizeInt;
 

@@ -46,12 +46,12 @@ namespace SampleGame.Sys
             return AddOrRemoveInventory(Action.AddEntity, rgs, ownerId, toRemoveId);
         }
 
-        internal static HashSet<long> GetEntityIdsFromFirstTagged(EcsRegistrar rgs, long ownerId, string tag)
-        {
-            var container = rgs.GetParts<Parts.Container>(ownerId).FirstOrDefault(c => c.Tag == tag);
+        //internal static HashSet<long> GetEntityIdsFromFirstTagged(EcsRegistrar rgs, long ownerId, string tag)
+        //{
+        //    var container = rgs.GetParts<Parts.Container>(ownerId).FirstOrDefault(c => c.Tag == tag);
 
-            return container?.EntityIds ?? new HashSet<long>();
-        }
+        //    return container?.EntityIds ?? new HashSet<long>();
+        //}
 
         internal static AlterContainerContentsResultsMessage AddOrRemoveInventory(Action action, EcsRegistrar rgs, long ownerId, long itemAddOrRemoveId)
         {

@@ -47,17 +47,10 @@ namespace SampleGame.Parts
         /// </summary>
         public string Size { get; set; }
 
-        //MWCTODO: maybe this should be equippable size.
         /// <summary>
         /// Any object might be wielded as a weapon or a shield. Wieldable size tells us what size of being can wield/equip the object one-handed.
         /// The equipment system has default rules on how deviations from this size will work.
         /// </summary>
         public string WieldableSize { get; set; }
-
-        /// <summary>
-        /// For explicitly equippable items, in what (default humanoid) slot the item is equippable/wieldable.
-        /// This couples Parts.PhysicalObject to Parts.Anatomy, which I don't like, but don't have a better idea about right now.
-        /// </summary>
-        public string EquippableSlot { get; set; }
     }
 }
