@@ -45,11 +45,7 @@ namespace SampleGame
             {
                 part.Id = 0;
                 if (part is Parts.Container) ((Parts.Container)part).EntityIds.Clear();
-                if (part is Parts.Anatomy)
-                {
-                    ((Parts.Anatomy)part).SlotsEquipped.Clear();
-                    ((Parts.Anatomy)part).SlotsWielding.Clear();
-                }
+                if (part is Parts.Anatomy) ((Parts.Anatomy)part).SlotsEquipped.Clear();
             }
 
             return rgs.SerializeEntityParts(revisedPartsList);

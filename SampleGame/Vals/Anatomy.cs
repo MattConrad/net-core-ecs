@@ -43,13 +43,13 @@ namespace SampleGame.Vals
     /// Notice that wielding hands and armor hand are different slots. Wielding is just a
     /// a specialized form of equipping. This is kind of a hack, not sure it will hold up, but trying it.
     /// </summary>
-    public static class EquipmentSlot
+    public static class EquipmentSlotsHumanoid
     {
         public const string Head = nameof(Head);
         public const string Neck = nameof(Neck);
         public const string Body = nameof(Body);
         public const string WieldingHandPrimary = nameof(WieldingHandPrimary);
-        public const string WieldingHandSecondary = nameof(WieldingHandSecondary);
+        public const string WieldingHandOffhand = nameof(WieldingHandOffhand);
         public const string Hands = nameof(Hands);
         public const string FingerPrimary = nameof(FingerPrimary);
         public const string FingerSecondary = nameof(FingerSecondary);
