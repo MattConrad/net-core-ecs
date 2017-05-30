@@ -14,6 +14,7 @@ namespace SampleGame.Vals
         //if there are multiple mappings for a slot, the highest priority should always come first, and descending from there.
         public static readonly Dictionary<string, Dictionary<string, string[]>> EquipmentSlotMapping = new Dictionary<string, Dictionary<string, string[]>>
         {
+            //never put an empty array in for an equipment slot--if the body type doesn't have any of that slot, omit the key entirely.
             [Humanoid] = new Dictionary<string, string[]>
             {
                 [EquipmentSlots.Head] = new string[] { EquipmentSlotsHumanoid.Head },

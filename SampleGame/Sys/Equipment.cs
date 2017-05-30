@@ -24,6 +24,36 @@ namespace SampleGame.Sys
         internal static int _defaultWielderSizeInt = Vals.Size.SizeToInt[Vals.Size.Human];
         internal static int _defaultWeaponWieldSizeInt = Vals.Size.SizeToInt[Vals.Size.Goliath];
 
+        internal static Output Equip(EcsRegistrar rgs, long equipperId, long gearId, bool autoUnequipExisting)
+        {
+            var output = new Output { Category = "Text" };
+
+            var equipperAnatomy = rgs.GetPartSingle<Parts.Anatomy>(equipperId);
+            var equipperAnatomyModifications = rgs.GetParts<Parts.AnatomyModifier>(equipperId).ToList();
+            var equipperPhysicalObject = rgs.GetPartSingle<Parts.PhysicalObject>(equipperId);
+            var equipperEntityName = rgs.GetPartSingle<Parts.EntityName>(equipperId);
+            var gearPhysicalObject = rgs.GetPartSingle<Parts.PhysicalObject>(gearId);
+            var gearEquippable = rgs.GetPartSingle<Parts.Equippable>(gearId);
+            var gearEntityName = rgs.GetPartSingle<Parts.EntityName>(gearId);
+
+            var slotsRequired = gearEquippable.EquipmentSlots;
+            //MWCTODO: you have to think about this clearer. an anatomy has multiple ring fingers but only one gauntlet hands.
+            var equipperBodyPlanSlotKeys = Vals.BodyPlan.EquipmentSlotMapping.GetValueOrDefault(equipperAnatomy.BodyPlan, null)
+                ?.Select(kvp => kvp.Key)
+                .Intersect(gearEquippable.EquipmentSlots)
+                .ToList();
+
+            if (equipperBodyPlanSlotKeys == null || equipperBodyPlanSlotKeys.Count() != gearEquippable.EquipmentSlots.Count)
+            {
+                output.Data = $"The {gearEntityName.GeneralName} doesn't fit {equipperEntityName.ProperName}'s anatomy.";
+
+                return output;
+            }
+
+
+
+        }
+
         // MWCTODO: maybe this could be one method for all equips . . . finish wielding first, then think about this.
         // MWCTODO: i'm thinking we want to be able to chain actions from a single UI input, so maybe autoUnwieldExisting shouldn't exist, there should just be an unequip followed by a chained equip.
         /// <summary>
@@ -42,7 +72,7 @@ namespace SampleGame.Sys
 
             var handsRequired = GetWeaponHandsRequired(wielderPhysicalObject, weaponPhysicalObject);
 
-            //MWCTODO: "to wield", what if it's a shield? also, shields should always go in the off-hand. that keeps things simple.
+            //MWCTODO: "to wield", what if it's a shield? (see remarks below about main/off hand auto-determination--we're not going to do that).
             if (handsRequired == WeaponHandsRequired.WeaponTooBig) output.Data = $"The {weaponEntityName.GeneralName} is too big for {wielderEntityName.Pronoun} to wield.";
             if (handsRequired == WeaponHandsRequired.WeaponTooSmall) output.Data = $"The {weaponEntityName.GeneralName} is too small for {wielderEntityName.Pronoun} to wield.";
 
@@ -51,12 +81,12 @@ namespace SampleGame.Sys
                 return output;
             }
 
-            var wielderHandSlots = Vals.BodyPlan.EquipmentSlotMapping.GetValueOrDefault(wielderAnatomy.BodyPlan, null)
+            var wielderBodyPlanHandSlots = Vals.BodyPlan.EquipmentSlotMapping.GetValueOrDefault(wielderAnatomy.BodyPlan, null)
                 ?.GetValueOrDefault(Vals.EquipmentSlots.WieldingHands, null) 
                 ?? new string[] { };
 
             var wielderBlockedSlots = wielderAnatomyModifications.Select(m => m.BodyPlanEquipmentSlotDisabled).ToList();
-            var wielderActiveHandSlots = wielderHandSlots.Except(wielderBlockedSlots).ToList();
+            var wielderActiveHandSlots = wielderBodyPlanHandSlots.Except(wielderBlockedSlots).ToList();
 
             if ((int)handsRequired > wielderActiveHandSlots.Count())
             {
@@ -67,26 +97,19 @@ namespace SampleGame.Sys
                 return output;
             }
 
-            var wielderFreeHandSlots = wielderActiveHandSlots.Except(wielderAnatomy.SlotsEquipped.Keys.Intersect(wielderHandSlots)).ToList();
+            var wielderFreeHandSlots = wielderActiveHandSlots
+                .Except(wielderAnatomy.SlotsEquipped.Keys.Intersect(wielderBodyPlanHandSlots)).ToList();
 
-            //MWCTODO: no, no, no from here down is all human centric again. i did all the easy stuff and didn't do the harder stuff!
             if (wielderFreeHandSlots.Count < (int)handsRequired && autoUnwieldExisting)
             {
-                //MWCTODO: stuff that is unequipped should go into the inventory, or onto the ground, but not just disappear. probably calling inventory system method.
-
-                if (handsRequired == WeaponHandsRequired.Two && wielderAnatomy.SlotsEquipped.Keys.Contains((Vals.BodyPlan.EquipmentSlotsHumanoid.WieldingHandOffhand)))
+                //MWCTODO these items should go into inventory, or perhaps onto the ground. they're just vanishing this way!
+                //this is a very lazy way to handle, but autoUnwieldExisting is probably temporary anyway.
+                foreach (string activeHandSlot in wielderActiveHandSlots)
                 {
-                    wielderAnatomy.SlotsEquipped.Remove(Vals.BodyPlan.EquipmentSlotsHumanoid.WieldingHandOffhand);
+                    wielderAnatomy.SlotsEquipped.Remove(activeHandSlot);
                 }
 
-                if (wielderAnatomy.SlotsEquipped.Keys.Contains((Vals.BodyPlan.EquipmentSlotsHumanoid.WieldingHandOffhand)))
-                {
-                    wielderAnatomy.SlotsEquipped.Remove(Vals.BodyPlan.EquipmentSlotsHumanoid.WieldingHandPrimary);
-                }
-
-                //there should be some output to the user here, maybe not super important given autoUnwieldExisting probably going away.
-
-                wielderFreeHandSlots = wielderActiveHandSlots.Except(wielderAnatomy.SlotsEquipped.Keys.Intersect(wielderHandSlots)).ToList();
+                wielderFreeHandSlots = wielderActiveHandSlots.Except(wielderAnatomy.SlotsEquipped.Keys.Intersect(wielderBodyPlanHandSlots)).ToList();
             }
 
             //for now, we will assume the wielder always wants to equip in the primary hand slot--but this is only a temporary simplification.
@@ -94,38 +117,22 @@ namespace SampleGame.Sys
             {
                 if (handsRequired == WeaponHandsRequired.Two)
                 {
-                    wielderAnatomy.SlotsEquipped[Vals.BodyPlan.EquipmentSlotsHumanoid.WieldingHandPrimary] = weaponId;
-                    wielderAnatomy.SlotsEquipped[Vals.BodyPlan.EquipmentSlotsHumanoid.WieldingHandOffhand] = weaponId;
-                    output.Data = $"{wielderEntityName.ProperName} grips the {weaponEntityName.GeneralName} firmly in both hands.";
-
-                    return output;
+                    wielderAnatomy.SlotsEquipped[wielderFreeHandSlots[0]] = weaponId;
+                    wielderAnatomy.SlotsEquipped[wielderFreeHandSlots[1]] = weaponId;
+                    output.Data = $"{wielderEntityName.ProperName} grips the {weaponEntityName.GeneralName} firmly in two hands.";
                 }
                 else if (handsRequired == WeaponHandsRequired.One)
                 {
-                    //we already know they've got enough total slots, so if the primary slot is already full, they have to have a secondary slot open.
-                    if (wielderAnatomy.SlotsEquipped.ContainsKey(Vals.BodyPlan.EquipmentSlotsHumanoid.WieldingHandPrimary))
-                    {
-                        wielderAnatomy.SlotsEquipped[Vals.BodyPlan.EquipmentSlotsHumanoid.WieldingHandOffhand] = 
-                            wielderAnatomy.SlotsEquipped[Vals.BodyPlan.EquipmentSlotsHumanoid.WieldingHandPrimary];
-                        wielderAnatomy.SlotsEquipped[Vals.BodyPlan.EquipmentSlotsHumanoid.WieldingHandPrimary] = weaponId;
-
-                        output.Data = $"{wielderEntityName.ProperName} swaps gear to {wielderEntityName.Pronoun}[poss-adj] offhand and wields {weaponEntityName.GeneralName} in his primary hand.";
-
-                        return output;
-                    }
-                    else
-                    {
-                        wielderAnatomy.SlotsEquipped[Vals.BodyPlan.EquipmentSlotsHumanoid.WieldingHandPrimary] = weaponId;
-
-                        output.Data = $"{wielderEntityName.ProperName} wields {weaponEntityName.GeneralName} in his primary hand.";
-
-                        return output;
-                    }
-
+                    //had been trying to automatically do main/off hand swapping here. this was a mistake. 
+                    // if you make swapping hands a free action this means the whole main/off thing becomes much simpler.
+                    wielderAnatomy.SlotsEquipped[wielderFreeHandSlots[0]] = weaponId;
+                    output.Data = $"{wielderEntityName.ProperName} wields the {weaponEntityName.GeneralName}.";
                 }
             }
-
-            output.Data = $"{wielderEntityName.ProperName} already has {wielderEntityName.Pronoun}[poss-adj] hands full. Unequip something first.";
+            else
+            {
+                output.Data = $"{wielderEntityName.ProperName} already has {wielderEntityName.Pronoun}[poss-adj] hands full. Unequip something first.";
+            }
 
             return output;
         }
@@ -138,7 +145,7 @@ namespace SampleGame.Sys
         /// </summary>
         internal static WeaponHandsRequired GetWeaponHandsRequired(Parts.PhysicalObject wielderPhysicalObject, Parts.PhysicalObject weaponPhysicalObject)
         {
-            //MWCTODO: deal with pobjs of "none" or "anysize". will need to extend WeaponHandsRequired
+            //MWCTODO: deal with pobjs of "none". will need to extend WeaponHandsRequired
 
             int wielderSizeInt = Vals.Size.SizeToInt.GetValueOrDefault(wielderPhysicalObject.Size ?? "", _defaultWielderSizeInt);
             int weaponWieldSizeInt = Vals.Size.SizeToInt.GetValueOrDefault(weaponPhysicalObject.Size ?? "", _defaultWeaponWieldSizeInt);

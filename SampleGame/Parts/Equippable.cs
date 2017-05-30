@@ -9,7 +9,8 @@ namespace SampleGame.Parts
     /// </summary>
     public class Equippable : EntropyEcsCore.EcsEntityPart
     {
-        public string EquipmentSlot { get; set; }
+        //normally this will be a single equipment slot, but some items might require several slots at once.
+        public List<string> EquipmentSlots { get; set; } = new List<string>();
 
 
     }

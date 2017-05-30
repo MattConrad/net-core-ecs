@@ -29,7 +29,6 @@ namespace SampleGame.Vals
         public const string Mountain = nameof(Mountain);
         public const string Special = nameof(Special);
         public const string None = nameof(None);
-        public const string AnySize = nameof(AnySize);
     }
 
 }
