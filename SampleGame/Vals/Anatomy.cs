@@ -11,6 +11,15 @@ namespace SampleGame.Vals
         public const string Avian = nameof(Avian);
         public const string Insect = nameof(Insect);
 
+        //MWCTODO: we need better names here. the key and value are not distinctly enough named. 
+        // when I said BodyPlanEquipmentSlotDisabled in AnatomyModifier, it wasn't immediately clear what that meant.
+        // really, this whole mapping is SUPER FLEXIBLE but it is also SUPER CONFUSING. i wrote it like 2 days ago
+        // and I'm already all confused about how it works.
+        // i'm now thinking this dictionary mapping has to go. something simpler where each body plan has a simple list of equipment slots.
+        // it's OK if the same slot is duplicated, so humans would have [..., RingFinger, RingFinger, GauntletHands, ...]
+        // i think we have to do this, or just be ??? every time we work with equipment and anatomy, which is no good.
+
+
         //if there are multiple mappings for a slot, the highest priority should always come first, and descending from there.
         public static readonly Dictionary<string, Dictionary<string, string[]>> EquipmentSlotMapping = new Dictionary<string, Dictionary<string, string[]>>
         {

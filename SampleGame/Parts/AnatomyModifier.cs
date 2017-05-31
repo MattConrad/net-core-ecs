@@ -13,6 +13,7 @@ namespace SampleGame.Parts
     /// </summary>
     public class AnatomyModifier : EntropyEcsCore.EcsEntityPart
     {
+        //MWCTODO: this name is ambiguous--does it mean 
         public string BodyPlanEquipmentSlotDisabled { get; set; }
     }
 }

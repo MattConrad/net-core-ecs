@@ -36,10 +36,9 @@ namespace SampleGame.Sys
             var gearEquippable = rgs.GetPartSingle<Parts.Equippable>(gearId);
             var gearEntityName = rgs.GetPartSingle<Parts.EntityName>(gearId);
 
-            var slotsRequired = gearEquippable.EquipmentSlots;
-            //MWCTODO: you have to think about this clearer. an anatomy has multiple ring fingers but only one gauntlet hands.
+            //this is a little tricky: count two anatomy ring fingers as [RingFingers, RingFingers], not [RingFingerPrimary, RingFingerSecondary].
             var equipperBodyPlanSlotKeys = Vals.BodyPlan.EquipmentSlotMapping.GetValueOrDefault(equipperAnatomy.BodyPlan, null)
-                ?.Select(kvp => kvp.Key)
+                ?.SelectMany(kvp => kvp.Value.Select(v => kvp.Key))
                 .Intersect(gearEquippable.EquipmentSlots)
                 .ToList();
 
@@ -49,6 +48,20 @@ namespace SampleGame.Sys
 
                 return output;
             }
+
+            var equipperAllSlots = Vals.BodyPlan.EquipmentSlotMapping.GetValueOrDefault(equipperAnatomy.BodyPlan, null)
+                ?.SelectMany(kvp => kvp.Value.Select(v => new { kvp.Key, Value = v }))
+                .ToList();
+            var equipperBlockedSlots = equipperAnatomyModifications.Select(m => m.BodyPlanEquipmentSlotDisabled).ToList();
+            var equipperActiveSlots = 
+
+            //var wielderBodyPlanHandSlots = Vals.BodyPlan.EquipmentSlotMapping.GetValueOrDefault(wielderAnatomy.BodyPlan, null)
+            //    ?.GetValueOrDefault(Vals.EquipmentSlots.WieldingHands, null)
+            //    ?? new string[] { };
+            //var wielderBlockedSlots = wielderAnatomyModifications.Select(m => m.BodyPlanEquipmentSlotDisabled).ToList();
+            //var wielderActiveHandSlots = wielderBodyPlanHandSlots.Except(wielderBlockedSlots).ToList();
+            //var wielderFreeHandSlots = wielderActiveHandSlots
+            //    .Except(wielderAnatomy.SlotsEquipped.Keys.Intersect(wielderBodyPlanHandSlots)).ToList();
 
 
 
