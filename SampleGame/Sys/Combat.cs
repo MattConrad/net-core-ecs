@@ -135,7 +135,8 @@ namespace SampleGame.Sys
             //var attackerEquipment = Container.GetEntityIdsFromFirstTagged(rgs, attackerId, Vals.ContainerTag.Equipped);
 
             //MWCTODO: no, this is human centric again.
-            long attackerWeaponId = attackerEquipment.GetValueOrDefault(Vals.BodyPlan.EquipmentSlotsHumanoid.WieldingHandPrimary, 0L);
+            //long attackerWeaponId = attackerEquipment.GetValueOrDefault(Vals.BodyPlan.EquipmentSlotsHumanoid.WieldingHandPrimary, 0L);
+            long attackerWeaponId = 0; //MWCTODO: erp
 
             //MWCTODO: no, a weapon might have multiple damagers attached.
             Parts.Damager attackerWeapon = attackerWeaponId == 0L ? null : rgs.GetParts<Parts.Damager>(attackerWeaponId).FirstOrDefault();

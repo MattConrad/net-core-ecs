@@ -17,7 +17,7 @@ namespace SampleGame
             long armorId = Blueprinter.GetEntityFromBlueprint(rgs, armorBlueprintName);
             long weaponId = Blueprinter.GetEntityFromBlueprint(rgs, weaponBlueprintName);
 
-            Sys.Equipment.WieldWeapon(rgs, agentId, weaponId, true);
+            Sys.Equipment.WieldWeapon(rgs, agentId, weaponId);
 
             //WMCTODO: we haven't fixed armor yet!
 
