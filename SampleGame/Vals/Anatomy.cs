@@ -11,6 +11,10 @@ namespace SampleGame.Vals
         public const string Avian = nameof(Avian);
         public const string Insect = nameof(Insect);
 
+        /// <summary>
+        /// This is only used to initialize the actual anatomy component for the first time. It should not be referenced
+        /// for any entity once anatomy creation is complete.
+        /// </summary>
         public static readonly Dictionary<string, string[]> BodyPlanEquipmentSlots = new Dictionary<string, string[]>
         {
             [Humanoid] = new string[]

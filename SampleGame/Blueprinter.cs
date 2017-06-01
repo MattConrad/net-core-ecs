@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using EntropyEcsCore;
 //using Newtonsoft.Json;
 
@@ -45,7 +47,11 @@ namespace SampleGame
             {
                 part.Id = 0;
                 if (part is Parts.Container) ((Parts.Container)part).EntityIds.Clear();
-                if (part is Parts.Anatomy) ((Parts.Anatomy)part).SlotsEquipped.Clear();
+                if (part is Parts.Anatomy)
+                {
+                    var anatomy = (Parts.Anatomy)part;
+                    anatomy.SlotsEquipped = GetClearedAnatomySlotsEquipped(anatomy.SlotsEquipped);
+                } 
             }
 
             return rgs.SerializeEntityParts(revisedPartsList);
@@ -58,5 +64,9 @@ namespace SampleGame
             return rgs.CreateEntity(blueprintJson);
         }
 
+        private static List<KeyValuePair<string, long>> GetClearedAnatomySlotsEquipped(List<KeyValuePair<string, long>> origSlotsEquipped)
+        {
+            return origSlotsEquipped.Select(s => new KeyValuePair<string, long>(s.Key, 0)).ToList();
+        }
     }
 }

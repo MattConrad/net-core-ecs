@@ -56,7 +56,7 @@ namespace SampleGame.Parts
         /// <summary>
         /// If the object is equippable, what slot does it occupy? Most items aren't equippable and so this will be null.
         /// </summary>
-        public string EquipmentSlot { get; set; }
+        public string EquipmentSlotName { get; set; }
 
         /// <summary>
         /// If the object is equippable, but it is special in what slots it occupies, this gives a code referring to detailed logic about its specialness.

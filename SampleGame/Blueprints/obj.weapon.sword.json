@@ -8,7 +8,7 @@
     "DefaultDamageMultiplier": 1.0,
     "Weight": 0.0,
     "Size": "Gnome",
-    "WieldableSize": "Human",
+    "WieldableSingleHandSize": "Goliath",
     "Id": 0
   },
   {

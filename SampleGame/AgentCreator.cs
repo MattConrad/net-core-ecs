@@ -17,15 +17,25 @@ namespace SampleGame
             long armorId = Blueprinter.GetEntityFromBlueprint(rgs, armorBlueprintName);
             long weaponId = Blueprinter.GetEntityFromBlueprint(rgs, weaponBlueprintName);
 
-            Sys.Equipment.WieldWeapon(rgs, agentId, weaponId);
+            var anatomy = rgs.GetPartSingle<Parts.Anatomy>(agentId);
 
-            //WMCTODO: we haven't fixed armor yet!
+            if (!anatomy.SlotsEquipped.Any())
+            {
+                anatomy.SlotsEquipped = GetSlotsEquippedForBodyPlan(anatomy.BodyPlan);
+            }
 
-            //packPart.EntityIds.Add(armorId);
-            //packPart.EntityIds.Add(weaponId);
+            var wieldResults = Sys.Equipment.WieldWeapon(rgs, agentId, weaponId);
+            var armorResults = Sys.Equipment.Equip(rgs, agentId, armorId, false);
 
             return agentId;
         }
+
+        //this wants a better home eventually.
+        private static List<KeyValuePair<string, long>> GetSlotsEquippedForBodyPlan(string bodyPlan)
+        {
+            return Vals.BodyPlan.BodyPlanEquipmentSlots[bodyPlan].Select(s => new KeyValuePair<string, long>(s, 0)).ToList();
+        }
+
     }
 
 }

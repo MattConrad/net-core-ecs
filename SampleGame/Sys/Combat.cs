@@ -84,6 +84,7 @@ namespace SampleGame.Sys
             return ResolveSingleTargetMelee(rgs, attackerId, targetId, Rando.GetRange5);
         }
 
+        //MWCTODO: we rewrote a bunch of stuff, but does any of it do what we meant?
         // do we want to pass in the random function for better testing? not sure, but let's try it.
         public static List<Messages.Combat> ResolveSingleTargetMelee(EcsRegistrar rgs, long attackerId, long targetId, Func<int> random0to5)
         {
@@ -123,31 +124,31 @@ namespace SampleGame.Sys
                 : 0m;
 
             var targetPhysicalObject = rgs.GetPartSingle<Parts.PhysicalObject>(targetId);
-            var targetEquipment = rgs.GetPartSingle<Parts.Anatomy>(targetId).SlotsEquipped;
-            //var targetEquipment = Container.GetEntityIdsFromFirstTagged(rgs, targetId, Vals.ContainerTag.Equipped);
+            var targetEquipmentIds = rgs.GetPartSingle<Parts.Anatomy>(targetId).SlotsEquipped.Where(s => s.Value != 0).Select(s => s.Value).ToList();
 
-            // MWCTODO: this don't cut it any more, we need to work with multiple slots at once.
-            var targetArmor = targetEquipment.Values.SelectMany(eid => rgs.GetParts<Parts.DamagePreventer>(eid)).FirstOrDefault();
+            var targetDamagePreventers = targetEquipmentIds.SelectMany(eid => rgs.GetParts<Parts.DamagePreventer>(eid)).ToList();
 
-            //later, we will have natural weapons and whatever you're wielding, and you probably only get one attack at a time.
+            //later, we will have natural weapons and whatever you're wielding, and you probably only get one attack at a time. also, watch for shield in first slot (or maybe player has to).
             //  this relates to the clock/timer, however that ends up working.
-            var attackerEquipment = rgs.GetPartSingle<Parts.Anatomy>(attackerId).SlotsEquipped;
-            //var attackerEquipment = Container.GetEntityIdsFromFirstTagged(rgs, attackerId, Vals.ContainerTag.Equipped);
+            var attackerWieldingSlots = rgs.GetPartSingle<Parts.Anatomy>(attackerId).SlotsEquipped
+                .Where(s => s.Key == Vals.BodyParts.WieldObjectAppendage && s.Value != 0)
+                .ToList();
 
-            //MWCTODO: no, this is human centric again.
-            //long attackerWeaponId = attackerEquipment.GetValueOrDefault(Vals.BodyPlan.EquipmentSlotsHumanoid.WieldingHandPrimary, 0L);
-            long attackerWeaponId = 0; //MWCTODO: erp
+            long attackerWeaponId = attackerWieldingSlots.Any() ? attackerWieldingSlots.First().Value : 0;
 
-            //MWCTODO: no, a weapon might have multiple damagers attached.
-            Parts.Damager attackerWeapon = attackerWeaponId == 0L ? null : rgs.GetParts<Parts.Damager>(attackerWeaponId).FirstOrDefault();
+            //MWCTODO: this would be a place to handle natural weaponry.
+            var attackerDamagers = attackerWeaponId == 0L ? new List<Parts.Damager>() : rgs.GetParts<Parts.Damager>(attackerWeaponId).ToList();
 
-            var damageAttempted = (attackerWeapon?.DamageAmount ?? 0) * finalAttackMultiplier;
-            var damagePrevented = targetPhysicalObject.DefaultDamageThreshold + targetArmor?.DamageThreshold ?? 0;
+            //MWCTODO: this doesn't address damage types at all. that's going to be . . . interesting when you get there.
+            var damageAttempted = attackerDamagers.Sum(d => d.DamageAmount) * finalAttackMultiplier;
+            var damagePrevented = targetPhysicalObject.DefaultDamageThreshold + targetDamagePreventers.Sum(p => p.DamageThreshold);
             msg.AttemptedDamage = damageAttempted;
 
-            //so we apply crit/attack multipliers first, then we subtract damage prevention, then we apply default damage multiplier and armor multiplier. whew!
+            //so we apply crit/attack multipliers first, then we subtract damage prevention, then we apply default damage multiplier and armor multipliers. whew!
             var damageDealt = Math.Max(0, 
-                (damageAttempted - damagePrevented) * targetPhysicalObject.DefaultDamageMultiplier * (targetArmor?.DamageMultiplier ?? 1m));
+                (damageAttempted - damagePrevented) 
+                * targetPhysicalObject.DefaultDamageMultiplier 
+                * (targetDamagePreventers.Select(p => p.DamageMultiplier).Aggregate(1m, (p1, p2) =>  p1 * p2)));
             msg.NetDamage = damageDealt;
 
             targetPhysicalObject.Condition = targetPhysicalObject.Condition - (int)damageDealt;
