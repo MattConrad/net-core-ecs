@@ -84,7 +84,6 @@ namespace SampleGame.Sys
             return ResolveSingleTargetMelee(rgs, attackerId, targetId, Rando.GetRange5);
         }
 
-        //MWCTODO: we rewrote a bunch of stuff, but does any of it do what we meant?
         // do we want to pass in the random function for better testing? not sure, but let's try it.
         public static List<Messages.Combat> ResolveSingleTargetMelee(EcsRegistrar rgs, long attackerId, long targetId, Func<int> random0to5)
         {
@@ -119,7 +118,7 @@ namespace SampleGame.Sys
             msg.NetActorRoll = netAttack;
 
             //a good attack gets whatever the attack crit damage multiplier is, a barely-attack gets a .5, and less gets a 0.
-            decimal finalAttackMultiplier = (netAttack > 1) ? attackCritMultiplier 
+            decimal finalAttackMultiplier = (netAttack > 1) ? attackCritMultiplier
                 : (netAttack == 1) ? 0.5m
                 : 0m;
 
@@ -135,9 +134,9 @@ namespace SampleGame.Sys
                 .ToList();
 
             long attackerWeaponId = attackerWieldingSlots.Any() ? attackerWieldingSlots.First().Value : 0;
-
-            //MWCTODO: this would be a place to handle natural weaponry.
-            var attackerDamagers = attackerWeaponId == 0L ? new List<Parts.Damager>() : rgs.GetParts<Parts.Damager>(attackerWeaponId).ToList();
+            var attackerDamagers = (attackerWeaponId == 0L)
+                ? GetNaturalWeapon(rgs.GetPartSingle<Parts.Anatomy>(attackerId).BodyPlan)
+                : rgs.GetParts<Parts.Damager>(attackerWeaponId).ToList();
 
             //MWCTODO: this doesn't address damage types at all. that's going to be . . . interesting when you get there.
             var damageAttempted = attackerDamagers.Sum(d => d.DamageAmount) * finalAttackMultiplier;
@@ -145,10 +144,10 @@ namespace SampleGame.Sys
             msg.AttemptedDamage = damageAttempted;
 
             //so we apply crit/attack multipliers first, then we subtract damage prevention, then we apply default damage multiplier and armor multipliers. whew!
-            var damageDealt = Math.Max(0, 
-                (damageAttempted - damagePrevented) 
-                * targetPhysicalObject.DefaultDamageMultiplier 
-                * (targetDamagePreventers.Select(p => p.DamageMultiplier).Aggregate(1m, (p1, p2) =>  p1 * p2)));
+            var damageDealt = Math.Max(0,
+                (damageAttempted - damagePrevented)
+                * targetPhysicalObject.DefaultDamageMultiplier
+                * (targetDamagePreventers.Select(p => p.DamageMultiplier).Aggregate(1m, (p1, p2) => p1 * p2)));
             msg.NetDamage = damageDealt;
 
             targetPhysicalObject.Condition = targetPhysicalObject.Condition - (int)damageDealt;
@@ -185,12 +184,25 @@ namespace SampleGame.Sys
             {
                 case 5: return 4;
                 case 4: return 2;
-                case -4: 
+                case -4:
                 case -5: return 0;
                 default: return 1;
             }
         }
 
+        private static List<Parts.Damager> GetNaturalWeapon(string bodyPlan)
+        {
+            switch(bodyPlan)
+            {
+                case Vals.BodyPlan.Humanoid:
+                    return new List<Parts.Damager>{ 
+                        new Parts.Damager {  DamageAmount = 1000, DamageType = Vals.DamageType.MechanicalBlunt }
+                    };
+                default:
+                    return new List<Parts.Damager>{ };
+            }
+
+        }
 
     }
 }

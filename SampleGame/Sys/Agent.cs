@@ -7,17 +7,21 @@ namespace SampleGame.Sys
 {
     internal static class Agent
     {
-        //MWCTODO: for now these are fixed, but later they'll vary with context (drop your weapon and you're punching not slashing).
-        public static Dictionary<string, string> GetPossibleActions(EcsRegistrar rgs, long agentId, List<long> battlefieldEnttiyIds)
+        //MWCTODO+: for now these are fixed, but later they'll vary with context (drop your weapon and you're punching not slashing).
+        public static Dictionary<string, string> GetPossibleActions(EcsRegistrar rgs, long agentId, List<long> battlefieldEntityIds)
         {
             var targetActions = new Dictionary<string, string>();
             //this is defective for many reasons. the general Dictionary<string, string> concept isn't really good, but 
             // relying on entity proper name and those all being unique, no not good at all.
-            foreach(long id in battlefieldEnttiyIds)
+            foreach(long id in battlefieldEntityIds)
             {
                 if (id == agentId) continue;
 
-                var entityName = rgs.GetParts<Parts.EntityName>(id).Single();
+                var entityName = rgs.GetPartSingle<Parts.EntityName>(id);
+                var entityAgent = rgs.GetPartSingle<Parts.Agent>(id);
+
+                if (entityAgent.CombatStatusTags.Intersect(Vals.CombatStatusTag.CombatTerminalStatuses).Any()) continue;
+                
                 targetActions.Add($"Attack Melee {entityName.ProperName}", $"{Vals.CombatAction.AttackMelee} {id}");
             }
 
@@ -26,7 +30,8 @@ namespace SampleGame.Sys
                 ["Switch To AI (for testing)"] = Vals.CombatAction.SwitchToAI,
                 ["Stance (Defensive)"] = Vals.CombatAction.StanceDefensive,
                 ["Stance (Stand Ground)"] = Vals.CombatAction.StanceStandGround,
-                ["Stance (Aggressive)"] = Vals.CombatAction.StanceAggressive
+                ["Stance (Aggressive)"] = Vals.CombatAction.StanceAggressive,
+                ["Doooo Nothing"] = Vals.CombatAction.DoNothing
             };
 
             return targetActions
@@ -35,7 +40,7 @@ namespace SampleGame.Sys
                 .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
         }
 
-        internal static string GetAgentCombatAction(EcsRegistrar rgs, long globalId, string attackerAI, long attackerId, List<long> battlefieldEntityIds)
+        internal static string GetAgentAICombatAction(EcsRegistrar rgs, long globalId, string attackerAI, long attackerId, List<long> battlefieldEntityIds)
         {
             if (attackerAI == Vals.AI.MeleeOnly) return CombatActionMeleeOnly(rgs, globalId, attackerId, battlefieldEntityIds);
 

@@ -12,9 +12,6 @@ namespace SampleGame.Parts
         // is used for action determination. i haven't thought about how those will work yet, but we can
         // start with basic melee only.
 
-        //MWCTODO: we're going to need some way of polling the entities to see what actions are available for a given entity.
-        // this might be a good place for an interface, because lots of different types of parts might want to weigh in on that question.
-
         public string DefaultCombatAI { get; set; }
         public string ActiveCombatAI { get; set; }
 

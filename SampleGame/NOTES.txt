@@ -1,6 +1,5 @@
 ﻿Consider unit testing. How important is it? How well can we test the static classes?
 
-TODO: recategories MWCTODOs into priority levels, there's too many for just one level. MWCTODO1, MWCTODO5, MWCTODO9, with 1 being do-soonest?
 
 TODO: emit list of supported actions for specified (and/or current) mode
 TODO: weapons/armor droppable

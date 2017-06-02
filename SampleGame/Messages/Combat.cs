@@ -31,7 +31,7 @@ namespace SampleGame.Messages
         internal string PrimaryDamageType { get; set; }
         internal string PrimaryDamagePreventer { get; set; }
         internal decimal AttemptedDamage { get; set; }
-        //MWCTODO: these two are wrong, they have to fit the dam resistance model better.
+        //MWCTODO+: these two are wrong, they have to fit the dam resistance model better.
         internal decimal DefaultPreventedDamage { get; set; }
         internal decimal ProtectionPreventedDamage { get; set; }
 

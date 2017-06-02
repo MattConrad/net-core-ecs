@@ -30,7 +30,7 @@ namespace SampleGame.Sys
                     }
                     else
                     {
-                        agentActionSet = Agent.GetAgentCombatAction(rgs, globalId, battlefieldAgent.ActiveCombatAI, agentId, battlefieldEntityIds);
+                        agentActionSet = Agent.GetAgentAICombatAction(rgs, globalId, battlefieldAgent.ActiveCombatAI, agentId, battlefieldEntityIds);
                     }
 
                     //we cheat a bit here, with knowledge that won't stay true forever.

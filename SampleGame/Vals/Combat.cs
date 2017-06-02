@@ -26,6 +26,7 @@ namespace SampleGame.Vals
 
     public static class DamageType
     {
+        public const string MechanicalBlunt = nameof(MechanicalBlunt);
         public const string MechanicalPiercing = nameof(MechanicalPiercing);
         public const string MechanicalSlashing = nameof(MechanicalSlashing);
     }

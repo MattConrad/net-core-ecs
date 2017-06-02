@@ -1,0 +1,30 @@
+[
+  {
+    "$type": "SampleGame.Parts.PhysicalObject, SampleGame",
+    "Corporeal": true,
+    "Moveable": true,
+    "Condition": 10000,
+    "DefaultDamageThreshold": 0,
+    "DefaultDamageMultiplier": 1.0,
+    "Weight": 0.0,
+    "Size": "Gnome",
+    "WieldableSingleHandSize": "Goliath",
+    "Id": 0
+  },
+  {
+    "$type": "SampleGame.Parts.EntityName, SampleGame",
+    "ProperName": "",
+    "GeneralName": "claymore",
+    "ObscuredName": null,
+    "ShortDescription": "claymore",
+    "LongDescription": null,
+    "Pronoun": null,
+    "Id": 0
+  },
+  {
+    "$type": "SampleGame.Parts.Damager, SampleGame",
+    "DamageType": "MechanicalSlashing",
+    "DamageAmount": 5000,
+    "Id": 0
+  }
+]
