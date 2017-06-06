@@ -8,6 +8,9 @@ namespace NetCoreEcsConsole
     {
         static void Main(string[] args)
         {
+            var actionKeyboardMappings = GetInitialActionKeyboardMappings();
+            var targetKeyboardMappings = new Dictionary<char, Dictionary<char, ActionChosen>>();
+
             var game = new Game(SendPlayerInput);
 
             //this might not even happen until the game has started and presented the player with an initial scenario.
@@ -25,10 +28,28 @@ namespace NetCoreEcsConsole
             Console.ReadLine();
         }
 
+        private static Dictionary<char, string> GetInitialActionKeyboardMappings()
+        {
+            var map = new Dictionary<char, string>();
+
+            map.Add('a', SampleGame.Vals.CombatAction.AttackWeaponMelee);
+            map.Add('f', SampleGame.Vals.CombatAction.AttackWeaponRanged);
+            map.Add('c', SampleGame.Vals.CombatAction.CastSpell);
+            map.Add('z', SampleGame.Vals.CombatAction.SwitchToAI);
+
+            return map;
+        }
+
         public static string SendPlayerInput(Dictionary<string, string> heroActionDict)
         {
             var actionInputSet = GetKeysToActions(heroActionDict);
             return GetHeroAction(actionInputSet);
+        }
+
+        public static ActionChosen SendPlayerInput2(Dictionary<string, string> heroActionDict)
+        {
+            //var actionInputSet = GetKeysToActions2(heroActionDict);
+            //return GetHeroAction2(actionInputSet);
         }
 
         static Dictionary<char, TextActionPair> GetKeysToActions(Dictionary<string, string> heroActionDict)

@@ -22,7 +22,7 @@ namespace SampleGame.Sys
 
                 if (entityAgent.CombatStatusTags.Intersect(Vals.CombatStatusTag.CombatTerminalStatuses).Any()) continue;
                 
-                targetActions.Add($"Attack Melee {entityName.ProperName}", $"{Vals.CombatAction.AttackMelee} {id}");
+                targetActions.Add($"Attack Melee {entityName.ProperName}", $"{Vals.CombatAction.AttackWeaponMelee} {id}");
             }
 
             var standardActions = new Dictionary<string, string>
@@ -64,7 +64,7 @@ namespace SampleGame.Sys
                 if (recordedIds.Contains(agentWieldedIds[i])) continue;
 
                 //MWCTODO: this gets fancier when we introduce ranged weaponry. we'll need to check if there are any enemies in range, for one thing.
-                string attackType = Vals.CombatAction.AttackMelee;
+                string attackType = Vals.CombatAction.AttackWeaponMelee;
 
                 //MWCTODO+: don't default to "punch", get the natural weapon type from the anatomy, maybe with a lookup. 
                 string weaponName = (agentWieldedIds[i] == 0) ? "punch" : agentWieldedIdToEntityName[agentWieldedIds[i]].GeneralName;
@@ -72,7 +72,15 @@ namespace SampleGame.Sys
                 //MWCTODO+: this shouldn't default to "hand", but whatever the wielding appendage is called.
                 string mainOrOffhand = (i == 0) ? "main hand" : "offhand";
 
-                var choice = new ActorChoiceSet { ActionWeaponOrSpellName = weaponName, ActionModifier = mainOrOffhand, Action = attackType, WeaponHandIndex = i, DirectObjectEntityId = agentWieldedIds[i] };
+                var choice = new ActorChoicesPossible
+                {
+                    ActionWeaponOrSpellName = weaponName,
+                    ActionModifier = mainOrOffhand,
+                    Action = attackType,
+                    WeaponHandIndex = i,
+                    WeaponEntityId = agentWieldedIds[i],
+                    NextLevelCategory = true
+                };
 
                 possibleCombatActions.SingleTargetMeleeAttacks.Add(choice);
 
@@ -106,7 +114,7 @@ namespace SampleGame.Sys
 
             foreach(string actionText in standardActions.Keys)
             {
-                possibleCombatActions.NonMeleeActions.Add(new ActorChoiceSet { ActionWeaponOrSpellName = actionText, Action = standardActions[actionText] });
+                possibleCombatActions.NonAttackActions.Add(new ActorChoicesPossible { ActionWeaponOrSpellName = actionText, Action = standardActions[actionText] });
             }
 
             return possibleCombatActions;
@@ -147,7 +155,7 @@ namespace SampleGame.Sys
             {
                 var targetId = targetIdsToWeights.First(kvp => kvp.Value == minWeight).Key;
 
-                action = Vals.CombatAction.AttackMelee + " " + targetId;
+                action = Vals.CombatAction.AttackWeaponMelee + " " + targetId;
             }
 
             return action;

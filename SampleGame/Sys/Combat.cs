@@ -20,7 +20,7 @@ namespace SampleGame.Sys
             {
                 return SwitchToAI(rgs, agentId);
             }
-            else if (action == Vals.CombatAction.AttackMelee)
+            else if (action == Vals.CombatAction.AttackWeaponMelee)
             {
                 return ResolveSingleTargetMelee(rgs, agentId, targetId.Value);
             }
@@ -93,7 +93,7 @@ namespace SampleGame.Sys
                 Tick = rgs.NewId(),
                 ActorId = attackerId,
                 TargetId = targetId,
-                ActorAction = Vals.CombatAction.AttackMelee,
+                ActorAction = Vals.CombatAction.AttackWeaponMelee,
                 TargetAction = Vals.CombatAction.Dodge
             };
 
