@@ -30,7 +30,8 @@ namespace SampleGame.Parts
          * 
          */
         /// <summary>
-        /// Equipped includes wielding. This does get a little complicated. See Equipment system.
+        /// Equipped includes wielding. The KVP Key is the name of the slot that is equipped, the Value is the entityId of the 
+        /// weapon that is being equipped. A Value of 0 means nothing is equipped in that slot. See Equipment system for details.
         /// </summary>
         public List<KeyValuePair<string, long>> SlotsEquipped { get; set; } = new List<KeyValuePair<string, long>>();
     }

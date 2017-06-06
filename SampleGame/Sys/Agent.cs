@@ -40,6 +40,78 @@ namespace SampleGame.Sys
                 .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
         }
 
+        public static PossibleCombatActions GetPossibleActions2(EcsRegistrar rgs, long agentId, List<long> battlefieldEntityIds)
+        {
+            var possibleCombatActions = new PossibleCombatActions();
+
+            var agentAnatomy = rgs.GetPartSingle<Parts.Anatomy>(agentId);
+            var agentWieldedIds = agentAnatomy.SlotsEquipped
+                .Where(s => s.Key == Vals.BodyEquipmentSlots.WieldObjectAppendage)
+                .Select(s => s.Value)
+                .ToList();
+            var agentWieldedIdToEntityName = agentWieldedIds
+                .Where(id => id != 0)
+                .Distinct()
+                .Select(id => new { Id = id, Name = rgs.GetPartSingle<Parts.EntityName>(id) } )
+                .ToDictionary(n => n.Id, n => n.Name);
+
+            var recordedIds = new HashSet<long>();
+            //whatever id is wielded in index 0 is the main hand. for now, everything else is the offhand. octopodes have a lot of offhands for now.
+            for (int i = 0; i < agentWieldedIds.Count; i++)
+            {
+                //2 hand weapons shouldn't show up repeatedly.
+                //MWCTODO++: but maybe 2 empty hands with offhand punch should....
+                if (recordedIds.Contains(agentWieldedIds[i])) continue;
+
+                //MWCTODO: this gets fancier when we introduce ranged weaponry. we'll need to check if there are any enemies in range, for one thing.
+                string attackType = Vals.CombatAction.AttackMelee;
+
+                //MWCTODO+: don't default to "punch", get the natural weapon type from the anatomy, maybe with a lookup. 
+                string weaponName = (agentWieldedIds[i] == 0) ? "punch" : agentWieldedIdToEntityName[agentWieldedIds[i]].GeneralName;
+
+                //MWCTODO+: this shouldn't default to "hand", but whatever the wielding appendage is called.
+                string mainOrOffhand = (i == 0) ? "main hand" : "offhand";
+
+                var choice = new ActorChoiceSet { ActionWeaponOrSpellName = weaponName, ActionModifier = mainOrOffhand, Action = attackType, WeaponHandIndex = i, DirectObjectEntityId = agentWieldedIds[i] };
+
+                possibleCombatActions.SingleTargetMeleeAttacks.Add(choice);
+
+                recordedIds.Add(agentWieldedIds[i]);
+            }
+
+            foreach (long id in battlefieldEntityIds)
+            {
+                if (id == agentId) continue;
+
+                var entityName = rgs.GetPartSingleOrDefault<Parts.EntityName>(id);
+                var entityAgent = rgs.GetPartSingleOrDefault<Parts.Agent>(id);
+
+                if (entityName == null || entityAgent == null) continue;
+
+                if (entityAgent.CombatStatusTags.Intersect(Vals.CombatStatusTag.CombatTerminalStatuses).Any()) continue;
+
+                //MWCTODO: again, ranged weaponry will change things.
+                //MWCTODO+: proper name is not correct here (hardly anywhere we're using it, really . . .)
+                possibleCombatActions.MeleeTargets.Add(id, entityName.ProperName);
+            }
+
+            var standardActions = new Dictionary<string, string>
+            {
+                ["Switch To AI (for testing)"] = Vals.CombatAction.SwitchToAI,
+                ["Stance (Defensive)"] = Vals.CombatAction.StanceDefensive,
+                ["Stance (Stand Ground)"] = Vals.CombatAction.StanceStandGround,
+                ["Stance (Aggressive)"] = Vals.CombatAction.StanceAggressive,
+                ["Doooo Nothing"] = Vals.CombatAction.DoNothing
+            };
+
+            foreach(string actionText in standardActions.Keys)
+            {
+                possibleCombatActions.NonMeleeActions.Add(new ActorChoiceSet { ActionWeaponOrSpellName = actionText, Action = standardActions[actionText] });
+            }
+
+            return possibleCombatActions;
+        }
+
         internal static string GetAgentAICombatAction(EcsRegistrar rgs, long globalId, string attackerAI, long attackerId, List<long> battlefieldEntityIds)
         {
             if (attackerAI == Vals.AI.MeleeOnly) return CombatActionMeleeOnly(rgs, globalId, attackerId, battlefieldEntityIds);

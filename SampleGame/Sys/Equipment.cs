@@ -36,7 +36,7 @@ namespace SampleGame.Sys
             var gearEntityName = rgs.GetPartSingle<Parts.EntityName>(gearId);
 
             //someday we'll support gear that occupies multiple slots or varying slots.
-            if (gearPhysicalObject.EquipmentSlotName == Vals.BodyParts.Special) throw new NotImplementedException();
+            if (gearPhysicalObject.EquipmentSlotName == Vals.BodyEquipmentSlots.Special) throw new NotImplementedException();
 
             var equipperAllSlotNames = equipperAnatomy.SlotsEquipped.Select(k => k.Key).ToList();
             var equipperDisabledSlotNames = equipperAnatomyModifications.Select(m => m.EquipmentSlotDisabled).ToList();
@@ -94,8 +94,8 @@ namespace SampleGame.Sys
                 return output;
             }
 
-            var wielderAllHandSlotNames = wielderAnatomy.SlotsEquipped.Select(k => k.Key).Where(s => s == Vals.BodyParts.WieldObjectAppendage).ToList();
-            var wielderDisableddHandSlotNames = wielderAnatomyModifications.Select(m => m.EquipmentSlotDisabled).Where(s => s == Vals.BodyParts.WieldObjectAppendage).ToList();
+            var wielderAllHandSlotNames = wielderAnatomy.SlotsEquipped.Select(k => k.Key).Where(s => s == Vals.BodyEquipmentSlots.WieldObjectAppendage).ToList();
+            var wielderDisableddHandSlotNames = wielderAnatomyModifications.Select(m => m.EquipmentSlotDisabled).Where(s => s == Vals.BodyEquipmentSlots.WieldObjectAppendage).ToList();
             //body plans have lots of duplicate entries, so can't use set-based .Except().
             foreach (var disabled in wielderDisableddHandSlotNames)
             {
@@ -111,7 +111,7 @@ namespace SampleGame.Sys
                 return output;
             }
 
-            var openWielderHandSlots = wielderAnatomy.SlotsEquipped.Where(s => s.Key == Vals.BodyParts.WieldObjectAppendage && s.Value == 0).ToList();
+            var openWielderHandSlots = wielderAnatomy.SlotsEquipped.Where(s => s.Key == Vals.BodyEquipmentSlots.WieldObjectAppendage && s.Value == 0).ToList();
             ////for now, we will assume the wielder always wants to equip in the primary hand slot--but this is only a temporary simplification.
             if (openWielderHandSlots.Count >= (int)handsRequired)
             {
@@ -119,8 +119,8 @@ namespace SampleGame.Sys
                 {
                     wielderAnatomy.SlotsEquipped.Remove(openWielderHandSlots[0]);
                     wielderAnatomy.SlotsEquipped.Remove(openWielderHandSlots[1]);
-                    wielderAnatomy.SlotsEquipped.Add(new KeyValuePair<string, long>(Vals.BodyParts.WieldObjectAppendage, weaponId));
-                    wielderAnatomy.SlotsEquipped.Add(new KeyValuePair<string, long>(Vals.BodyParts.WieldObjectAppendage, weaponId));
+                    wielderAnatomy.SlotsEquipped.Add(new KeyValuePair<string, long>(Vals.BodyEquipmentSlots.WieldObjectAppendage, weaponId));
+                    wielderAnatomy.SlotsEquipped.Add(new KeyValuePair<string, long>(Vals.BodyEquipmentSlots.WieldObjectAppendage, weaponId));
 
                     output.Data = $"{wielderEntityName.ProperName} grips the {weaponEntityName.GeneralName} firmly in two hands.";
                 }
@@ -129,7 +129,7 @@ namespace SampleGame.Sys
                     //had been trying to automatically do main/off hand swapping here. this was a mistake. 
                     // if you make swapping hands a free action this means the whole main/off thing becomes much simpler.
                     wielderAnatomy.SlotsEquipped.Remove(openWielderHandSlots[0]);
-                    wielderAnatomy.SlotsEquipped.Add(new KeyValuePair<string, long>(Vals.BodyParts.WieldObjectAppendage, weaponId));
+                    wielderAnatomy.SlotsEquipped.Add(new KeyValuePair<string, long>(Vals.BodyEquipmentSlots.WieldObjectAppendage, weaponId));
 
                     output.Data = $"{wielderEntityName.ProperName} wields the {weaponEntityName.GeneralName}.";
                 }

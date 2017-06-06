@@ -130,7 +130,7 @@ namespace SampleGame.Sys
             //later, we will have natural weapons and whatever you're wielding, and you probably only get one attack at a time. also, watch for shield in first slot (or maybe player has to).
             //  this relates to the clock/timer, however that ends up working.
             var attackerWieldingSlots = rgs.GetPartSingle<Parts.Anatomy>(attackerId).SlotsEquipped
-                .Where(s => s.Key == Vals.BodyParts.WieldObjectAppendage && s.Value != 0)
+                .Where(s => s.Key == Vals.BodyEquipmentSlots.WieldObjectAppendage && s.Value != 0)
                 .ToList();
 
             long attackerWeaponId = attackerWieldingSlots.Any() ? attackerWieldingSlots.First().Value : 0;

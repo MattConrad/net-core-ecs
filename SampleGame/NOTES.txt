@@ -13,7 +13,7 @@ TODO: pretty text descriptions
 TODO: Fancy text interpolation for messages. Forget tracery, see https://github.com/TheBerkin/Rant instead.
 TODO: combat/noncombat modes
 
-
+TODO: maybe rethink equipment anatomy AGAIN as a bitmask-enum. Int64 would cover lots of body parts, humanoid and exotic. but this is a maybe someday thing. https://gamedev.stackexchange.com/questions/48054/how-to-handle-weapon-slots
 
 don't put logic in parts. sometimes it could plausibly go there, but then there would be some logic in parts and others in systems, and you'd have to guess where the logic was this time.
 parts are data. only data.
