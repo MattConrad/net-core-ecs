@@ -40,9 +40,9 @@ namespace SampleGame.Sys
                 .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
         }
 
-        public static PossibleCombatActions GetPossibleActions2(EcsRegistrar rgs, long agentId, List<long> battlefieldEntityIds)
+        public static CombatChoicesAndTargets GetPossibleActions2(EcsRegistrar rgs, long agentId, List<long> battlefieldEntityIds)
         {
-            var possibleCombatActions = new PossibleCombatActions();
+            var possibleCombatActions = new CombatChoicesAndTargets();
 
             var agentAnatomy = rgs.GetPartSingle<Parts.Anatomy>(agentId);
             var agentWieldedIds = agentAnatomy.SlotsEquipped
@@ -72,17 +72,34 @@ namespace SampleGame.Sys
                 //MWCTODO+: this shouldn't default to "hand", but whatever the wielding appendage is called.
                 string mainOrOffhand = (i == 0) ? "main hand" : "offhand";
 
-                var choice = new ActorChoicesPossible
+                var choice = new AgentActionChoice
                 {
-                    ActionWeaponOrSpellName = weaponName,
-                    ActionModifier = mainOrOffhand,
+                    AgentId = agentId,
+                    Category = Vals.CombatCategory.AllMelee,
+                    Description = $"Melee {weaponName} ({mainOrOffhand})",
                     Action = attackType,
                     WeaponHandIndex = i,
                     WeaponEntityId = agentWieldedIds[i],
-                    NextLevelCategory = true
+                    NextCategory = Vals.CombatCategory.MeleeTarget
                 };
 
-                possibleCombatActions.SingleTargetMeleeAttacks.Add(choice);
+                possibleCombatActions.Choices.Add(choice);
+
+                if (i == 0)
+                {
+                    var primaryChoice = new AgentActionChoice
+                    {
+                        AgentId = agentId,
+                        Category = Vals.CombatCategory.TopLevelAction,
+                        Description = $"Primary Melee {weaponName} ({mainOrOffhand})",
+                        Action = attackType,
+                        WeaponHandIndex = i,
+                        WeaponEntityId = agentWieldedIds[i],
+                        NextCategory = Vals.CombatCategory.MeleeTarget
+                    };
+
+                    possibleCombatActions.Choices.Add(primaryChoice);
+                }
 
                 recordedIds.Add(agentWieldedIds[i]);
             }
@@ -103,19 +120,59 @@ namespace SampleGame.Sys
                 possibleCombatActions.MeleeTargets.Add(id, entityName.ProperName);
             }
 
-            var standardActions = new Dictionary<string, string>
+            //add stances
+            possibleCombatActions.Choices.Add(new AgentActionChoice
             {
-                ["Switch To AI (for testing)"] = Vals.CombatAction.SwitchToAI,
-                ["Stance (Defensive)"] = Vals.CombatAction.StanceDefensive,
-                ["Stance (Stand Ground)"] = Vals.CombatAction.StanceStandGround,
-                ["Stance (Aggressive)"] = Vals.CombatAction.StanceAggressive,
-                ["Doooo Nothing"] = Vals.CombatAction.DoNothing
-            };
+                AgentId = agentId,
+                Category = Vals.CombatCategory.AllStances,
+                Description = "Stance (Defensive)",
+                Action = Vals.CombatAction.StanceDefensive
+            });
+            possibleCombatActions.Choices.Add(new AgentActionChoice
+            {
+                AgentId = agentId,
+                Category = Vals.CombatCategory.AllStances,
+                Description = "Stance (Stand Ground)",
+                Action = Vals.CombatAction.StanceStandGround
+            });
+            possibleCombatActions.Choices.Add(new AgentActionChoice
+            {
+                AgentId = agentId,
+                Category = Vals.CombatCategory.AllStances,
+                Description = "Stance (Aggressive)",
+                Action = Vals.CombatAction.StanceAggressive
+            });
 
-            foreach(string actionText in standardActions.Keys)
+            //add top-level choices that we know are present: note that we already did NextCategory = primary-melee because the description there is context dependent.
+            possibleCombatActions.Choices.Add(new AgentActionChoice
             {
-                possibleCombatActions.NonAttackActions.Add(new ActorChoicesPossible { ActionWeaponOrSpellName = actionText, Action = standardActions[actionText] });
-            }
+                AgentId = agentId,
+                Category = Vals.CombatCategory.TopLevelAction,
+                Description = "All Melee Options",
+                NextCategory = Vals.CombatCategory.AllMelee
+            });
+            possibleCombatActions.Choices.Add(new AgentActionChoice
+            {
+                AgentId = agentId,
+                Category = Vals.CombatCategory.TopLevelAction,
+                Description = "Change Stance",
+                NextCategory = Vals.CombatCategory.AllStances
+            });
+            possibleCombatActions.Choices.Add(new AgentActionChoice
+            {
+                AgentId = agentId,
+                Category = Vals.CombatCategory.TopLevelAction,
+                Description = "Flee",
+                Action = Vals.CombatAction.Flee
+            });
+            possibleCombatActions.Choices.Add(new AgentActionChoice
+            {
+                AgentId = agentId,
+                Category = Vals.CombatCategory.TopLevelAction,
+                Description = "Do Nothing",
+                Action = Vals.CombatAction.DoNothing
+            });
+
 
             return possibleCombatActions;
         }
