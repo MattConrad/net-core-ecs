@@ -85,18 +85,18 @@ namespace NetCoreEcsConsole
                     continue;
                 }
 
-                int i = 49;
-                foreach (string text in heroActionDict.Keys)
-                {
-                    string action = heroActionDict[text];
-                    char letter = Convert.ToChar(i);
-                    i++;
+                //int i = 49;
+                //foreach (string text in heroActionDict.Keys)
+                //{
+                //    string action = heroActionDict[text];
+                //    char letter = Convert.ToChar(i);
+                //    i++;
 
-                    keyToTAP.Add(letter, new TextActionPair { Text = text, Action = action });
+                //    keyToTAP.Add(letter, new TextActionPair { Text = text, Action = action });
 
-                    if (i == 58) i = 65;
-                    if (i > 90) throw new InvalidOperationException("You were supposed to rewrite this long ago.");
-                }
+                //    if (i == 58) i = 65;
+                //    if (i > 90) throw new InvalidOperationException("You were supposed to rewrite this long ago.");
+                //}
             }
 
             return choicesToDisplay;
