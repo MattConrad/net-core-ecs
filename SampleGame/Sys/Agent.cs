@@ -162,8 +162,8 @@ namespace SampleGame.Sys
             {
                 AgentId = agentId,
                 Category = Vals.CombatCategory.TopLevelAction,
-                Description = "Flee",
-                Action = Vals.CombatAction.Flee
+                Description = "Run Away",
+                Action = Vals.CombatAction.RunAway
             });
             possibleCombatActions.Choices.Add(new AgentActionChoice
             {

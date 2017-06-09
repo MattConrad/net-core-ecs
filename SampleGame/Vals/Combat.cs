@@ -23,7 +23,7 @@ namespace SampleGame.Vals
         public static readonly string[] AllStances = new string[] { StanceDefensive, StanceStandGround, StanceAggressive };
 
         public const string DoNothing = nameof(DoNothing);
-        public const string Flee = nameof(Flee);
+        public const string RunAway = nameof(RunAway);
         public const string AttackWeaponMelee = nameof(AttackWeaponMelee);
         public const string AttackWeaponRanged = nameof(AttackWeaponRanged);
         public const string SwitchToAI = nameof(SwitchToAI);

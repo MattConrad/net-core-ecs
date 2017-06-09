@@ -7,7 +7,7 @@ namespace SampleGame
     public static class Switchboard
     {
         //i could see this becoming a separate project eventually.
-        // if so, actor choice categories would need to move here from vals.
+        // if so, actor choice categories would need to move here from vals. also combatcategory (which is poorly named anyway).
     }
 
     public class CombatChoicesAndTargets
