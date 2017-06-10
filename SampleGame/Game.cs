@@ -13,13 +13,13 @@ namespace SampleGame
             public string Examine = nameof(Examine);
         }
 
-        private Func<Dictionary<string, string>, string> ReceivePlayerInputFunc { get; set; }
+        private Func<CombatChoicesAndTargets, ActionChosen> ReceivePlayerInputFunc { get; set; }
         private EcsRegistrar Rgs { get; set; }
 
         private long GlobalId { get; set; }
         private long BattlefieldId { get; set; }
 
-        public Game(Func<Dictionary<string, string>, string> receivePlayerInputFunc)
+        public Game(Func<CombatChoicesAndTargets, ActionChosen> receivePlayerInputFunc)
         {
             this.ReceivePlayerInputFunc = receivePlayerInputFunc;
             this.Rgs = new EcsRegistrar();

@@ -8,7 +8,7 @@ namespace SampleGame.Sys
 {
     internal static class Battlefield
     {
-        internal static IEnumerable<List<Output>> RunBattlefield(EcsRegistrar rgs, long globalId, long battlefieldId, Func<Dictionary<string, string>, string> receivePlayerInput)
+        internal static IEnumerable<List<Output>> RunBattlefield(EcsRegistrar rgs, long globalId, long battlefieldId, Func<CombatChoicesAndTargets, ActionChosen> receivePlayerInput)
         {
             while (true)
             {
@@ -22,11 +22,10 @@ namespace SampleGame.Sys
                     if (battlefieldAgent == null) continue;
                     if (battlefieldAgent.CombatStatusTags.Intersect(Vals.CombatStatusTag.CombatTerminalStatuses).Any()) continue;
 
-                    string agentActionSet;
+                    ActionChosen agentActionSet;
                     if (battlefieldAgent.ActiveCombatAI == Vals.AI.PlayerChoice)
                     {
                         var possibleActions = Agent.GetPossibleActions(rgs, agentId, battlefieldEntityIds);
-                        var possibleActions2 = Agent.GetPossibleActions2(rgs, agentId, battlefieldEntityIds);
                         agentActionSet = receivePlayerInput(possibleActions);
                     }
                     else
@@ -34,11 +33,7 @@ namespace SampleGame.Sys
                         agentActionSet = Agent.GetAgentAICombatAction(rgs, globalId, battlefieldAgent.ActiveCombatAI, agentId, battlefieldEntityIds);
                     }
 
-                    //we cheat a bit here, with knowledge that won't stay true forever.
-                    string[] agentActionStrings = agentActionSet.Split(' ');
-                    long? targetId = agentActionStrings.Length > 1 ? long.Parse(agentActionStrings[1]) : (long?)null;
-
-                    var results = Combat.ProcessAgentAction(rgs, agentId, targetId, agentActionStrings[0]);
+                    var results = Combat.ProcessAgentAction(rgs, agentId, agentActionSet.TargetEntityId, agentActionSet.Action);
 
                     var output = Narrator.OutputForCombatMessages(rgs, results);
 

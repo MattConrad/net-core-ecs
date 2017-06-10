@@ -31,25 +31,119 @@ namespace NetCoreEcsConsole
             Console.ReadLine();
         }
 
-        public static string SendPlayerInput(Dictionary<string, string> heroActionDict)
+        public static ActionChosen SendPlayerInput(CombatChoicesAndTargets choicesAndTargets)
         {
-            var actionInputSet = GetKeysToActions(heroActionDict);
-            return GetHeroAction(actionInputSet);
-        }
-
-        public static ActionChosen SendPlayerInput2(CombatChoicesAndTargets choicesAndTargets)
-        {
-            var keysToActions = GetKeysToActions2(choicesAndTargets);
+            var keysToActions = GetKeysToActions(choicesAndTargets);
             var keysToMeleeTargets = GetKeysToTargets(choicesAndTargets, SampleGame.Vals.CombatCategory.MeleeTarget);
             var keysToRangedTargets = GetKeysToTargets(choicesAndTargets, SampleGame.Vals.CombatCategory.RangedTarget);
 
-            throw new NotImplementedException();
-            //return GetHeroAction2(actionInputSet);
+            return GetHeroAction(keysToActions, keysToMeleeTargets, keysToRangedTargets);
+        }
+
+        private static ActionChosen GetHeroAction(List<ConsoleKeyAndChoice> keysToChoices, List<ConsoleKeyToTarget> keysToMeleeTargets, List<ConsoleKeyToTarget> keysToRangedTargets)
+        {
+            var actionChosen = new ActionChosen();
+
+            string category = SampleGame.Vals.CombatCategory.TopLevelAction;
+
+            //there might be a series of choices before we're done. we'll successively fill in parts of actionChosen as we repeat.
+            Console.WriteLine("Choose an action:");
+            while(true)
+            {
+                //MWCTODO: really ought to implement backspace option here that works same regardless of context.
+                if (category != SampleGame.Vals.CombatCategory.MeleeTarget && category != SampleGame.Vals.CombatCategory.RangedTarget)
+                {
+                    var possibleChoices = keysToChoices.Where(kc => kc.Choice.Category == category).ToList();
+
+                    DisplayCurrentChoices(possibleChoices);
+
+                    var choice = GetChoice(possibleChoices);
+
+                    actionChosen.AgentId = choice.AgentId;
+                    actionChosen.Action = choice.Action;
+                    actionChosen.WeaponEntityId = choice.WeaponEntityId;
+                    actionChosen.WeaponHandIndex = choice.WeaponHandIndex;
+
+                    category = choice.NextCategory;
+                }
+                else
+                {
+                    var keysToTargets = category == SampleGame.Vals.CombatCategory.MeleeTarget ? keysToMeleeTargets : keysToRangedTargets;
+
+                    DisplayCurrentTargets(keysToTargets);
+
+                    actionChosen.TargetEntityId = GetTargetId(keysToTargets);
+
+                    category = null;
+                }
+
+                if (category == null) return actionChosen;
+            }
+        }
+
+        private static void DisplayCurrentChoices(List<ConsoleKeyAndChoice> choices)
+        {
+            foreach (var choice in choices)
+            {
+                string choiceKeyString = GetChoiceKeyString(choice.Cki);
+                Console.WriteLine($"{choiceKeyString.PadRight(10)} : {choice.Choice.Description}");
+            }
+        }
+
+        private static void DisplayCurrentTargets(List<ConsoleKeyToTarget> keysToTargets)
+        {
+            Console.WriteLine("");
+            foreach (var k2t in keysToTargets)
+            {
+                string keyString = GetChoiceKeyString(k2t.Cki);
+                Console.WriteLine($"{keyString.PadRight(10)} : {k2t.TargetDescription}");
+            }
+        }
+
+        private static AgentActionChoice GetChoice(List<ConsoleKeyAndChoice> possibleChoices)
+        {
+            ConsoleKeyInfo cki;
+            while(true)
+            {
+                cki = Console.ReadKey(true);
+
+                var match = possibleChoices.FirstOrDefault(c => c.Cki == cki);
+
+                if (match != null) return match.Choice;
+            }
+        }
+
+        private static long GetTargetId(List<ConsoleKeyToTarget> keysToTargets)
+        {
+            ConsoleKeyInfo cki;
+            while (true)
+            {
+                cki = Console.ReadKey(true);
+
+                var match = keysToTargets.FirstOrDefault(c => c.Cki == cki);
+
+                if (match != null) return match.TargetId;
+            }
+        }
+
+        private static string GetChoiceKeyString(ConsoleKeyInfo cki)
+        {
+            var parts = new List<string>();
+
+            if (cki.Modifiers == ConsoleModifiers.Control) parts.Add("ctrl");
+            if (cki.Modifiers == ConsoleModifiers.Alt) parts.Add("alt");
+
+            parts.Add(cki.Key.ToString().ToUpper());
+
+            return string.Join("-", parts);
         }
 
         private static List<ConsoleKeyToTarget> GetKeysToTargets(CombatChoicesAndTargets choicesAndTargets, string meleeOrRanged)
         {
             long agentId = choicesAndTargets.Choices.Select(c => c.AgentId).Distinct().Single();
+
+            if (!_agentToTargetMappings.ContainsKey(agentId)) _agentToTargetMappings[agentId] = new Dictionary<long, ConsoleKeyToTarget>();
+
             var establishedTargets = _agentToTargetMappings[agentId];
 
             var ckiToTarget = new List<ConsoleKeyToTarget>();
@@ -68,41 +162,26 @@ namespace NetCoreEcsConsole
 
                     var nextOpenConsoleKey = GetNextOpenConsoleKey(new HashSet<char>(), sameLevelChars);
 
-                    ckiToTarget.Add(new ConsoleKeyToTarget { Cki = nextOpenConsoleKey, TargetId = kvp.Key, TargetDescription = kvp.Value });
+                    var newCki = new ConsoleKeyToTarget { Cki = nextOpenConsoleKey, TargetId = kvp.Key, TargetDescription = kvp.Value };
+                    ckiToTarget.Add(newCki);
+                    establishedTargets.Add(kvp.Key, newCki);
                 }
             }
 
             return ckiToTarget;
         }
 
-        static Dictionary<char, TextActionPair> GetKeysToActions(Dictionary<string, string> heroActionDict)
-        {
-            Dictionary<char, TextActionPair> keyToTAP = new Dictionary<char, TextActionPair>();
-
-            int i = 49;
-            foreach (string text in heroActionDict.Keys)
-            {
-                string action = heroActionDict[text];
-                char letter = Convert.ToChar(i);
-                i++;
-
-                keyToTAP.Add(letter, new TextActionPair { Text = text, Action = action });
-
-                if (i == 58) i = 65;
-                if (i > 90) throw new InvalidOperationException("You were supposed to rewrite this long ago.");
-            }
-
-            return keyToTAP;
-        }
-
         //oh god this is terrible, but i just want to move on from it for now.
         //  we need keys to be unique FOR THE SAME GROUP of actions, but they don't need to be unique globally.
-        static List<ConsoleKeyAndChoice> GetKeysToActions2(CombatChoicesAndTargets choicesAndTargets)
+        static List<ConsoleKeyAndChoice> GetKeysToActions(CombatChoicesAndTargets choicesAndTargets)
         {
             var keysAndChoices = new List<ConsoleKeyAndChoice>();
 
             //for now (probably always) we support only a single agent at a time.
             long agentId = choicesAndTargets.Choices.Select(c => c.AgentId).Distinct().Single();
+
+            if (!_agentToActionMappings.ContainsKey(agentId)) _agentToActionMappings[agentId] = new List<ConsoleKeyAndChoice>();
+
             var establishedKeysAndChoices = _agentToActionMappings[agentId];
 
             //ugh, should have a better way of dealing with presets, but this is getting thrown away anyway.
@@ -131,6 +210,7 @@ namespace NetCoreEcsConsole
                 var newCkiAndChoice = new ConsoleKeyAndChoice { Cki = openConsoleKey, Choice = choice };
 
                 establishedKeysAndChoices.Add(newCkiAndChoice);
+                keysAndChoices.Add(newCkiAndChoice);
             }
 
             return keysAndChoices;
@@ -143,6 +223,7 @@ namespace NetCoreEcsConsole
                 char letter = Convert.ToChar(i);
 
                 if (presetChars.Contains(letter)) continue;
+                if (sameLevelChars.Contains(letter)) continue;
 
                 ConsoleKey consoleKey;
                 if (Enum.TryParse(letter.ToString().ToUpper(), true, out consoleKey))
@@ -188,29 +269,6 @@ namespace NetCoreEcsConsole
 
             return new ConsoleKeyAndChoice { Cki = cki, Choice = choice };
         }
-
-        static string GetHeroAction(Dictionary<char, TextActionPair> keyToTextActionPair)
-        {
-            Console.WriteLine("Choose an action:");
-            foreach(char key in keyToTextActionPair.Keys)
-            {
-                Console.WriteLine($"{key}: {keyToTextActionPair[key].Text}");
-            }
-
-            ConsoleKeyInfo cki;
-            while (!keyToTextActionPair.ContainsKey(cki.KeyChar))
-            {
-                cki = Console.ReadKey(true);
-            }
-
-            return keyToTextActionPair[cki.KeyChar].Action;
-        }
-    }
-
-    public class TextActionPair
-    {
-        public string Text { get; set; }
-        public string Action { get; set; }
     }
 
     public class ConsoleKeyAndChoice

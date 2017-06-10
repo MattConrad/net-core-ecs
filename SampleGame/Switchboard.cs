@@ -48,10 +48,11 @@ namespace SampleGame
 
     public class ActionChosen
     {
+        public long AgentId { get; set; }
         public string Action { get; set; }
         public int? WeaponHandIndex { get; set; }
         public long? WeaponEntityId { get; set; }
-        public int? TargetEntityId { get; set; }
+        public long? TargetEntityId { get; set; }
     }
 
 }

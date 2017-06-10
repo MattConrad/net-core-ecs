@@ -8,39 +8,7 @@ namespace SampleGame.Sys
     internal static class Agent
     {
         //MWCTODO+: for now these are fixed, but later they'll vary with context (drop your weapon and you're punching not slashing).
-        public static Dictionary<string, string> GetPossibleActions(EcsRegistrar rgs, long agentId, List<long> battlefieldEntityIds)
-        {
-            var targetActions = new Dictionary<string, string>();
-            //this is defective for many reasons. the general Dictionary<string, string> concept isn't really good, but 
-            // relying on entity proper name and those all being unique, no not good at all.
-            foreach(long id in battlefieldEntityIds)
-            {
-                if (id == agentId) continue;
-
-                var entityName = rgs.GetPartSingle<Parts.EntityName>(id);
-                var entityAgent = rgs.GetPartSingle<Parts.Agent>(id);
-
-                if (entityAgent.CombatStatusTags.Intersect(Vals.CombatStatusTag.CombatTerminalStatuses).Any()) continue;
-                
-                targetActions.Add($"Attack Melee {entityName.ProperName}", $"{Vals.CombatAction.AttackWeaponMelee} {id}");
-            }
-
-            var standardActions = new Dictionary<string, string>
-            {
-                ["Switch To AI (for testing)"] = Vals.CombatAction.SwitchToAI,
-                ["Stance (Defensive)"] = Vals.CombatAction.StanceDefensive,
-                ["Stance (Stand Ground)"] = Vals.CombatAction.StanceStandGround,
-                ["Stance (Aggressive)"] = Vals.CombatAction.StanceAggressive,
-                ["Doooo Nothing"] = Vals.CombatAction.DoNothing
-            };
-
-            return targetActions
-                .Select(d => d)
-                .Union(standardActions.Select(d => d))
-                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-        }
-
-        public static CombatChoicesAndTargets GetPossibleActions2(EcsRegistrar rgs, long agentId, List<long> battlefieldEntityIds)
+        public static CombatChoicesAndTargets GetPossibleActions(EcsRegistrar rgs, long agentId, List<long> battlefieldEntityIds)
         {
             var possibleCombatActions = new CombatChoicesAndTargets();
 
@@ -177,16 +145,16 @@ namespace SampleGame.Sys
             return possibleCombatActions;
         }
 
-        internal static string GetAgentAICombatAction(EcsRegistrar rgs, long globalId, string attackerAI, long attackerId, List<long> battlefieldEntityIds)
+        internal static ActionChosen GetAgentAICombatAction(EcsRegistrar rgs, long globalId, string attackerAI, long attackerId, List<long> battlefieldEntityIds)
         {
             if (attackerAI == Vals.AI.MeleeOnly) return CombatActionMeleeOnly(rgs, globalId, attackerId, battlefieldEntityIds);
 
             throw new ArgumentException($"Attacker AI {attackerAI} not supported.");
         }
 
-        private static string CombatActionMeleeOnly(EcsRegistrar rgs, long globalId, long attackerId, List<long> battlefieldEntityIds)
+        private static ActionChosen CombatActionMeleeOnly(EcsRegistrar rgs, long globalId, long attackerId, List<long> battlefieldEntityIds)
         {
-            string action = Vals.CombatAction.DoNothing;
+            var action = new ActionChosen { Action = Vals.CombatAction.DoNothing, AgentId = attackerId };
 
             var targetIdsToWeights = battlefieldEntityIds
                 .Select(id => new { Id = id, Agent = rgs.GetPartSingleOrDefault<Parts.Agent>(id) })
@@ -212,7 +180,8 @@ namespace SampleGame.Sys
             {
                 var targetId = targetIdsToWeights.First(kvp => kvp.Value == minWeight).Key;
 
-                action = Vals.CombatAction.AttackWeaponMelee + " " + targetId;
+                action.Action = Vals.CombatAction.AttackWeaponMelee;
+                action.TargetEntityId = targetId;
             }
 
             return action;
