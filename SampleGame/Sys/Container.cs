@@ -24,6 +24,9 @@ namespace SampleGame.Sys
             var battlefieldId = rgs.CreateEntity();
             var battlefieldContainer = new Parts.Container { Description = "battlefield", Tag = Vals.ContainerTag.Battlefield, ItemsAreVisible = true, Preposition = "on" };
 
+            //MWCTODO+++: can we make a list of CombatMessages a feature of the battlefield here?
+            //  if we do this, should we make combatmessages parts, that fit into a container?
+
             battlefieldEntityIds = battlefieldEntityIds ?? new long[] { };
             foreach(long entityId in battlefieldEntityIds)
             {

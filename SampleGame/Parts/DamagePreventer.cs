@@ -19,7 +19,5 @@ namespace SampleGame.Parts
         /// A heavy stone door would have something like 0.01.
         /// </summary>
         public decimal DamageMultiplier { get; set; } = 1.0m;
-
-        //MWCTODO: later, ofc, we need lots of damage types and specific protections here.
     }
 }

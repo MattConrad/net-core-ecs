@@ -56,12 +56,29 @@ namespace NetCoreEcsConsole
                         ? keysToMeleeTargets.ToList<IConsoleMap>()
                         : keysToChoices.Where(kc => kc.Choice.Category == category).ToList<IConsoleMap>();
 
-                //MWCTODO: really ought to implement backspace option here that works same regardless of context.
                 DisplayCurrentChoices(possibleChoices2);
 
-                if (category != SampleGame.Vals.CombatCategory.MeleeTarget && category != SampleGame.Vals.CombatCategory.RangedTarget)
+                var response = GetChoiceFromConsoleKeymap(possibleChoices2);
+                if (response.Cki.Key == ConsoleKey.Backspace)
                 {
-                    var choice = (ConsoleKeyAndChoice)GetChoiceFromConsoleKeymap(possibleChoices2);
+                    Console.WriteLine("restart");
+                    Console.WriteLine("");
+                    category = SampleGame.Vals.CombatCategory.TopLevelAction;
+
+                    continue;
+
+                }
+                else if (category == SampleGame.Vals.CombatCategory.MeleeTarget || category == SampleGame.Vals.CombatCategory.RangedTarget)
+                {
+                    var targetSelection = (ConsoleKeyToTarget)response;
+
+                    actionChosen.TargetEntityId = targetSelection.TargetId;
+
+                    return actionChosen;
+                }
+                else
+                {
+                    var choice = (ConsoleKeyAndChoice)response;
 
                     actionChosen.AgentId = choice.Choice.AgentId;
                     actionChosen.Action = choice.Choice.Action;
@@ -69,17 +86,9 @@ namespace NetCoreEcsConsole
                     actionChosen.WeaponHandIndex = choice.Choice.WeaponHandIndex;
 
                     category = choice.Choice.NextCategory;
+
+                    if (choice.Choice.NextCategory == null) return actionChosen;
                 }
-                else
-                {
-                    var choice = (ConsoleKeyToTarget)GetChoiceFromConsoleKeymap(possibleChoices2);
-
-                    actionChosen.TargetEntityId = choice.TargetId;
-
-                    category = null;
-                }
-
-                if (category == null) return actionChosen;
             }
         }
 
@@ -102,7 +111,7 @@ namespace NetCoreEcsConsole
             {
                 cki = Console.ReadKey(true);
 
-                if (cki.Key == ConsoleKey.Backspace) return default(T);
+                if (cki.Key == ConsoleKey.Backspace) return (T)(IConsoleMap)new ConsoleKeyAndChoice { Cki = new ConsoleKeyInfo((char)8, ConsoleKey.Backspace, false, false, false) };
 
                 var match = consoleKeyMap.FirstOrDefault(c => c.Cki == cki);
 

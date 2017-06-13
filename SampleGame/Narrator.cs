@@ -20,19 +20,32 @@ namespace SampleGame
 
                 var actorNames = rgs.GetPartSingle<Parts.EntityName>(msg.ActorId);
 
+                if (Vals.CombatAction.AllStances.Contains(msg.ActorAction))
+                {
+                    result.Data = $"{actorNames.ProperName} assumes a {msg.ActorAction} stance.";
+                    results.Add(result);
+                }
+
+                if (msg.ActorAction == Vals.CombatAction.DoNothing)
+                {
+                    result.Data = $"{actorNames.ProperName} stands still and looks around dumbly. What do?";
+                    results.Add(result);
+                }
+
+                if (msg.ActorAction == Vals.CombatAction.RunAway)
+                {
+                    result.Data = $"{actorNames.ProperName} tries to run away, and {actorNames.Pronoun} feet spin on the floor in a cartoon whirlwind, but nothing actually happens. Uh oh.";
+                    results.Add(result);
+                }
+
                 if (msg.TargetId == 0)
                 {
-                    if (Vals.CombatAction.AllStances.Contains(msg.ActorAction))
-                    {
-                        result.Data = $"{actorNames.ProperName} assumes a {msg.ActorAction} stance.";
-                    }
-                    else
-                    {
-                        result.Data = $"MWCTODO: we don't know what {msg.ActorAction} is.";
-                    }
+                    result.Data = $"MWCTODO: we don't know what {msg.ActorAction} is.";
                     results.Add(result);
-                    continue;
                 }
+
+                //if the result has data, we're done with this iteration.
+                if (!string.IsNullOrEmpty(result.Data)) continue;
 
                 var targetNames = rgs.GetPartSingle<Parts.EntityName>(msg.TargetId);
 
@@ -71,11 +84,7 @@ namespace SampleGame
                 //any fatality or any crit ought to get a special fatality/crit message.
                 if (msg.NetDamage > 7000)
                 {
-                    result.Data = sb.ToString();
-                    results.Add(result);
-                    results.Add(new Output { Category = OutputCategory.Text, Data = "" });
-
-                    result = new Output { Category = OutputCategory.Text, Data = $".  The attack is nearly perfect, and it is devastating. {targetNames.ProperName} is {targetConditionString}.  " };
+                    sb.Append($".  The attack is nearly perfect, and it is devastating. {targetNames.ProperName} is {targetConditionString}.");
                 }
                 else if (msg.NetDamage > 4000)
                 {
