@@ -18,6 +18,9 @@
     <None Update="Blueprints\agent.monster.orc.basic.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Blueprints\obj.weapon.natural.humanoid.standard.punch.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Blueprints\obj.armor.chainmail.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

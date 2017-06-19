@@ -7,12 +7,31 @@ namespace SampleGame.Sys
 {
     internal static class Agent
     {
-        //MWCTODO+: for now these are fixed, but later they'll vary with context (drop your weapon and you're punching not slashing).
-        public static CombatChoicesAndTargets GetPossibleActions(EcsRegistrar rgs, long agentId, List<long> battlefieldEntityIds)
+        public static CombatChoicesAndTargets GetPossibleActions(EcsRegistrar rgs, long globalId, long agentId, List<long> battlefieldEntityIds)
         {
             var possibleCombatActions = new CombatChoicesAndTargets();
 
+            var naturalWeaponsMap = rgs.GetPartSingle<Parts.NaturalWeaponsMap>(globalId);
+
             var agentAnatomy = rgs.GetPartSingle<Parts.Anatomy>(agentId);
+            var agentAnatomyModifers = rgs.GetParts<Parts.AnatomyModifier>(agentId);
+
+            //MWCTODO: uuuuugh. ok, I screwed up. this can't work, because we really need to know WHICH hand was disabled.
+            // there is no way to  have one equipement slot disabled and sometimes be shield hand and sometimes main hand.
+            // we can say disabled is always shield hand first, or always main hand first, but not either one or the other.
+            // i don't remember what I was thinking. maybe disabled is always main hand first, but that still sucks.
+            // i thought it would be a pain in the ass to check both left ring finger and right ring finger, and it would have been, 
+            // but that would have worked, and this won't.
+            // i think i will rewrite this with the bitmask approach--that is interesting, anyway, but i'm not going to do that
+            // right now, we'll redo it later and ignore the messed up part here for a while.
+            var agentWieldingDisabled = agentAnatomyModifers
+                .Where(m => m.EquipmentSlotDisabled == Vals.BodyEquipmentSlots.WieldObjectAppendage)
+                .Select(m => m.EquipmentSlotDisabled)
+                .ToList();
+
+            //MWCTODO+: yanno, there could be other natural weapons not in wielding hands, like bites/kicks.
+            // and you could have, conceivably, a flame-hand gauntlet or a laser eye in your eyesocket
+            // we probably ought to do all slots and not just wieldeds.
             var agentWieldedIds = agentAnatomy.SlotsEquipped
                 .Where(s => s.Key == Vals.BodyEquipmentSlots.WieldObjectAppendage)
                 .Select(s => s.Value)
@@ -34,7 +53,7 @@ namespace SampleGame.Sys
                 //MWCTODO: this gets fancier when we introduce ranged weaponry. we'll need to check if there are any enemies in range, for one thing.
                 string attackType = Vals.CombatAction.AttackWeaponMelee;
 
-                //MWCTODO+: don't default to "punch", get the natural weapon type from the anatomy, maybe with a lookup. 
+                //MWCTODO+++: don't default to "punch", get the natural weapon type from the anatomy, maybe with a lookup. 
                 string weaponName = (agentWieldedIds[i] == 0) ? "punch" : agentWieldedIdToEntityName[agentWieldedIds[i]].GeneralName;
 
                 //MWCTODO+: this shouldn't default to "hand", but whatever the wielding appendage is called.
@@ -143,6 +162,19 @@ namespace SampleGame.Sys
 
 
             return possibleCombatActions;
+        }
+
+        //NOTE: see notes above, but this eventually won't be limited to wielding hands.
+        internal static long GetNaturalWeapon(Parts.NaturalWeaponsMap map, Parts.Anatomy agentAnatomy, string slotName)
+        {
+            if (agentAnatomy.BodyPlan == Vals.BodyPlan.Human && slotName == Vals.BodyEquipmentSlots.WieldObjectAppendage)
+            {
+                return map.NameToNaturalWeaponId[Vals.NaturalWeaponNames.HumanPunch];
+            }
+            else
+            {
+                return 0;
+            }
         }
 
         internal static ActionChosen GetAgentAICombatAction(EcsRegistrar rgs, long globalId, string attackerAI, long attackerId, List<long> battlefieldEntityIds)

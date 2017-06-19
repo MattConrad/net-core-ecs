@@ -33,7 +33,7 @@ namespace SampleGame
         //this wants a better home eventually.
         private static List<KeyValuePair<string, long>> GetSlotsEquippedForBodyPlan(string bodyPlan)
         {
-            return Vals.BodyPlan.BodyPlanEquipmentSlots[bodyPlan].Select(s => new KeyValuePair<string, long>(s, 0)).ToList();
+            return Vals.BodyPlan.OldBodyPlanSlots[bodyPlan].Select(s => new KeyValuePair<string, long>(s, 0)).ToList();
         }
 
     }

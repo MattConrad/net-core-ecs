@@ -1,23 +1,51 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace SampleGame.Vals
 {
     public static class BodyPlan
     {
-        public const string Humanoid = nameof(Humanoid);
-        public const string Quadruped = nameof(Quadruped);
-        public const string Avian = nameof(Avian);
-        public const string Insect = nameof(Insect);
+        public const string Human = nameof(Human);
+        //public const string Quadruped = nameof(Quadruped);
+        //public const string Avian = nameof(Avian);
+        //public const string Insect = nameof(Insect);
+
+        public static readonly Dictionary<string, BodySlots> BodyPlanToSlots = new Dictionary<string, BodySlots>
+            {
+                [Human] = BodySlots.WieldHandRight |
+                    BodySlots.WieldHandLeft |
+                    BodySlots.WieldTwoHanded |
+                    BodySlots.HumanHeadHat |
+                    BodySlots.HumanHeadHelmet |
+                    BodySlots.HumanNeck |
+                    BodySlots.HumanTorso |
+                    BodySlots.HumanWaist |
+                    BodySlots.HumanGroin |
+                    BodySlots.HumanGlovesPair |
+                    BodySlots.HumanBootsPair |
+                    BodySlots.HumanArmLeft |
+                    BodySlots.HumanArmRight |
+                    BodySlots.HumanLegLeft |
+                    BodySlots.HumanLegRight |
+                    BodySlots.HumanWristLeft |
+                    BodySlots.HumanWristRight |
+                    BodySlots.HumanRingFingerLeft |
+                    BodySlots.HumanRingFingerRight |
+                    BodySlots.HumanEyeLeft |
+                    BodySlots.HumanEyeRight |
+                    BodySlots.HumanEarLeft |
+                    BodySlots.HumanEarRight |
+                    BodySlots.HumanNose |
+                    BodySlots.HumanMouth
+            };
 
         /// <summary>
         /// This is only used to initialize the actual anatomy component for the first time. It should not be referenced
         /// for any entity once anatomy creation is complete.
         /// </summary>
-        public static readonly Dictionary<string, string[]> BodyPlanEquipmentSlots = new Dictionary<string, string[]>
+        public static readonly Dictionary<string, string[]> OldBodyPlanSlots = new Dictionary<string, string[]>
         {
-            [Humanoid] = new string[]
+            [Human] = new string[]
             {
                 BodyEquipmentSlots.WieldObjectAppendage,
                 BodyEquipmentSlots.WieldObjectAppendage,
@@ -44,31 +72,6 @@ namespace SampleGame.Vals
                 BodyEquipmentSlots.HumanoidLeg,
                 BodyEquipmentSlots.HumanoidFoot,
                 BodyEquipmentSlots.HumanoidFoot
-            },
-            [Quadruped] = new string[]
-            {
-                BodyEquipmentSlots.VertebrateEye,
-                BodyEquipmentSlots.VertebrateEye,
-                BodyEquipmentSlots.VertebrateEar,
-                BodyEquipmentSlots.VertebrateEar,
-                BodyEquipmentSlots.VertebrateNose,
-                BodyEquipmentSlots.VertebrateMouth,
-                BodyEquipmentSlots.QuadrupedHead,
-                BodyEquipmentSlots.QuadrupedNeck,
-                BodyEquipmentSlots.QuadrupedBody,
-                BodyEquipmentSlots.QuadrupedChest,
-                BodyEquipmentSlots.QuadrupedBack,
-                BodyEquipmentSlots.QuadrupedAbdomen,
-                BodyEquipmentSlots.QuadrupedGroin,
-                BodyEquipmentSlots.QuadrupedLeg,
-                BodyEquipmentSlots.QuadrupedLeg,
-                BodyEquipmentSlots.QuadrupedLeg,
-                BodyEquipmentSlots.QuadrupedLeg,
-                BodyEquipmentSlots.QuadrupedFoot,
-                BodyEquipmentSlots.QuadrupedFoot,
-                BodyEquipmentSlots.QuadrupedFoot,
-                BodyEquipmentSlots.QuadrupedFoot,
-                BodyEquipmentSlots.QuadrupedTail
             }
         };
     }
@@ -115,5 +118,85 @@ namespace SampleGame.Vals
 
         public const string InsectThorax = nameof(InsectThorax);
     }
+
+    [Flags]
+    public enum BodySlots : long
+    {
+        NoSlot = 0b000000000000000000000000000000000000000000000000000000000000000,
+        WieldHandRight = 0b000000000000000000000000000000000000000000000000000000000000001,
+        WieldHandLeft = 0b000000000000000000000000000000000000000000000000000000000000010,
+        WieldTwoHanded = 0b000000000000000000000000000000000000000000000000000000000000100,
+        HumanHeadHat = 0b000000000000000000000000000000000000000000000000000000000001000,
+        HumanHeadHelmet = 0b000000000000000000000000000000000000000000000000000000000010000,
+        HumanNeck = 0b000000000000000000000000000000000000000000000000000000000100000,
+        HumanTorso = 0b000000000000000000000000000000000000000000000000000000001000000,
+        HumanWaist = 0b000000000000000000000000000000000000000000000000000000010000000,
+        HumanGroin = 0b000000000000000000000000000000000000000000000000000000100000000,
+        HumanGlovesPair = 0b000000000000000000000000000000000000000000000000000001000000000,
+        HumanBootsPair = 0b000000000000000000000000000000000000000000000000000010000000000,
+        HumanArmLeft = 0b000000000000000000000000000000000000000000000000000100000000000,
+        HumanArmRight = 0b000000000000000000000000000000000000000000000000001000000000000,
+        HumanLegLeft = 0b000000000000000000000000000000000000000000000000010000000000000,
+        HumanLegRight = 0b000000000000000000000000000000000000000000000000100000000000000,
+        HumanWristLeft = 0b000000000000000000000000000000000000000000000001000000000000000,
+        HumanWristRight = 0b000000000000000000000000000000000000000000000010000000000000000,
+        HumanRingFingerLeft = 0b000000000000000000000000000000000000000000000100000000000000000,
+        HumanRingFingerRight = 0b000000000000000000000000000000000000000000001000000000000000000,
+        HumanEyeLeft = 0b000000000000000000000000000000000000000000010000000000000000000,
+        HumanEyeRight = 0b000000000000000000000000000000000000000000100000000000000000000,
+        HumanEarLeft = 0b000000000000000000000000000000000000000001000000000000000000000,
+        HumanEarRight = 0b000000000000000000000000000000000000000010000000000000000000000,
+        HumanNose = 0b000000000000000000000000000000000000000100000000000000000000000,
+        HumanMouth = 0b000000000000000000000000000000000000001000000000000000000000000,
+        //and we'll pause here until we actually need some of these others.
+        Flags26 = 0b000000000000000000000000000000000000010000000000000000000000000,
+        Flags27 = 0b000000000000000000000000000000000000100000000000000000000000000,
+        Flags28 = 0b000000000000000000000000000000000001000000000000000000000000000,
+        Flags29 = 0b000000000000000000000000000000000010000000000000000000000000000,
+        Flags30 = 0b000000000000000000000000000000000100000000000000000000000000000,
+        Flags31 = 0b000000000000000000000000000000001000000000000000000000000000000,
+        Flags32 = 0b000000000000000000000000000000010000000000000000000000000000000,
+        Flags33 = 0b000000000000000000000000000000100000000000000000000000000000000,
+        Flags34 = 0b000000000000000000000000000001000000000000000000000000000000000,
+        Flags35 = 0b000000000000000000000000000010000000000000000000000000000000000,
+        Flags36 = 0b000000000000000000000000000100000000000000000000000000000000000,
+        Flags37 = 0b000000000000000000000000001000000000000000000000000000000000000,
+        Flags38 = 0b000000000000000000000000010000000000000000000000000000000000000,
+        Flags39 = 0b000000000000000000000000100000000000000000000000000000000000000,
+        Flags40 = 0b000000000000000000000001000000000000000000000000000000000000000,
+        Flags41 = 0b000000000000000000000010000000000000000000000000000000000000000,
+        Flags42 = 0b000000000000000000000100000000000000000000000000000000000000000,
+        Flags43 = 0b000000000000000000001000000000000000000000000000000000000000000,
+        Flags44 = 0b000000000000000000010000000000000000000000000000000000000000000,
+        Flags45 = 0b000000000000000000100000000000000000000000000000000000000000000,
+        Flags46 = 0b000000000000000001000000000000000000000000000000000000000000000,
+        Flags47 = 0b000000000000000010000000000000000000000000000000000000000000000,
+        Flags48 = 0b000000000000000100000000000000000000000000000000000000000000000,
+        Flags49 = 0b000000000000001000000000000000000000000000000000000000000000000,
+        Flags50 = 0b000000000000010000000000000000000000000000000000000000000000000,
+        Flags51 = 0b000000000000100000000000000000000000000000000000000000000000000,
+        Flags52 = 0b000000000001000000000000000000000000000000000000000000000000000,
+        Flags53 = 0b000000000010000000000000000000000000000000000000000000000000000,
+        Flags54 = 0b000000000100000000000000000000000000000000000000000000000000000,
+        Flags55 = 0b000000001000000000000000000000000000000000000000000000000000000,
+        Flags56 = 0b000000010000000000000000000000000000000000000000000000000000000,
+        Flags57 = 0b000000100000000000000000000000000000000000000000000000000000000,
+        Flags58 = 0b000001000000000000000000000000000000000000000000000000000000000,
+        Flags59 = 0b000010000000000000000000000000000000000000000000000000000000000,
+        Flags60 = 0b000100000000000000000000000000000000000000000000000000000000000,
+        Flags61 = 0b001000000000000000000000000000000000000000000000000000000000000,
+        Flags62 = 0b010000000000000000000000000000000000000000000000000000000000000,
+        Special = 0b100000000000000000000000000000000000000000000000000000000000000
+    }
+
+    /// <summary>
+    /// These are both keys for the natural weapons dictionary, and also the names of the natural weapons blueprint.
+    /// </summary>
+    public static class NaturalWeaponNames
+    {
+        public const string HumanPunch = "obj.weapon.natural.humanoid.standard.punch";
+    }
+
+
 
 }

@@ -194,7 +194,7 @@ namespace SampleGame.Sys
         {
             switch(bodyPlan)
             {
-                case Vals.BodyPlan.Humanoid:
+                case Vals.BodyPlan.Human:
                     return new List<Parts.Damager>{ 
                         new Parts.Damager {  DamageAmount = 1000, DamageType = Vals.DamageType.MechanicalBlunt }
                     };

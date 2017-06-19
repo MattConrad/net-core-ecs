@@ -1,0 +1,30 @@
+[
+  {
+    "$type": "SampleGame.Parts.PhysicalObject, SampleGame",
+    "Corporeal": true,
+    "Moveable": false,
+    "Condition": 10000,
+    "DefaultDamageThreshold": 1000000,
+    "DefaultDamageMultiplier": 0,
+    "Weight": 0.0,
+    "Size": "Rabbit",
+    "WieldableSingleHandSize": "Gnome",
+    "Id": 0
+  },
+  {
+    "$type": "SampleGame.Parts.EntityName, SampleGame",
+    "ProperName": "",
+    "GeneralName": "punch",
+    "ObscuredName": null,
+    "ShortDescription": "punch",
+    "LongDescription": null,
+    "Pronoun": "it",
+    "Id": 0
+  },
+  {
+    "$type": "SampleGame.Parts.Damager, SampleGame",
+    "DamageType": "MechanicalBlunt",
+    "DamageAmount": 500,
+    "Id": 0
+  }
+]

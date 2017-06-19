@@ -25,7 +25,7 @@ namespace SampleGame.Sys
                     ActionChosen agentActionSet;
                     if (battlefieldAgent.ActiveCombatAI == Vals.AI.PlayerChoice)
                     {
-                        var possibleActions = Agent.GetPossibleActions(rgs, agentId, battlefieldEntityIds);
+                        var possibleActions = Agent.GetPossibleActions(rgs, globalId, agentId, battlefieldEntityIds);
                         agentActionSet = receivePlayerInput(possibleActions);
                     }
                     else

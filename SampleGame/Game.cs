@@ -13,10 +13,10 @@ namespace SampleGame
             public string Examine = nameof(Examine);
         }
 
-        private Func<CombatChoicesAndTargets, ActionChosen> ReceivePlayerInputFunc { get; set; }
-        private EcsRegistrar Rgs { get; set; }
+        private Func<CombatChoicesAndTargets, ActionChosen> ReceivePlayerInputFunc { get; }
+        private EcsRegistrar Rgs { get; }
+        private long GlobalId { get; }
 
-        private long GlobalId { get; set; }
         private long BattlefieldId { get; set; }
 
         public Game(Func<CombatChoicesAndTargets, ActionChosen> receivePlayerInputFunc)
@@ -25,6 +25,9 @@ namespace SampleGame
             this.Rgs = new EcsRegistrar();
 
             this.GlobalId = Blueprinter.GetEntityFromBlueprint(this.Rgs, "global");
+
+            var natWeaponsPart = new Parts.NaturalWeaponsMap { NameToNaturalWeaponId = Sys.Equipment.InitializeNaturalWeapons(this.Rgs) };
+            Rgs.AddPart(this.GlobalId, natWeaponsPart);
 
             long heroId = AgentCreator.Agent(this.Rgs, "agent.hero", "obj.armor.chainmail", "obj.weapon.claymore");
             long villian1Id = AgentCreator.Agent(this.Rgs, "agent.monster.orc.basic", "obj.armor.leather-armor", "obj.weapon.sword");

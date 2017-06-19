@@ -47,11 +47,16 @@ namespace SampleGame.Parts
         /// </summary>
         public string Size { get; set; }
 
+        ///// <summary>
+        ///// Any object might be wielded as a weapon or a shield. This tells us size of *wielder* can wield/equip the object one-handed.
+        ///// The equipment system has default rules on how deviations from this size will work.
+        ///// </summary>
+        //public string WieldableSingleHandSize { get; set; } = Vals.Size.Goliath;
+
         /// <summary>
-        /// Any object might be wielded as a weapon or a shield. This tells us size of *wielder* can wield/equip the object one-handed.
-        /// The equipment system has default rules on how deviations from this size will work.
+        /// Which slots can this item be equipped to? Usually, either of two hands, either of two ring fingers, head, etc.
         /// </summary>
-        public string WieldableSingleHandSize { get; set; } = Vals.Size.Goliath;
+        public Vals.BodySlots EquipmentSlots { get; set; }
 
         /// <summary>
         /// If the object is equippable, what slot does it occupy? Most items aren't equippable and so this will be null.
