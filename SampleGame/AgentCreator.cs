@@ -24,8 +24,8 @@ namespace SampleGame
                 anatomy.SlotsEquipped = GetSlotsEquippedForBodyPlan(anatomy.BodyPlan);
             }
 
-            var wieldResults = Sys.Equipment.WieldWeapon(rgs, agentId, weaponId);
-            var armorResults = Sys.Equipment.Equip(rgs, agentId, armorId, false);
+            var wieldResults = Sys.Anatomy.WieldWeapon(rgs, agentId, weaponId);
+            var armorResults = Sys.Anatomy.NewEquip(rgs, agentId, armorId);
 
             return agentId;
         }

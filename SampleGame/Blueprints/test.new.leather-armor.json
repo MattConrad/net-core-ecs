@@ -8,8 +8,7 @@
     "DefaultDamageMultiplier": 1.0,
     "Weight": 0.0,
     "Size": "Gnome",
-    "WieldableSingleHandSize": "Goliath",
-    "EquipmentSlots": 64,
+    "EquipmentSlots": 0,
     "EquipmentSlotName": "HumanoidBody",
     "EquipmentSpecialCode": null,
     "Id": 0
