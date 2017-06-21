@@ -43,41 +43,48 @@ namespace SampleGame.Vals
                     BodySlots.HumanMouth
             };
 
+        public static readonly Dictionary<BodySlots, BodySlots[]> BodySlotsEncompassedByOtherSlot = new Dictionary<BodySlots, BodySlots[]>
+            {
+                [BodySlots.WieldTwoHanded] = new BodySlots[] { BodySlots.WieldHandLeft, BodySlots.WieldHandRight },
+                [BodySlots.HumanBodyArmor] = new BodySlots[] { BodySlots.HumanArmLeft, BodySlots.HumanArmRight, BodySlots.HumanLegLeft, BodySlots.HumanLegRight, BodySlots.HumanGroin }
+            };
+
+
         /// <summary>
         /// This is only used to initialize the actual anatomy component for the first time. It should not be referenced
         /// for any entity once anatomy creation is complete.
         /// </summary>
-        public static readonly Dictionary<string, string[]> OldBodyPlanSlots = new Dictionary<string, string[]>
-        {
-            [Human] = new string[]
-            {
-                BodyEquipmentSlots.WieldObjectAppendage,
-                BodyEquipmentSlots.WieldObjectAppendage,
-                BodyEquipmentSlots.VertebrateEye,
-                BodyEquipmentSlots.VertebrateEye,
-                BodyEquipmentSlots.VertebrateEar,
-                BodyEquipmentSlots.VertebrateEar,
-                BodyEquipmentSlots.VertebrateNose,
-                BodyEquipmentSlots.VertebrateMouth,
-                BodyEquipmentSlots.HumanoidHead,
-                BodyEquipmentSlots.HumanoidNeck,
-                BodyEquipmentSlots.HumanoidBody,
-                BodyEquipmentSlots.HumanoidGauntletHandPair,
-                BodyEquipmentSlots.HumanoidBootFootPair,
-                BodyEquipmentSlots.HumanoidRingFinger,
-                BodyEquipmentSlots.HumanoidRingFinger,
-                BodyEquipmentSlots.HumanoidChest,
-                BodyEquipmentSlots.HumanoidBack,
-                BodyEquipmentSlots.HumanoidAbdomen,
-                BodyEquipmentSlots.HumanoidGroin,
-                BodyEquipmentSlots.HumanoidArm,
-                BodyEquipmentSlots.HumanoidArm,
-                BodyEquipmentSlots.HumanoidLeg,
-                BodyEquipmentSlots.HumanoidLeg,
-                BodyEquipmentSlots.HumanoidFoot,
-                BodyEquipmentSlots.HumanoidFoot
-            }
-        };
+        //public static readonly Dictionary<string, string[]> DEADOldBodyPlanSlots = new Dictionary<string, string[]>
+        //{
+        //    [Human] = new string[]
+        //    {
+        //        BodyEquipmentSlots.WieldObjectAppendage,
+        //        BodyEquipmentSlots.WieldObjectAppendage,
+        //        BodyEquipmentSlots.VertebrateEye,
+        //        BodyEquipmentSlots.VertebrateEye,
+        //        BodyEquipmentSlots.VertebrateEar,
+        //        BodyEquipmentSlots.VertebrateEar,
+        //        BodyEquipmentSlots.VertebrateNose,
+        //        BodyEquipmentSlots.VertebrateMouth,
+        //        BodyEquipmentSlots.HumanoidHead,
+        //        BodyEquipmentSlots.HumanoidNeck,
+        //        BodyEquipmentSlots.HumanoidBody,
+        //        BodyEquipmentSlots.HumanoidGauntletHandPair,
+        //        BodyEquipmentSlots.HumanoidBootFootPair,
+        //        BodyEquipmentSlots.HumanoidRingFinger,
+        //        BodyEquipmentSlots.HumanoidRingFinger,
+        //        BodyEquipmentSlots.HumanoidChest,
+        //        BodyEquipmentSlots.HumanoidBack,
+        //        BodyEquipmentSlots.HumanoidAbdomen,
+        //        BodyEquipmentSlots.HumanoidGroin,
+        //        BodyEquipmentSlots.HumanoidArm,
+        //        BodyEquipmentSlots.HumanoidArm,
+        //        BodyEquipmentSlots.HumanoidLeg,
+        //        BodyEquipmentSlots.HumanoidLeg,
+        //        BodyEquipmentSlots.HumanoidFoot,
+        //        BodyEquipmentSlots.HumanoidFoot
+        //    }
+        //};
     }
 
     public static class BodyEquipmentSlots
@@ -122,6 +129,8 @@ namespace SampleGame.Vals
 
         public const string InsectThorax = nameof(InsectThorax);
     }
+
+
 
     [Flags]
     public enum BodySlots : long

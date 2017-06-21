@@ -24,7 +24,7 @@ namespace SampleGame
                 anatomy.SlotsEquipped = GetSlotsEquippedForBodyPlan(anatomy.BodyPlan);
             }
 
-            var wieldResults = Sys.Anatomy.WieldWeapon(rgs, agentId, weaponId);
+            var wieldResults = Sys.Anatomy.NewEquip(rgs, agentId, weaponId);
             var armorResults = Sys.Anatomy.NewEquip(rgs, agentId, armorId);
 
             return agentId;
@@ -33,7 +33,8 @@ namespace SampleGame
         //this wants a better home eventually.
         private static List<KeyValuePair<string, long>> GetSlotsEquippedForBodyPlan(string bodyPlan)
         {
-            return Vals.BodyPlan.OldBodyPlanSlots[bodyPlan].Select(s => new KeyValuePair<string, long>(s, 0)).ToList();
+            throw new System.NotImplementedException();
+            //return Vals.BodyPlan.OldBodyPlanSlots[bodyPlan].Select(s => new KeyValuePair<string, long>(s, 0)).ToList();
         }
 
     }

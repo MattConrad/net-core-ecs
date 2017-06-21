@@ -6,6 +6,7 @@
     "Condition": 10000,
     "DefaultDamageThreshold": 0,
     "DefaultDamageMultiplier": 1.0,
+    "EquipmentSlots": 4,
     "Weight": 0.0,
     "Size": "Gnome",
     "WieldableSingleHandSize": "Goliath",

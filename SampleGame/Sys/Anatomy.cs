@@ -78,6 +78,11 @@ namespace SampleGame.Sys
             var gearPhysicalObject = rgs.GetPartSingle<Parts.PhysicalObject>(gearId);
             var gearEntityName = rgs.GetPartSingle<Parts.EntityName>(gearId);
 
+
+
+            //MWCTODO+++++: this isn't working bc we aren't rehydrating "EquipmentSlots". maybe JSON.NET needs more type info, dunno yet.
+
+
             //someday we'll support gear that occupies multiple slots or using complex slot logic.
             if (gearPhysicalObject.EquipmentSlots == Vals.BodySlots.NoSlot || gearPhysicalObject.EquipmentSlots == Vals.BodySlots.Special) throw new NotImplementedException();
 
@@ -100,13 +105,19 @@ namespace SampleGame.Sys
                 return output;
             }
 
-            //we will special case 2h weapons here, though.
+            //we will special case 2h weapons here, though. and body armor!
             bool gearIs2Handed = (gearPhysicalObject.EquipmentSlots & Vals.BodySlots.WieldTwoHanded) == Vals.BodySlots.WieldTwoHanded;
+            bool gearIsHumanBodyArmor = (gearPhysicalObject.EquipmentSlots & Vals.BodySlots.HumanBodyArmor) == Vals.BodySlots.HumanBodyArmor;
 
-            if (gearIs2Handed
-                && (equipperAnatomy.NewSlotsEquipped[Vals.BodySlots.WieldHandLeft] != 0 || equipperAnatomy.NewSlotsEquipped[Vals.BodySlots.WieldHandRight] != 0))
+            if (gearIs2Handed && Vals.BodyPlan.BodySlotsEncompassedByOtherSlot[Vals.BodySlots.WieldTwoHanded].Any(s => equipperAnatomy.NewSlotsEquipped[s] != 0))
             {
                 output.Data = $"Two free hands are needed for the {gearEntityName.GeneralName}. Unequip something else first.";
+                return output;
+            }
+
+            if (gearIsHumanBodyArmor && Vals.BodyPlan.BodySlotsEncompassedByOtherSlot[Vals.BodySlots.HumanBodyArmor].Any(s => equipperAnatomy.NewSlotsEquipped[s] != 0))
+            {
+                output.Data = $"Other equipment is in the way of equipping the {gearEntityName.GeneralName}. Unequip other gear first.";
                 return output;
             }
 
@@ -114,8 +125,18 @@ namespace SampleGame.Sys
             equipperAnatomy.NewSlotsEquipped[firstOpenSlot.Key] = gearId;
             if (gearIs2Handed)
             {
-                equipperAnatomy.NewSlotsEquipped[Vals.BodySlots.WieldHandLeft] = gearId;
-                equipperAnatomy.NewSlotsEquipped[Vals.BodySlots.WieldHandRight] = gearId;
+                foreach (var slot in Vals.BodyPlan.BodySlotsEncompassedByOtherSlot[Vals.BodySlots.WieldTwoHanded])
+                {
+                    equipperAnatomy.NewSlotsEquipped[slot] = gearId;
+                }
+            }
+
+            if (gearIsHumanBodyArmor)
+            {
+                foreach(var slot in Vals.BodyPlan.BodySlotsEncompassedByOtherSlot[Vals.BodySlots.HumanBodyArmor])
+                {
+                    equipperAnatomy.NewSlotsEquipped[slot] = gearId;
+                }
             }
 
             output.Data = $"{equipperEntityName.ProperName} equips the {gearEntityName.GeneralName}.";
@@ -125,7 +146,7 @@ namespace SampleGame.Sys
         /// <summary>
         /// Equipping a shield is really wielding one, though we may present it as equipping to the user. Yes, a tangle.
         /// </summary>
-        internal static Output WieldWeapon(EcsRegistrar rgs, long wielderId, long weaponId)
+        internal static Output DEADWieldWeapon(EcsRegistrar rgs, long wielderId, long weaponId)
         {
             var output = new Output { Category = "Text" };
 
