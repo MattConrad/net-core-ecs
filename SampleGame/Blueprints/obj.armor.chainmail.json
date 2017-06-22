@@ -9,6 +9,7 @@
     "Weight": 0.0,
     "Size": "Gnome",
     "WieldableSingleHandSize": "Goliath",
+    "EquipmentSlots": 64,
     "EquipmentSlotName": "HumanoidBody",
     "EquipmentSpecialCode": null,
     "Id": 0
@@ -16,9 +17,9 @@
   {
     "$type": "SampleGame.Parts.EntityName, SampleGame",
     "ProperName": "",
-    "GeneralName": "leather armor",
+    "GeneralName": "chainmail",
     "ObscuredName": null,
-    "ShortDescription": "leather armor",
+    "ShortDescription": "chainmail",
     "LongDescription": null,
     "Pronoun": null,
     "Id": 0

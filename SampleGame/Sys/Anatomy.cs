@@ -78,11 +78,6 @@ namespace SampleGame.Sys
             var gearPhysicalObject = rgs.GetPartSingle<Parts.PhysicalObject>(gearId);
             var gearEntityName = rgs.GetPartSingle<Parts.EntityName>(gearId);
 
-
-
-            //MWCTODO+++++: this isn't working bc we aren't rehydrating "EquipmentSlots". maybe JSON.NET needs more type info, dunno yet.
-
-
             //someday we'll support gear that occupies multiple slots or using complex slot logic.
             if (gearPhysicalObject.EquipmentSlots == Vals.BodySlots.NoSlot || gearPhysicalObject.EquipmentSlots == Vals.BodySlots.Special) throw new NotImplementedException();
 
@@ -95,7 +90,7 @@ namespace SampleGame.Sys
             var matchingEquipperSlots = equipperSlots.Where(slot => (slot.Key & gearPhysicalObject.EquipmentSlots) == slot.Key).ToList();
             if (!matchingEquipperSlots.Any())
             {
-                output.Data = $"{equipperEntityName.ProperName} doesn't have the right anatomy to equip the {gearEntityName.GeneralName}.";
+                output.Data = $"{equipperEntityName.ProperName} doesn't have the right body parts to equip the {gearEntityName.GeneralName}.";
                 return output;
             }
 

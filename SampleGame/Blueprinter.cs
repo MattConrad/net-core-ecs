@@ -50,8 +50,9 @@ namespace SampleGame
                 if (part is Parts.Anatomy)
                 {
                     var anatomy = (Parts.Anatomy)part;
-                    anatomy.SlotsEquipped = GetClearedAnatomySlotsEquipped(anatomy.SlotsEquipped);
-                } 
+                    //anatomy.SlotsEquipped = GetClearedAnatomySlotsEquipped(anatomy.SlotsEquipped);
+                    anatomy.NewSlotsEquipped = anatomy.NewSlotsEquipped.ToDictionary(k => k.Key, v => 0L);
+                }
             }
 
             return rgs.SerializeEntityParts(revisedPartsList);
@@ -64,9 +65,9 @@ namespace SampleGame
             return rgs.CreateEntity(blueprintJson);
         }
 
-        private static List<KeyValuePair<string, long>> GetClearedAnatomySlotsEquipped(List<KeyValuePair<string, long>> origSlotsEquipped)
-        {
-            return origSlotsEquipped.Select(s => new KeyValuePair<string, long>(s.Key, 0)).ToList();
-        }
+        //private static List<KeyValuePair<string, long>> GetClearedAnatomySlotsEquipped(List<KeyValuePair<string, long>> origSlotsEquipped)
+        //{
+        //    return origSlotsEquipped.Select(s => new KeyValuePair<string, long>(s.Key, 0)).ToList();
+        //}
     }
 }
