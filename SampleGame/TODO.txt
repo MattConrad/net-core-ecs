@@ -1,0 +1,4 @@
+﻿Get rid of most of the MWCTODOs in code and migrate them here. Make sure you provide enough info to find the place again easily.
+
+Rework randos, having negative numbers for rolls is confusing. If you want a fumble concept, work it in some other way.
+

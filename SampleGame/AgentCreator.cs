@@ -19,20 +19,14 @@ namespace SampleGame
 
             var anatomy = rgs.GetPartSingle<Parts.Anatomy>(agentId);
 
-            if (!anatomy.NewSlotsEquipped.Any())
+            if (!anatomy.SlotsEquipped.Any())
             {
                 var bodySlotsAsEnum = Vals.BodyPlan.BodyPlanToSlots[anatomy.BodyPlan];
-                anatomy.NewSlotsEquipped = bodySlotsAsEnum.GetUniqueFlags().ToDictionary(s => (Vals.BodySlots)s, s => 0L);
+                anatomy.SlotsEquipped = bodySlotsAsEnum.GetUniqueFlags().ToDictionary(s => (Vals.BodySlots)s, s => 0L);
             }
 
-
-            //if (!anatomy.SlotsEquipped.Any())
-            //{
-            //    anatomy.SlotsEquipped = GetSlotsEquippedForBodyPlan(anatomy.BodyPlan);
-            //}
-
-            var wieldResults = Sys.Anatomy.NewEquip(rgs, agentId, weaponId);
-            var armorResults = Sys.Anatomy.NewEquip(rgs, agentId, armorId);
+            var wieldResults = Sys.Anatomy.Equip(rgs, agentId, weaponId);
+            var armorResults = Sys.Anatomy.Equip(rgs, agentId, armorId);
 
             return agentId;
         }

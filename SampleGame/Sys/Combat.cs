@@ -123,14 +123,14 @@ namespace SampleGame.Sys
                 : 0m;
 
             var targetPhysicalObject = rgs.GetPartSingle<Parts.PhysicalObject>(targetId);
-            var targetEquipmentIds = rgs.GetPartSingle<Parts.Anatomy>(targetId).SlotsEquipped.Where(s => s.Value != 0).Select(s => s.Value).ToList();
+            //heh, that distinct is important, since the same armor can now occupy multiple slots.
+            var targetEquipmentIds = rgs.GetPartSingle<Parts.Anatomy>(targetId).SlotsEquipped.Where(s => s.Value != 0).Select(s => s.Value).Distinct().ToList();
 
             var targetDamagePreventers = targetEquipmentIds.SelectMany(eid => rgs.GetParts<Parts.DamagePreventer>(eid)).ToList();
 
-            //later, we will have natural weapons and whatever you're wielding, and you probably only get one attack at a time. also, watch for shield in first slot (or maybe player has to).
-            //  this relates to the clock/timer, however that ends up working.
+            //MWCTODO++: eventually (soon?) the weaponId of the attack should be passed in as part of the call, and we merely verify it is available here. 
             var attackerWieldingSlots = rgs.GetPartSingle<Parts.Anatomy>(attackerId).SlotsEquipped
-                .Where(s => s.Key == Vals.BodyEquipmentSlots.WieldObjectAppendage && s.Value != 0)
+                .Where(s => s.Key == Vals.BodySlots.WieldHandLeft && s.Value != 0 || s.Key == Vals.BodySlots.WieldHandRight && s.Value != 0)
                 .ToList();
 
             long attackerWeaponId = attackerWieldingSlots.Any() ? attackerWieldingSlots.First().Value : 0;

@@ -14,29 +14,22 @@ namespace SampleGame.Sys
             var naturalWeaponsMap = rgs.GetPartSingle<Parts.NaturalWeaponsMap>(globalId);
 
             var agentAnatomy = rgs.GetPartSingle<Parts.Anatomy>(agentId);
-            var agentAnatomyModifers = rgs.GetParts<Parts.AnatomyModifier>(agentId);
+            //var agentAnatomyModifers = rgs.GetParts<Parts.AnatomyModifier>(agentId);
 
-            //MWCTODO: uuuuugh. ok, I screwed up. this can't work, because we really need to know WHICH hand was disabled.
-            // there is no way to  have one equipement slot disabled and sometimes be shield hand and sometimes main hand.
-            // we can say disabled is always shield hand first, or always main hand first, but not either one or the other.
-            // i don't remember what I was thinking. maybe disabled is always main hand first, but that still sucks.
-            // i thought it would be a pain in the ass to check both left ring finger and right ring finger, and it would have been, 
-            // but that would have worked, and this won't.
-            // i think i will rewrite this with the bitmask approach--that is interesting, anyway, but i'm not going to do that
-            // right now, we'll redo it later and ignore the messed up part here for a while.
-            var agentWieldingDisabled = agentAnatomyModifers
-                .Where(m => m.EquipmentSlotDisabled == Vals.BodyEquipmentSlots.WieldObjectAppendage)
-                .Select(m => m.EquipmentSlotDisabled)
-                .ToList();
+            //MWCTODO+: possibly there could/should be a single entityId named DisabledSlot and which can be equipped by any number of entities/slots as needed. (it wouldn't even need to have any parts!)
+            //var agentWieldingDisabled = agentAnatomyModifers
+            //    .Where(m => m.EquipmentSlotDisabled == Vals.BodyEquipmentSlots.WieldObjectAppendage)
+            //    .Select(m => m.EquipmentSlotDisabled)
+            //    .ToList();
 
             //MWCTODO+: yanno, there could be other natural weapons not in wielding hands, like bites/kicks.
             // and you could have, conceivably, a flame-hand gauntlet or a laser eye in your eyesocket
             // we probably ought to do all slots and not just wieldeds.
             var agentWieldedIds = agentAnatomy.SlotsEquipped
-                .Where(s => s.Key == Vals.BodyEquipmentSlots.WieldObjectAppendage)
+                .Where(s => s.Key == Vals.BodySlots.WieldHandLeft || s.Key == Vals.BodySlots.WieldHandRight || s.Key == Vals.BodySlots.WieldTwoHanded)
                 .Select(s => s.Value)
                 .ToList();
-            var agentWieldedIdToEntityName = agentWieldedIds
+            var agentWieldedIdToWeaponEntityName = agentWieldedIds
                 .Where(id => id != 0)
                 .Distinct()
                 .Select(id => new { Id = id, Name = rgs.GetPartSingle<Parts.EntityName>(id) } )
@@ -54,7 +47,7 @@ namespace SampleGame.Sys
                 string attackType = Vals.CombatAction.AttackWeaponMelee;
 
                 //MWCTODO+++: don't default to "punch", get the natural weapon type from the anatomy, maybe with a lookup. 
-                string weaponName = (agentWieldedIds[i] == 0) ? "punch" : agentWieldedIdToEntityName[agentWieldedIds[i]].GeneralName;
+                string weaponName = (agentWieldedIds[i] == 0) ? "punch" : agentWieldedIdToWeaponEntityName[agentWieldedIds[i]].GeneralName;
 
                 //MWCTODO+: this shouldn't default to "hand", but whatever the wielding appendage is called.
                 string mainOrOffhand = (i == 0) ? "main hand" : "offhand";
@@ -165,17 +158,17 @@ namespace SampleGame.Sys
         }
 
         //NOTE: see notes above, but this eventually won't be limited to wielding hands.
-        internal static long GetNaturalWeapon(Parts.NaturalWeaponsMap map, Parts.Anatomy agentAnatomy, string slotName)
-        {
-            if (agentAnatomy.BodyPlan == Vals.BodyPlan.Human && slotName == Vals.BodyEquipmentSlots.WieldObjectAppendage)
-            {
-                return map.NameToNaturalWeaponId[Vals.NaturalWeaponNames.HumanPunch];
-            }
-            else
-            {
-                return 0;
-            }
-        }
+        //internal static long GetNaturalWeapon(Parts.NaturalWeaponsMap map, Parts.Anatomy agentAnatomy, string slotName)
+        //{
+        //    if (agentAnatomy.BodyPlan == Vals.BodyPlan.Human && slotName == Vals.BodyEquipmentSlots.WieldObjectAppendage)
+        //    {
+        //        return map.NameToNaturalWeaponId[Vals.NaturalWeaponNames.HumanPunch];
+        //    }
+        //    else
+        //    {
+        //        return 0;
+        //    }
+        //}
 
         internal static ActionChosen GetAgentAICombatAction(EcsRegistrar rgs, long globalId, string attackerAI, long attackerId, List<long> battlefieldEntityIds)
         {

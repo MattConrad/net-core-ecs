@@ -26,9 +26,6 @@ namespace SampleGame
 
             this.GlobalId = Blueprinter.GetEntityFromBlueprint(this.Rgs, "global");
 
-            var leatherId = Blueprinter.GetEntityFromBlueprint(this.Rgs, "obj.armor.leather-armor");
-
-
             var natWeaponsPart = new Parts.NaturalWeaponsMap { NameToNaturalWeaponId = Sys.Anatomy.InitializeNaturalWeapons(this.Rgs) };
             Rgs.AddPart(this.GlobalId, natWeaponsPart);
 
