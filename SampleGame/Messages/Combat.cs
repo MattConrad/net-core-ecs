@@ -4,9 +4,6 @@ using System.Text;
 
 namespace SampleGame.Messages
 {
-    //MWCTODO: we'll want history eventually, should this maybe be a combat history part that is added successively to the battlefield?
-    // NOTE: if we make it into a part, can't have properties that are parts themselves.
-
     /// <summary>
     /// A combat action might have multiple targets, so there might be multiple combat messages from the same action.
     /// </summary>
@@ -31,9 +28,6 @@ namespace SampleGame.Messages
         internal string PrimaryDamageType { get; set; }
         internal string PrimaryDamagePreventer { get; set; }
         internal decimal AttemptedDamage { get; set; }
-        //MWCTODO+: these two are wrong, they have to fit the dam resistance model better.
-        internal decimal DefaultPreventedDamage { get; set; }
-        internal decimal ProtectionPreventedDamage { get; set; }
 
         internal decimal NetDamage { get; set; }
     }

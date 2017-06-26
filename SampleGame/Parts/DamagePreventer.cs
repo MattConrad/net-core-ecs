@@ -3,9 +3,6 @@ namespace SampleGame.Parts
 {
     public class DamagePreventer : EntropyEcsCore.EcsEntityPart
     {
-        //MWCTODO: eventually, each damage preventer type should have a specific damage type that it prevents.
-        // a piece of armor might be composed of multiple damage preventers.
-
         /// <summary>
         /// A general damage threshold, below which all damage is absorbed, and after which the damage multiplier is applied.
         /// The baseline is 0, and (for now) a DDT of 10000 is complete invincibility. It's OK for most things to have a DDT of 0. 

@@ -1,4 +1,24 @@
-﻿Get rid of most of the MWCTODOs in code and migrate them here. Make sure you provide enough info to find the place again easily.
+﻿Rework randos, having negative numbers for rolls is confusing. If you want a fumble concept, work it in some other way.
 
-Rework randos, having negative numbers for rolls is confusing. If you want a fumble concept, work it in some other way.
+We should have a combat-message history, so that the narrator can look through it to say more interesting things. Probably this can live in the battlefield entity. Possibly this means combatmessage should become a part, so that they neatly fit into the battlefield container.
 
+Need type-specific damage and damage prevention. Right now, there is no difference between damage types in any way.
+
+Slots should be disabled by "equipping" a special entity id called DisabledEquipmentSlot. Eventually, we'll want a timer that allows these to un-disable spontaneously. We may want to have different categories of disabling, too (broken arm vs a severed arm should heal rather differently)
+
+Weapons could exist in slots other than wielding hands (someday I want a laser eye). We need to rethink this when assessing available actions in Sys\Agent.cs.
+
+Natural weapons need more development. Right now they're just punches, but we should have bites, kicks, etc. See Sys\Agent.cs.
+
+We need to introduce ranged weaponry. This will affect Sys\Agent.cs and also Sys\Combat.cs. And probably lotsa other stuff. It will be a big deal.
+Eventually we'll want a 2-d battlefield, but I may do simple 1-D distances to start with. Not sure.
+
+Narrator needs lots of rework. Examples:
+	Using proper name in not-very-good way all over the place.
+	Combat output is very dull. Needs templates that are much smarter.
+
+Need to review Sys.Container. That AlterContainer sounds weird and we aren't actually using it. Can it be salvaged to become useful?
+
+Switchboard.cs is kind of a mess. it includes actions at all different "levels", sometimes it has Action and sometimes not 
+	it includes actions with and without weapons, with and without NextCategory.
+	It is very likely inadequate for some future scenarios like spellcasting.

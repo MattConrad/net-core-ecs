@@ -10,15 +10,11 @@ namespace SampleGame.Sys
     /// </summary>
     internal static class Anatomy
     {
-        internal enum WeaponHandsRequired
+        internal static Output Unequip(EcsRegistrar rgs, long equipperId, long gearId)
         {
-            WeaponTooSmall = 0,
-            One = 1,
-            Two = 2,
-            WeaponTooBig = 3
+            //MWCTODO++: we need unequip
+            return null;
         }
-
-        //MWCTODO++: we need unequip
 
         internal static Output Equip(EcsRegistrar rgs, long equipperId, long gearId)
         {

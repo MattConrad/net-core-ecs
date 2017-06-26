@@ -17,11 +17,6 @@ namespace SampleGame
         public Dictionary<long, string> RangedTargets { get; set; } = new Dictionary<long, string>();
     }
 
-    //MWCTODO: this is kind of a mess. it includes actions at all different "levels", sometimes it has Action and sometimes not, 
-    //  it includes actions with and without weapons, with and without NextCategory.
-    //  It is very likely inadequate for some future scenarios like spellcasting.
-    //  I considered "normalizing" the the data organization more but I think that would add trade one kind of client-side complexity for a worse. 
-    //  Anyway, this could use a bright idea or two.
     //Note the importance of "NextCategory". If this is null, then this choice is a terminal choice. If it is not-null, there will always be a submenu under the choice (or the choice is corrupt data).
     public class AgentActionChoice
     {

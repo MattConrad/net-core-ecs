@@ -138,7 +138,6 @@ namespace SampleGame.Sys
                 ? GetNaturalWeapon(rgs.GetPartSingle<Parts.Anatomy>(attackerId).BodyPlan)
                 : rgs.GetParts<Parts.Damager>(attackerWeaponId).ToList();
 
-            //MWCTODO: this doesn't address damage types at all. that's going to be . . . interesting when you get there.
             var damageAttempted = attackerDamagers.Sum(d => d.DamageAmount) * finalAttackMultiplier;
             var damagePrevented = targetPhysicalObject.DefaultDamageThreshold + targetDamagePreventers.Sum(p => p.DamageThreshold);
             msg.AttemptedDamage = damageAttempted;

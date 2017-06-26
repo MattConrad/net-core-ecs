@@ -14,17 +14,12 @@ namespace SampleGame.Sys
             var naturalWeaponsMap = rgs.GetPartSingle<Parts.NaturalWeaponsMap>(globalId);
 
             var agentAnatomy = rgs.GetPartSingle<Parts.Anatomy>(agentId);
-            //var agentAnatomyModifers = rgs.GetParts<Parts.AnatomyModifier>(agentId);
 
-            //MWCTODO+: possibly there could/should be a single entityId named DisabledSlot and which can be equipped by any number of entities/slots as needed. (it wouldn't even need to have any parts!)
             //var agentWieldingDisabled = agentAnatomyModifers
             //    .Where(m => m.EquipmentSlotDisabled == Vals.BodyEquipmentSlots.WieldObjectAppendage)
             //    .Select(m => m.EquipmentSlotDisabled)
             //    .ToList();
 
-            //MWCTODO+: yanno, there could be other natural weapons not in wielding hands, like bites/kicks.
-            // and you could have, conceivably, a flame-hand gauntlet or a laser eye in your eyesocket
-            // we probably ought to do all slots and not just wieldeds.
             var agentWieldedIds = agentAnatomy.SlotsEquipped
                 .Where(s => s.Key == Vals.BodySlots.WieldHandLeft || s.Key == Vals.BodySlots.WieldHandRight || s.Key == Vals.BodySlots.WieldTwoHanded)
                 .Select(s => s.Value)
@@ -39,11 +34,9 @@ namespace SampleGame.Sys
             //whatever id is wielded in index 0 is the main hand. for now, everything else is the offhand. octopodes have a lot of offhands for now.
             for (int i = 0; i < agentWieldedIds.Count; i++)
             {
-                //2 hand weapons shouldn't show up repeatedly.
-                //MWCTODO++: but maybe 2 empty hands with offhand punch should....
+                //2 hand weapons shouldn't show up repeatedly. for now at least, neither will multiple punches.
                 if (recordedIds.Contains(agentWieldedIds[i])) continue;
 
-                //MWCTODO: this gets fancier when we introduce ranged weaponry. we'll need to check if there are any enemies in range, for one thing.
                 string attackType = Vals.CombatAction.AttackWeaponMelee;
 
                 //MWCTODO+++: don't default to "punch", get the natural weapon type from the anatomy, maybe with a lookup. 
@@ -95,8 +88,6 @@ namespace SampleGame.Sys
 
                 if (entityAgent.CombatStatusTags.Intersect(Vals.CombatStatusTag.CombatTerminalStatuses).Any()) continue;
 
-                //MWCTODO: again, ranged weaponry will change things.
-                //MWCTODO+: proper name is not correct here (hardly anywhere we're using it, really . . .)
                 possibleCombatActions.MeleeTargets.Add(id, entityName.ProperName);
             }
 

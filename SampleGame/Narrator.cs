@@ -51,7 +51,6 @@ namespace SampleGame
 
                 sb.Append($"{actorNames.ProperName} makes a {msg.ActorAdjustedRoll} attack");
 
-                //MWCTODO: we need templates for these, and they should be damage type/weapon specific.
                 if (msg.ActorAdjustedRoll <= 0)
                 {
                     sb.Append($", presenting no real threat to {targetNames.ProperName}, who steps back from it casually.");
