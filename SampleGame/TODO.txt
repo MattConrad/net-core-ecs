@@ -22,3 +22,5 @@ Need to review Sys.Container. That AlterContainer sounds weird and we aren't act
 Switchboard.cs is kind of a mess. it includes actions at all different "levels", sometimes it has Action and sometimes not 
 	it includes actions with and without weapons, with and without NextCategory.
 	It is very likely inadequate for some future scenarios like spellcasting.
+
+Eventually, we'll need time duration for all sorts of actions. This will affect just about everything.

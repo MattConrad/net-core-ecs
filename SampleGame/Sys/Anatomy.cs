@@ -10,10 +10,29 @@ namespace SampleGame.Sys
     /// </summary>
     internal static class Anatomy
     {
-        internal static Output Unequip(EcsRegistrar rgs, long equipperId, long gearId)
+        internal static Output Unequip(EcsRegistrar rgs, long unequipperId, long gearId)
         {
-            //MWCTODO++: we need unequip
-            return null;
+            var output = new Output { Category = "Text" };
+
+            var unequipperEntityName = rgs.GetPartSingle<Parts.EntityName>(unequipperId);
+            var unequipperAnatomy = rgs.GetPartSingle<Parts.Anatomy>(unequipperId);
+            var gearEntityName = rgs.GetPartSingle<Parts.EntityName>(gearId);
+
+            bool unequipped = false;
+            foreach(var slot in unequipperAnatomy.SlotsEquipped)
+            {
+                if (slot.Value == gearId)
+                {
+                    unequipperAnatomy.SlotsEquipped[slot.Key] = 0L;
+                    unequipped = true;
+                }
+            }
+
+            output.Data = unequipped
+                ? output.Data = $"{unequipperEntityName.ProperName} removes the {gearEntityName.GeneralName}."
+                : output.Data = $"{unequipperEntityName.ProperName} doesn't have the {gearEntityName.GeneralName} equipped and can't remove it.";
+
+            return output;
         }
 
         internal static Output Equip(EcsRegistrar rgs, long equipperId, long gearId)
@@ -21,7 +40,6 @@ namespace SampleGame.Sys
             var output = new Output { Category = "Text" };
 
             var equipperAnatomy = rgs.GetPartSingle<Parts.Anatomy>(equipperId);
-            //var equipperAnatomyModifications = rgs.GetParts<Parts.AnatomyModifier>(equipperId).ToList();
             var equipperPhysicalObject = rgs.GetPartSingle<Parts.PhysicalObject>(equipperId);
             var equipperEntityName = rgs.GetPartSingle<Parts.EntityName>(equipperId);
             var gearPhysicalObject = rgs.GetPartSingle<Parts.PhysicalObject>(gearId);
