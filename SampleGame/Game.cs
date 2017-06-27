@@ -26,8 +26,8 @@ namespace SampleGame
 
             this.GlobalId = Blueprinter.GetEntityFromBlueprint(this.Rgs, "global");
 
-            var natWeaponsPart = new Parts.NaturalWeaponsMap { NameToNaturalWeaponId = Sys.Anatomy.InitializeNaturalWeapons(this.Rgs) };
-            Rgs.AddPart(this.GlobalId, natWeaponsPart);
+            var natWeaponsSetsPart = new Parts.NaturalWeaponsMap { NaturalWeaponSets = Sys.Anatomy.InitializeNaturalWeapons(this.Rgs) };
+            Rgs.AddPart(this.GlobalId, natWeaponsSetsPart);
 
             long heroId = AgentCreator.Agent(this.Rgs, "agent.hero", "obj.armor.chainmail", "obj.weapon.claymore");
             long villian1Id = AgentCreator.Agent(this.Rgs, "agent.monster.orc.basic", "obj.armor.leather-armor", "obj.weapon.sword");

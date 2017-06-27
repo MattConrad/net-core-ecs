@@ -128,7 +128,7 @@ namespace SampleGame.Sys
 
             var targetDamagePreventers = targetEquipmentIds.SelectMany(eid => rgs.GetParts<Parts.DamagePreventer>(eid)).ToList();
 
-            //MWCTODO++: eventually (soon?) the weaponId of the attack should be passed in as part of the call, and we merely verify it is available here. 
+            //MWCTODO++++: eventually (soon?) the weaponId of the attack should be passed in as part of the call, and we merely verify it is available here. 
             var attackerWieldingSlots = rgs.GetPartSingle<Parts.Anatomy>(attackerId).SlotsEquipped
                 .Where(s => s.Key == Vals.BodySlots.WieldHandLeft && s.Value != 0 || s.Key == Vals.BodySlots.WieldHandRight && s.Value != 0)
                 .ToList();

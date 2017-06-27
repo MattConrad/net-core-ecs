@@ -9,6 +9,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Blueprints\agent.monster.wolf.basic.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Blueprints\global.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -18,7 +21,10 @@
     <None Update="Blueprints\agent.monster.orc.basic.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Blueprints\obj.weapon.natural.humanoid.standard.punch.json">
+    <None Update="Blueprints\obj.weapon.natural.wolf.bite.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Blueprints\obj.weapon.natural.human.punch.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Blueprints\obj.armor.chainmail.json">

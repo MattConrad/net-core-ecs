@@ -24,3 +24,13 @@ Switchboard.cs is kind of a mess. it includes actions at all different "levels",
 	It is very likely inadequate for some future scenarios like spellcasting.
 
 Eventually, we'll need time duration for all sorts of actions. This will affect just about everything.
+
+weapons/armor droppable
+weapons/armor damageable
+
+locations for physical objects.
+
+maybe we want the tree of actions to go arbitrarily deep: https://stackoverflow.com/questions/647533/recursive-generic-types
+really, I think this is very unlikely to make sense. alas, i could see 3 deep, but probably not arbitrarily deep.
+
+in addition to inventory (pack) there should also be 

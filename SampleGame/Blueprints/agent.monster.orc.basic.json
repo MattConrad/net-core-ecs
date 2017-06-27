@@ -19,6 +19,7 @@
   {
     "$type": "SampleGame.Parts.Anatomy, SampleGame",
     "BodyPlan": "Human",
+    "DefaultAttackSlotsCategory": "Human",
     "SlotsEquipped": {},
     "Id": 0
   },

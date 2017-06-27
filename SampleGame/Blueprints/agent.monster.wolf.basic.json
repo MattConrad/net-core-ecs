@@ -5,7 +5,7 @@
     "Moveable": true,
     "Condition": 10000,
     "DefaultDamageThreshold": 0,
-    "DefaultDamageMultiplier": 0.66,
+    "DefaultDamageMultiplier": 1.0,
     "Weight": 0.0,
     "Size": "Human",
     "Id": 0
@@ -13,30 +13,30 @@
   {
     "$type": "SampleGame.Parts.Agent, SampleGame",
     "DefaultCombatAI": "MeleeOnly",
-    "ActiveCombatAI": "PlayerChoice",
+    "ActiveCombatAI": "MeleeOnly",
     "Id": 0
   },
   {
     "$type": "SampleGame.Parts.Anatomy, SampleGame",
-    "BodyPlan": "Human",
-    "DefaultAttackSlotsCategory": "Human",
+    "BodyPlan": "Quadruped",
+    "DefaultAttackSlotsCategory": "Wolf",
     "SlotsEquipped": {},
     "Id": 0
   },
   {
     "$type": "SampleGame.Parts.EntityName, SampleGame",
-    "ProperName": "The Hero",
-    "GeneralName": "person",
+    "ProperName": "The wolf",
+    "GeneralName": "wolf",
     "ObscuredName": null,
-    "ShortDescription": "The hero, who must emerge from battle victorious.",
+    "ShortDescription": "A wolf: gaunt and filthy, with stinking breath.",
     "LongDescription": null,
-    "Pronoun": "him",
+    "Pronoun": "he",
     "Id": 0
   },
   {
     "$type": "SampleGame.Parts.Skillset, SampleGame",
     "Skills": {
-      "Melee": 3,
+      "Melee": 2,
       "Dodge": 2
     },
     "Id": 0
@@ -51,10 +51,10 @@
   },
   {
     "$type": "SampleGame.Parts.Faction, SampleGame",
-    "PrimaryPublicFaction": "Heroes",
-    "CurrentPublicFaction": "Heroes",
+    "PrimaryPublicFaction": "Villians",
+    "CurrentPublicFaction": "Villians",
     "PublicFactionReputations": {
-      "Heroes": 100
+      "Villians": 100
     },
     "Id": 0
   }

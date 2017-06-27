@@ -30,6 +30,13 @@ namespace SampleGame.Sys
                 .Select(id => new { Id = id, Name = rgs.GetPartSingle<Parts.EntityName>(id) } )
                 .ToDictionary(n => n.Id, n => n.Name);
 
+            //MWCTODO: rework this: first we get all the default attack slots for the anatomy. then we remove any disabled slots.
+            // then we query the entity for any "extra" slots (not sure how this bit should work, but we want to track things like
+            // equipping/dequpping wristblades)
+            // then we go through the slots and add each slot as an action, if that slot holds a physical object OR there is a matching natural weapon 
+            // for the anatomy's DefaultAttackSlotsCategory. (if there is nothing in the slot and it has no matching nat weapon, don't do anything).
+            // we'll still want to filter out dupes.
+
             var recordedIds = new HashSet<long>();
             //whatever id is wielded in index 0 is the main hand. for now, everything else is the offhand. octopodes have a lot of offhands for now.
             for (int i = 0; i < agentWieldedIds.Count; i++)

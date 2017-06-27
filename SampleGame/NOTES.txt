@@ -1,24 +1,6 @@
 ﻿Consider unit testing. How important is it? How well can we test the static classes?
 
-TODO: make singleton instances of each natural weapon type that can be shared by any wielder. for now, just make them indestructible, and deal with damage effects on the anatomy rather than the "weapon".
-
-TODO: emit list of supported actions for specified (and/or current) mode
-TODO: weapons/armor droppable
-TODO: weapons/armor damageable
-
-TODO: timing system: events fire off on a clock
-TODO: locations for physical objects.
-
-TODO: pretty text descriptions
-
-TODO: Fancy text interpolation for messages. Forget tracery, see https://github.com/TheBerkin/Rant instead.
-TODO: combat/noncombat modes
-
-TODO: maybe rethink equipment anatomy AGAIN as a bitmask-enum. Int64 would cover lots of body parts, humanoid and exotic. but this is a maybe someday thing. https://gamedev.stackexchange.com/questions/48054/how-to-handle-weapon-slots
-
-TODO: maybe we want the tree of actions to go arbitrarily deep: https://stackoverflow.com/questions/647533/recursive-generic-types
-	really, I think this is very unlikely to make sense. alas, i could see 3 deep, but probably not arbitrarily deep. 
-
+Forget tracery, see https://github.com/TheBerkin/Rant instead.
 
 don't put logic in parts. sometimes it could plausibly go there, but then there would be some logic in parts and others in systems, and you'd have to guess where the logic was this time.
 parts are data. only data.

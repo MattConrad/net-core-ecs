@@ -5,7 +5,6 @@ namespace SampleGame.Parts
     /// <summary>
     /// Any entity can be a container, and can be multiple containers. Usually a container will list entities that are "in" the containing entity,
     /// but it could have things that are "on" or "under", or all 3 at once.
-    /// Let's try having "equipped" be just another container. At least as a test drive. (UPDATE: equipment also needs to fit a particlar slot, so maybe "container" is too simple. or maybe equipment is a container that works with another part . . . hmmm)
     /// However, a "region" won't be just a container, despite being somewhat containerish. (UPDATE: why not? maybe "just a container" is too simple. several containers?)
     /// </summary>
     public class Container : EntropyEcsCore.EcsEntityPart

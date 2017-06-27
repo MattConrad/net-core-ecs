@@ -108,23 +108,27 @@ namespace SampleGame.Sys
             return output;
         }
 
-        internal static Dictionary<string, long> InitializeNaturalWeapons(EcsRegistrar rgs)
+        //for now, hardcoding this is fine. once we get a dozen, reconsider (or maybe not).
+        internal static Dictionary<string, Dictionary<Vals.BodySlots, long>> InitializeNaturalWeapons(EcsRegistrar rgs)
         {
-            var nwd = new Dictionary<string, long>();
-
-            var names = new string[] { Vals.NaturalWeaponNames.HumanPunch };
-
-            foreach(var name in names)
+            var humanPunchId = Blueprinter.GetEntityFromBlueprint(rgs, Vals.NaturalWeaponNames.HumanPunch);
+            var humanNatWeapons = new Dictionary<Vals.BodySlots, long>
             {
-                try
-                {
-                    var id = Blueprinter.GetEntityFromBlueprint(rgs, name);
-                    nwd.Add(name, id);
-                }
-                catch { }
-            }
+                [Vals.BodySlots.WieldHandLeft] = humanPunchId,
+                [Vals.BodySlots.WieldHandRight] = humanPunchId
+            };
 
-            return nwd;
+            var wolfBiteId = Blueprinter.GetEntityFromBlueprint(rgs, Vals.NaturalWeaponNames.HumanPunch);
+            var wolfNatWeapons = new Dictionary<Vals.BodySlots, long>
+            {
+                [Vals.BodySlots.VertebrateMouth] = wolfBiteId
+            };
+
+            return new Dictionary<string, Dictionary<Vals.BodySlots, long>>
+            {
+                [Vals.NaturalWeaponSet.Human] = humanNatWeapons,
+                [Vals.NaturalWeaponSet.Wolf] = wolfNatWeapons
+            };
         }
 
     }
