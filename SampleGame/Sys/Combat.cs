@@ -10,21 +10,22 @@ namespace SampleGame.Sys
         internal static readonly string[] Stances = new string[] { Vals.CombatAction.StanceAggressive, Vals.CombatAction.StanceDefensive, Vals.CombatAction.StanceStandGround };
         internal static readonly string[] Incapacitations = new string[] { Vals.CombatStatusTag.Dead };
 
-        internal static List<Messages.Combat> ProcessAgentAction(EcsRegistrar rgs, long agentId, long? targetId, string action)
+        //internal static List<Messages.Combat> ProcessAgentAction(EcsRegistrar rgs, long agentId, long? targetId, string action)
+        internal static List<Messages.Combat> ProcessAgentAction(EcsRegistrar rgs, long agentId, ActionChosen agentAction)
         {
-            if (Stances.Contains(action))
+            if (Stances.Contains(agentAction.Action))
             {
-                return ApplyStance(rgs, agentId, action);
+                return ApplyStance(rgs, agentId, agentAction.Action);
             }
-            else if (action == Vals.CombatAction.SwitchToAI)
+            else if (agentAction.Action == Vals.CombatAction.SwitchToAI)
             {
                 return SwitchToAI(rgs, agentId);
             }
-            else if (action == Vals.CombatAction.AttackWeaponMelee)
+            else if (agentAction.Action == Vals.CombatAction.AttackWeaponMelee)
             {
-                return ResolveSingleTargetMelee(rgs, agentId, targetId.Value);
+                return ResolveSingleTargetMelee(rgs, agentId, agentAction.WeaponEntityId.Value, agentAction.TargetEntityId.Value);
             }
-            else if (action == Vals.CombatAction.DoNothing)
+            else if (agentAction.Action == Vals.CombatAction.DoNothing)
             {
                 var agentNames = rgs.GetPartSingle<Parts.EntityName>(agentId);
                 return new List<Messages.Combat> {
@@ -33,7 +34,7 @@ namespace SampleGame.Sys
             }
             else
             {
-                throw new ArgumentException($"Action '{action}' not supported.");
+                throw new ArgumentException($"Action '{agentAction.Action}' not supported.");
             }
         }
 
@@ -79,13 +80,13 @@ namespace SampleGame.Sys
             return new List<Messages.Combat> { result };
         }
 
-        public static List<Messages.Combat> ResolveSingleTargetMelee(EcsRegistrar rgs, long attackerId, long targetId)
+        public static List<Messages.Combat> ResolveSingleTargetMelee(EcsRegistrar rgs, long attackerId, long weaponId, long targetId)
         {
-            return ResolveSingleTargetMelee(rgs, attackerId, targetId, Rando.GetRange5);
+            return ResolveSingleTargetMelee(rgs, attackerId, weaponId, targetId, Rando.GetRange5);
         }
 
         // do we want to pass in the random function for better testing? not sure, but let's try it.
-        public static List<Messages.Combat> ResolveSingleTargetMelee(EcsRegistrar rgs, long attackerId, long targetId, Func<int> random0to5)
+        public static List<Messages.Combat> ResolveSingleTargetMelee(EcsRegistrar rgs, long attackerId, long weaponId, long targetId, Func<int> random0to5)
         {
             //this is only temporary, later we'll have a clock/scheduler.
             var msg = new Messages.Combat
@@ -128,7 +129,6 @@ namespace SampleGame.Sys
 
             var targetDamagePreventers = targetEquipmentIds.SelectMany(eid => rgs.GetParts<Parts.DamagePreventer>(eid)).ToList();
 
-            //MWCTODO++++: eventually (soon?) the weaponId of the attack should be passed in as part of the call, and we merely verify it is available here. 
             var attackerWieldingSlots = rgs.GetPartSingle<Parts.Anatomy>(attackerId).SlotsEquipped
                 .Where(s => s.Key == Vals.BodySlots.WieldHandLeft && s.Value != 0 || s.Key == Vals.BodySlots.WieldHandRight && s.Value != 0)
                 .ToList();

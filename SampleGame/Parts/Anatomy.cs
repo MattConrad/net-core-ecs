@@ -15,7 +15,7 @@ namespace SampleGame.Parts
         /// Says which slots are normally used for attacks. Expected to be a subset of body plan (e.g. human, wolf, horse),
         /// although weird anatomies might be weird in this regard. An empty/null string here means no natural weapons.
         /// </summary>
-        public string DefaultAttackSlotsCategory { get; set; }
+        public string NaturalWeaponsCategory { get; set; }
 
         /// <summary>
         /// Equipped includes wielding. The Value is the entityId of the weapon that is being equipped. 

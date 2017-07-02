@@ -22,18 +22,18 @@ namespace SampleGame.Sys
                     if (battlefieldAgent == null) continue;
                     if (battlefieldAgent.CombatStatusTags.Intersect(Vals.CombatStatusTag.CombatTerminalStatuses).Any()) continue;
 
-                    ActionChosen agentActionSet;
+                    ActionChosen agentActionChosen;
                     if (battlefieldAgent.ActiveCombatAI == Vals.AI.PlayerChoice)
                     {
                         var possibleActions = Agent.GetPossibleActions(rgs, globalId, agentId, battlefieldEntityIds);
-                        agentActionSet = receivePlayerInput(possibleActions);
+                        agentActionChosen = receivePlayerInput(possibleActions);
                     }
                     else
                     {
-                        agentActionSet = Agent.GetAgentAICombatAction(rgs, globalId, battlefieldAgent.ActiveCombatAI, agentId, battlefieldEntityIds);
+                        agentActionChosen = Agent.GetAgentAICombatAction(rgs, globalId, battlefieldAgent.ActiveCombatAI, agentId, battlefieldEntityIds);
                     }
 
-                    var results = Combat.ProcessAgentAction(rgs, agentId, agentActionSet.TargetEntityId, agentActionSet.Action);
+                    var results = Combat.ProcessAgentAction(rgs, agentId, agentActionChosen);
 
                     var output = Narrator.OutputForCombatMessages(rgs, results);
 

@@ -19,7 +19,7 @@
   {
     "$type": "SampleGame.Parts.Anatomy, SampleGame",
     "BodyPlan": "Quadruped",
-    "DefaultAttackSlotsCategory": "Wolf",
+    "NaturalWeaponsCategory": "Wolf",
     "SlotsEquipped": {},
     "Id": 0
   },

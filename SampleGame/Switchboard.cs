@@ -36,8 +36,8 @@ namespace SampleGame
                 _description = value;
             }
         }
-        public int? WeaponHandIndex { get; set; }
         public long? WeaponEntityId { get; set; }
+        public Vals.BodySlots? WeaponBodySlot { get; set; }
         public string NextCategory { get; set; }
     }
 
@@ -45,8 +45,8 @@ namespace SampleGame
     {
         public long AgentId { get; set; }
         public string Action { get; set; }
-        public int? WeaponHandIndex { get; set; }
         public long? WeaponEntityId { get; set; }
+        public Vals.BodySlots? WeaponBodySlot { get; set; }
         public long? TargetEntityId { get; set; }
     }
 

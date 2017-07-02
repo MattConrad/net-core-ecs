@@ -83,7 +83,7 @@ namespace NetCoreEcsConsole
                     actionChosen.AgentId = choice.Choice.AgentId;
                     actionChosen.Action = choice.Choice.Action;
                     actionChosen.WeaponEntityId = choice.Choice.WeaponEntityId;
-                    actionChosen.WeaponHandIndex = choice.Choice.WeaponHandIndex;
+                    actionChosen.WeaponBodySlot = choice.Choice.WeaponBodySlot;
 
                     category = choice.Choice.NextCategory;
 
@@ -232,7 +232,7 @@ namespace NetCoreEcsConsole
         private static ConsoleKeyAndChoice GetEstablishedKeyAndChoice(List<ConsoleKeyAndChoice> establishedChoices, AgentActionChoice choice)
         {
             var establishedChoice = establishedChoices.SingleOrDefault(c => c.Choice.Category == choice.Category 
-                && c.Choice.Action == choice.Action && c.Choice.WeaponEntityId == choice.WeaponEntityId && c.Choice.WeaponHandIndex == c.Choice.WeaponHandIndex);
+                && c.Choice.Action == choice.Action && c.Choice.WeaponEntityId == choice.WeaponEntityId && c.Choice.WeaponBodySlot == c.Choice.WeaponBodySlot);
 
             if (establishedChoice == null) return null;
 

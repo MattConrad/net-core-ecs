@@ -25,20 +25,17 @@ namespace SampleGame
                     result.Data = $"{actorNames.ProperName} assumes a {msg.ActorAction} stance.";
                     results.Add(result);
                 }
-
-                if (msg.ActorAction == Vals.CombatAction.DoNothing)
+                else if (msg.ActorAction == Vals.CombatAction.DoNothing)
                 {
                     result.Data = $"{actorNames.ProperName} stands still and looks around dumbly. What do?";
                     results.Add(result);
                 }
-
-                if (msg.ActorAction == Vals.CombatAction.RunAway)
+                else if (msg.ActorAction == Vals.CombatAction.RunAway)
                 {
                     result.Data = $"{actorNames.ProperName} tries to run away, and {actorNames.Pronoun} feet spin on the floor in a cartoon whirlwind, but nothing actually happens. Uh oh.";
                     results.Add(result);
                 }
-
-                if (msg.TargetId == 0)
+                else if (msg.TargetId == 0)
                 {
                     result.Data = $"MWCTODO: we don't know what {msg.ActorAction} is.";
                     results.Add(result);

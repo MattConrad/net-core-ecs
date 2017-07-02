@@ -30,58 +30,31 @@ namespace SampleGame.Sys
                 .Select(id => new { Id = id, Name = rgs.GetPartSingle<Parts.EntityName>(id) } )
                 .ToDictionary(n => n.Id, n => n.Name);
 
-            //MWCTODO: rework this: first we get all the default attack slots for the anatomy. then we remove any disabled slots.
-            // then we query the entity for any "extra" slots (not sure how this bit should work, but we want to track things like
-            // equipping/dequpping wristblades)
-            // then we go through the slots and add each slot as an action, if that slot holds a physical object OR there is a matching natural weapon 
-            // for the anatomy's DefaultAttackSlotsCategory. (if there is nothing in the slot and it has no matching nat weapon, don't do anything).
-            // we'll still want to filter out dupes.
-
+            var agentNaturalWeaponSlots = naturalWeaponsMap.NaturalWeaponSets[agentAnatomy.NaturalWeaponsCategory];
+            //MWCTODO: some magic happens here and we find out a wristblade or a laser eye has been equipped, and add that to the slots.
+            // also any quickslots that might have attack items in them. we want quickslots. maybe a wristblade or a laser eye automatically adds a new, fixed quickslot for itself? i like this idea upon first think!
             var recordedIds = new HashSet<long>();
-            //whatever id is wielded in index 0 is the main hand. for now, everything else is the offhand. octopodes have a lot of offhands for now.
-            for (int i = 0; i < agentWieldedIds.Count; i++)
+            foreach (var slot in agentNaturalWeaponSlots.Keys)
             {
-                //2 hand weapons shouldn't show up repeatedly. for now at least, neither will multiple punches.
-                if (recordedIds.Contains(agentWieldedIds[i])) continue;
+                var weaponId = agentAnatomy.SlotsEquipped[slot];
+                if (weaponId == 0L) weaponId = agentNaturalWeaponSlots[slot];
 
-                string attackType = Vals.CombatAction.AttackWeaponMelee;
+                if (recordedIds.Contains(weaponId)) continue;
 
-                //MWCTODO+++: don't default to "punch", get the natural weapon type from the anatomy, maybe with a lookup. 
-                string weaponName = (agentWieldedIds[i] == 0) ? "punch" : agentWieldedIdToWeaponEntityName[agentWieldedIds[i]].GeneralName;
-
-                //MWCTODO+: this shouldn't default to "hand", but whatever the wielding appendage is called.
-                string mainOrOffhand = (i == 0) ? "main hand" : "offhand";
-
+                var weapon = Bundle.GetWeaponBundle(rgs, weaponId);
                 var choice = new AgentActionChoice
                 {
                     AgentId = agentId,
-                    Category = Vals.CombatCategory.AllMelee,
-                    Description = $"Melee {weaponName} ({mainOrOffhand})",
-                    Action = attackType,
-                    WeaponHandIndex = i,
-                    WeaponEntityId = agentWieldedIds[i],
+                    Category = Vals.CombatCategory.TopLevelAction,
+                    Description = $"Melee {weapon.EntityName.GeneralName}",
+                    Action = Vals.CombatAction.AttackWeaponMelee,
+                    WeaponBodySlot = slot,
+                    WeaponEntityId = weaponId,
                     NextCategory = Vals.CombatCategory.MeleeTarget
                 };
 
                 possibleCombatActions.Choices.Add(choice);
-
-                if (i == 0)
-                {
-                    var primaryChoice = new AgentActionChoice
-                    {
-                        AgentId = agentId,
-                        Category = Vals.CombatCategory.TopLevelAction,
-                        Description = $"Primary Melee {weaponName} ({mainOrOffhand})",
-                        Action = attackType,
-                        WeaponHandIndex = i,
-                        WeaponEntityId = agentWieldedIds[i],
-                        NextCategory = Vals.CombatCategory.MeleeTarget
-                    };
-
-                    possibleCombatActions.Choices.Add(primaryChoice);
-                }
-
-                recordedIds.Add(agentWieldedIds[i]);
+                recordedIds.Add(weaponId);
             }
 
             foreach (long id in battlefieldEntityIds)
@@ -155,19 +128,6 @@ namespace SampleGame.Sys
             return possibleCombatActions;
         }
 
-        //NOTE: see notes above, but this eventually won't be limited to wielding hands.
-        //internal static long GetNaturalWeapon(Parts.NaturalWeaponsMap map, Parts.Anatomy agentAnatomy, string slotName)
-        //{
-        //    if (agentAnatomy.BodyPlan == Vals.BodyPlan.Human && slotName == Vals.BodyEquipmentSlots.WieldObjectAppendage)
-        //    {
-        //        return map.NameToNaturalWeaponId[Vals.NaturalWeaponNames.HumanPunch];
-        //    }
-        //    else
-        //    {
-        //        return 0;
-        //    }
-        //}
-
         internal static ActionChosen GetAgentAICombatAction(EcsRegistrar rgs, long globalId, string attackerAI, long attackerId, List<long> battlefieldEntityIds)
         {
             if (attackerAI == Vals.AI.MeleeOnly) return CombatActionMeleeOnly(rgs, globalId, attackerId, battlefieldEntityIds);
@@ -203,8 +163,14 @@ namespace SampleGame.Sys
             {
                 var targetId = targetIdsToWeights.First(kvp => kvp.Value == minWeight).Key;
 
+                var attackerEquipment = rgs.GetPartSingle<Parts.Anatomy>(attackerId);
+
+                var weaponId = attackerEquipment.SlotsEquipped[Vals.BodySlots.WieldHandRight];
+                if (weaponId == 0) weaponId = attackerEquipment.SlotsEquipped[Vals.BodySlots.WieldHandLeft];
+
                 action.Action = Vals.CombatAction.AttackWeaponMelee;
                 action.TargetEntityId = targetId;
+                action.WeaponEntityId = weaponId;
             }
 
             return action;
