@@ -82,7 +82,7 @@ namespace SampleGame.Sys
 
         public static List<Messages.Combat> ResolveSingleTargetMelee(EcsRegistrar rgs, long attackerId, long weaponId, long targetId)
         {
-            return ResolveSingleTargetMelee(rgs, attackerId, weaponId, targetId, Rando.GetRange5);
+            return ResolveSingleTargetMelee(rgs, attackerId, weaponId, targetId, Rando.GetRange7);
         }
 
         // do we want to pass in the random function for better testing? not sure, but let's try it.

@@ -1,5 +1,15 @@
 ﻿Rework randos, having negative numbers for rolls is confusing. If you want a fumble concept, work it in some other way. However, dodge probably can't be a matched skill check any more, not with the rando we've got--if you are 2 points higher in dodge than your attacker's attack, you're basically untouchable. (i.e. we don't want a massive cliff where dodge goes from useless to amazing over a couple of skill levels). idk, maybe we want a more linear rando system after all. could make it MORE linear and still some curve, perhaps.
 
+18 + 17 + 16 + 14 + 12 + 10 + 8 + 4 + 1
+Enumerable.Range(0, 9).Select(i => Math.Pow(i, .65) * 5).Sum()
+
+5, 10, 11, 12, 13, 14, 15, 16
+
+8, 10, 12, 14, 16, 18, 20
+
+91, 81, 69, 55, 39, 21, 1
+
+
 You are naming things as "...Type" and "...Category" interchangeably. Probably ought to choose one or the other. "Type" is shorter, but is maybe confusing with .NET class types. Not sure.
 
 Do NOT make natural weapons auto-equip when you have nothing else in the slot. That is convenient in some ways, but inconvenient every time you want to see if the slot is empty. Which it IS.
