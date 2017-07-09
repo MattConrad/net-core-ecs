@@ -36,8 +36,8 @@
   {
     "$type": "SampleGame.Parts.Skillset, SampleGame",
     "Skills": {
-      "Melee": 3,
-      "Dodge": 2
+      "Melee": 4,
+      "Dodge": 3
     },
     "Id": 0
   },

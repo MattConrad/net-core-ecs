@@ -25,14 +25,14 @@ Looks like the link above is the answer, if I want to do it at all. For now, won
 way more than i need now, but maybe i'd like to remember this later.
         internal static class Vals
         {
-            internal static class TargetType
+            internal static class TargetCategory
             {
                 public const string SingleMelee = nameof(SingleMelee);
                 public const string SingleRanged = nameof(SingleRanged);
                 public const string Aoe = nameof(Aoe);
             }
 
-            internal static class MeleeWeaponType
+            internal static class MeleeWeapoCategory
             {
                 public const string BareFist = nameof(BareFist);
                 public const string Dagger = nameof(Dagger);
@@ -40,7 +40,7 @@ way more than i need now, but maybe i'd like to remember this later.
                 public const string Claymore = nameof(Claymore);
             }
 
-            internal static class DamageType
+            internal static class DamageCategory
             {
                 public const string Mechanical = nameof(Mechanical);
                 public const string Heat = nameof(Heat);
@@ -53,7 +53,7 @@ similar to above, but probably less valuable.
             /// <summary>
             /// String: enum.
             /// </summary>
-            public const string TargetType = nameof(TargetType);
+            public const string TargetCategory = nameof(TargetCategory);
             /// <summary>
             /// Long
             /// </summary>
@@ -69,6 +69,6 @@ similar to above, but probably less valuable.
             /// <summary>
             /// String: enum
             /// </summary>
-            public const string DamageType = nameof(DamageType);
+            public const string DamageCategory = nameof(DamageCategory);
 
 

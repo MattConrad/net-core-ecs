@@ -23,7 +23,7 @@
   },
   {
     "$type": "SampleGame.Parts.Damager, SampleGame",
-    "DamageType": "MechanicalPiercing",
+    "DamageCategory": "MechanicalPiercing",
     "DamageAmount": 2000,
     "Id": 0
   }

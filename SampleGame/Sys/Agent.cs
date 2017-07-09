@@ -165,8 +165,10 @@ namespace SampleGame.Sys
 
                 var attackerEquipment = rgs.GetPartSingle<Parts.Anatomy>(attackerId);
 
-                var weaponId = attackerEquipment.SlotsEquipped[Vals.BodySlots.WieldHandRight];
-                if (weaponId == 0) weaponId = attackerEquipment.SlotsEquipped[Vals.BodySlots.WieldHandLeft];
+                var weaponId = attackerEquipment.SlotsEquipped.GetValueOrDefault(Vals.BodySlots.WieldHandRight, 0);
+                if (weaponId == 0) weaponId = attackerEquipment.SlotsEquipped.GetValueOrDefault(Vals.BodySlots.WieldHandLeft, 0);
+
+                //MWCTODO++: we need to pick natural weapons here. for the wolf, to start with
 
                 action.Action = Vals.CombatAction.AttackWeaponMelee;
                 action.TargetEntityId = targetId;

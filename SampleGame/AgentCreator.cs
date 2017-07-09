@@ -14,8 +14,8 @@ namespace SampleGame
         internal static long Agent(EcsRegistrar rgs, string agentBlueprintName, string armorBlueprintName, string weaponBlueprintName)
         {
             long agentId = Blueprinter.GetEntityFromBlueprint(rgs, agentBlueprintName);
-            long armorId = Blueprinter.GetEntityFromBlueprint(rgs, armorBlueprintName);
-            long weaponId = Blueprinter.GetEntityFromBlueprint(rgs, weaponBlueprintName);
+            long? armorId = string.IsNullOrEmpty(armorBlueprintName) ? (long?)null : Blueprinter.GetEntityFromBlueprint(rgs, armorBlueprintName);
+            long? weaponId = string.IsNullOrEmpty(weaponBlueprintName) ? (long?)null :  Blueprinter.GetEntityFromBlueprint(rgs, weaponBlueprintName);
 
             var anatomy = rgs.GetPartSingle<Parts.Anatomy>(agentId);
 
@@ -25,8 +25,15 @@ namespace SampleGame
                 anatomy.SlotsEquipped = bodySlotsAsEnum.GetUniqueFlags().ToDictionary(s => (Vals.BodySlots)s, s => 0L);
             }
 
-            var wieldResults = Sys.Anatomy.Equip(rgs, agentId, weaponId);
-            var armorResults = Sys.Anatomy.Equip(rgs, agentId, armorId);
+            if (armorId.HasValue)
+            {
+                var armorResults = Sys.Anatomy.Equip(rgs, agentId, armorId.Value);
+            }
+
+            if (weaponId.HasValue)
+            {
+                var wieldResults = Sys.Anatomy.Equip(rgs, agentId, weaponId.Value);
+            }
 
             return agentId;
         }

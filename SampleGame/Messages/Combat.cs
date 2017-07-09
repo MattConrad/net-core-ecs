@@ -25,7 +25,7 @@ namespace SampleGame.Messages
         internal List<string> NewTargetCombatTags { get; set; } = new List<string>();
         //dunno if we should dupe this info here, it's on the entity as well.
         internal long TargetCondition { get; set; }
-        internal string PrimaryDamageType { get; set; }
+        internal string PrimaryDamageCategory { get; set; }
         internal string PrimaryDamagePreventer { get; set; }
         internal decimal AttemptedDamage { get; set; }
 

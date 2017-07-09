@@ -40,7 +40,7 @@ namespace SampleGame.Vals
         public const string Dead = nameof(Dead);
     }
 
-    public static class DamageType
+    public static class DamageCategory
     {
         public const string MechanicalBlunt = nameof(MechanicalBlunt);
         public const string MechanicalPiercing = nameof(MechanicalPiercing);

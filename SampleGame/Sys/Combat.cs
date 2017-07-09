@@ -102,7 +102,7 @@ namespace SampleGame.Sys
             var targetAdjustedSkills = Skills.GetAdjustedSkills(rgs, targetId);
 
             int attackRoll = random0to5();
-            decimal attackCritMultiplier = GetDamageMultiplierFromRange5(attackRoll);
+            decimal attackCritMultiplier = GetDamageMultiplierFromRange7(attackRoll);
             int attackerMeleeSkill = attackerAdjustedSkills[Vals.EntitySkillPhysical.Melee];
             int attackerAdjustedRoll = attackRoll + attackerMeleeSkill;
             msg.ActorAdjustedSkill = attackerMeleeSkill;
@@ -176,15 +176,14 @@ namespace SampleGame.Sys
         }
 
         //this is just some made up stuff, i have no idea how to design a combat system.
-        private static decimal GetDamageMultiplierFromRange5(int roll)
+        private static decimal GetDamageMultiplierFromRange7(int roll)
         {
             //someday crits and fumbles will be more interesting, applying debilities to target or self.
             switch (roll)
             {
-                case 5: return 4;
-                case 4: return 2;
-                case -4:
-                case -5: return 0;
+                case 7: return 4;
+                case 6: return 2;
+                case -7: return 0;
                 default: return 1;
             }
         }
@@ -195,7 +194,7 @@ namespace SampleGame.Sys
             {
                 case Vals.BodyPlan.Human:
                     return new List<Parts.Damager>{ 
-                        new Parts.Damager {  DamageAmount = 1000, DamageType = Vals.DamageType.MechanicalBlunt }
+                        new Parts.Damager {  DamageAmount = 1000, DamageCategory = Vals.DamageCategory.MechanicalBlunt }
                     };
                 default:
                     return new List<Parts.Damager>{ };

@@ -7,12 +7,12 @@ namespace SampleGame.Parts
         // there might be a bunch of these on the same weapon (or spell, or whatever)
 
         //eg, single entity, battlefield, aoe, enemies only.
-        public string TargetType { get; set; }
+        public string TargetCategory { get; set; }
 
         /// <summary>
         /// Defined string value
         /// </summary>
-        public string DamageType { get; set; }
+        public string DamageCategory { get; set; }
 
         /// <summary>
         /// Usually a multiple of 1000: 1000, 2000, 3000 . . .

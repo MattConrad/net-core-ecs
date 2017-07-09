@@ -24,7 +24,7 @@
   },
   {
     "$type": "SampleGame.Parts.Damager, SampleGame",
-    "DamageType": "MechanicalSlashing",
+    "DamageCategory": "MechanicalSlashing",
     "DamageAmount": 3000,
     "Id": 0
   }

@@ -56,8 +56,24 @@ namespace SampleGame.Vals
                     BodySlots.VertebrateEarLeft |
                     BodySlots.VertebrateEarRight |
                     BodySlots.VertebrateNose |
+                    BodySlots.VertebrateMouth,
+                [Quadruped] = BodySlots.QuadrupedHead |
+                    BodySlots.QuadrupedNeck |
+                    BodySlots.QuadrupedBarding |
+                    BodySlots.QuadrupedTorso |
+                    BodySlots.QuadrupedBack |
+                    BodySlots.QuadrupedRightForeLeg |
+                    BodySlots.QuadrupedLeftForeLeg |
+                    BodySlots.QuadrupedRightHindLeg |
+                    BodySlots.QuadrupedLeftHindLeg |
+                    BodySlots.QuadrupedTail |
+                    BodySlots.VertebrateEyeLeft |
+                    BodySlots.VertebrateEyeRight |
+                    BodySlots.VertebrateEarLeft |
+                    BodySlots.VertebrateEarRight |
+                    BodySlots.VertebrateNose |
                     BodySlots.VertebrateMouth
-            };
+        };
 
         public static readonly Dictionary<BodySlots, BodySlots[]> BodySlotsEncompassedByOtherSlot = new Dictionary<BodySlots, BodySlots[]>
             {
