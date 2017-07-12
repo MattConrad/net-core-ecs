@@ -86,8 +86,17 @@ namespace SampleGame.Sys
         }
 
         // do we want to pass in the random function for better testing? not sure, but let's try it.
-        public static List<Messages.Combat> ResolveSingleTargetMelee(EcsRegistrar rgs, long attackerId, long weaponId, long targetId, Func<int> random0to5)
+        public static List<Messages.Combat> ResolveSingleTargetMelee(EcsRegistrar rgs, long attackerId, long weaponId, long targetId, Func<int> randoRange7)
         {
+            var attacker = Bundle.GetAgentBundle(rgs, attackerId);
+
+            if (weaponId == 0)
+            {
+                return new List<Messages.Combat> {
+                    new Messages.Combat { Tick = rgs.NewId(), ActorId = attackerId, ActorAction = $"{attacker.EntityName.ProperName} starts to attack, but merely spins around in place, because its weaponId is 0. SHOULD NOT EVER HAPPEN." }
+                };
+            }
+
             //this is only temporary, later we'll have a clock/scheduler.
             var msg = new Messages.Combat
             {
@@ -101,14 +110,14 @@ namespace SampleGame.Sys
             var attackerAdjustedSkills = Skills.GetAdjustedSkills(rgs, attackerId);
             var targetAdjustedSkills = Skills.GetAdjustedSkills(rgs, targetId);
 
-            int attackRoll = random0to5();
+            int attackRoll = randoRange7();
             decimal attackCritMultiplier = GetDamageMultiplierFromRange7(attackRoll);
             int attackerMeleeSkill = attackerAdjustedSkills[Vals.EntitySkillPhysical.Melee];
             int attackerAdjustedRoll = attackRoll + attackerMeleeSkill;
             msg.ActorAdjustedSkill = attackerMeleeSkill;
             msg.ActorAdjustedRoll = attackerAdjustedRoll;
 
-            int targetDodgeRoll = random0to5();
+            int targetDodgeRoll = randoRange7();
             int targetDodgeSkill = targetAdjustedSkills[Vals.EntitySkillPhysical.Dodge];
             //dodge is a difficult skill and always reduced by 1.
             int targetAdjustedDodgeRoll = Math.Max(0, targetDodgeRoll + targetDodgeSkill - 1);
@@ -123,42 +132,42 @@ namespace SampleGame.Sys
                 : (netAttack == 1) ? 0.5m
                 : 0m;
 
-            var targetPhysicalObject = rgs.GetPartSingle<Parts.PhysicalObject>(targetId);
+            var target = Bundle.GetAgentBundle(rgs, targetId);
             //heh, that distinct is important, since the same armor can now occupy multiple slots.
-            var targetEquipmentIds = rgs.GetPartSingle<Parts.Anatomy>(targetId).SlotsEquipped.Where(s => s.Value != 0).Select(s => s.Value).Distinct().ToList();
+            var targetEquipmentIds = target.Anatomy.SlotsEquipped.Where(s => s.Value != 0).Select(s => s.Value).Distinct().ToList();
 
             var targetDamagePreventers = targetEquipmentIds.SelectMany(eid => rgs.GetParts<Parts.DamagePreventer>(eid)).ToList();
 
-            var attackerWieldingSlots = rgs.GetPartSingle<Parts.Anatomy>(attackerId).SlotsEquipped
-                .Where(s => s.Key == Vals.BodySlots.WieldHandLeft && s.Value != 0 || s.Key == Vals.BodySlots.WieldHandRight && s.Value != 0)
-                .ToList();
+            //MWCTODO: remove commented stuff once monsters are clearing working correctly.
+            //var attackerWieldingSlots = rgs.GetPartSingle<Parts.Anatomy>(attackerId).SlotsEquipped
+            //    .Where(s => s.Key == Vals.BodySlots.WieldHandLeft && s.Value != 0 || s.Key == Vals.BodySlots.WieldHandRight && s.Value != 0)
+            //    .ToList();
 
-            long attackerWeaponId = attackerWieldingSlots.Any() ? attackerWieldingSlots.First().Value : 0;
-            var attackerDamagers = (attackerWeaponId == 0L)
-                ? GetNaturalWeapon(rgs.GetPartSingle<Parts.Anatomy>(attackerId).BodyPlan)
-                : rgs.GetParts<Parts.Damager>(attackerWeaponId).ToList();
+            //long attackerWeaponId = attackerWieldingSlots.Any() ? attackerWieldingSlots.First().Value : 0;
+            //var attackerDamagers = (attackerWeaponId == 0L)
+            //    ? GetNaturalWeapon(rgs.GetPartSingle<Parts.Anatomy>(attackerId).BodyPlan)
+            //    : rgs.GetParts<Parts.Damager>(attackerWeaponId).ToList();
+            var attackerDamagers = rgs.GetParts<Parts.Damager>(weaponId);
 
             var damageAttempted = attackerDamagers.Sum(d => d.DamageAmount) * finalAttackMultiplier;
-            var damagePrevented = targetPhysicalObject.DefaultDamageThreshold + targetDamagePreventers.Sum(p => p.DamageThreshold);
+            var damagePrevented = target.PhysicalObject.DefaultDamageThreshold + targetDamagePreventers.Sum(p => p.DamageThreshold);
             msg.AttemptedDamage = damageAttempted;
 
             //so we apply crit/attack multipliers first, then we subtract damage prevention, then we apply default damage multiplier and armor multipliers. whew!
             var damageDealt = Math.Max(0,
                 (damageAttempted - damagePrevented)
-                * targetPhysicalObject.DefaultDamageMultiplier
+                * target.PhysicalObject.DefaultDamageMultiplier
                 * (targetDamagePreventers.Select(p => p.DamageMultiplier).Aggregate(1m, (p1, p2) => p1 * p2)));
             msg.NetDamage = damageDealt;
 
-            targetPhysicalObject.Condition = targetPhysicalObject.Condition - (int)damageDealt;
-            msg.TargetCondition = targetPhysicalObject.Condition;
+            target.PhysicalObject.Condition = target.PhysicalObject.Condition - (int)damageDealt;
+            msg.TargetCondition = target.PhysicalObject.Condition;
 
-            if (targetPhysicalObject.Condition <= 0)
+            if (target.PhysicalObject.Condition <= 0)
             {
-                var targetAgent = rgs.GetPartSingle<Parts.Agent>(targetId);
-
-                if (!targetAgent.CombatStatusTags.Contains(Vals.CombatStatusTag.Dead))
+                if (!target.Agent.CombatStatusTags.Contains(Vals.CombatStatusTag.Dead))
                 {
-                    targetAgent.CombatStatusTags.Add(Vals.CombatStatusTag.Dead);
+                    target.Agent.CombatStatusTags.Add(Vals.CombatStatusTag.Dead);
                     msg.NewTargetCombatTags.Add(Vals.CombatStatusTag.Dead);
                 }
             }
@@ -188,19 +197,20 @@ namespace SampleGame.Sys
             }
         }
 
-        private static List<Parts.Damager> GetNaturalWeapon(string bodyPlan)
-        {
-            switch(bodyPlan)
-            {
-                case Vals.BodyPlan.Human:
-                    return new List<Parts.Damager>{ 
-                        new Parts.Damager {  DamageAmount = 1000, DamageCategory = Vals.DamageCategory.MechanicalBlunt }
-                    };
-                default:
-                    return new List<Parts.Damager>{ };
-            }
+        //MWCTODO: i think this is dead.
+        //private static List<Parts.Damager> GetNaturalWeapon(string bodyPlan)
+        //{
+        //    switch(bodyPlan)
+        //    {
+        //        case Vals.BodyPlan.Human:
+        //            return new List<Parts.Damager>{ 
+        //                new Parts.Damager {  DamageAmount = 1000, DamageCategory = Vals.DamageCategory.MechanicalBlunt }
+        //            };
+        //        default:
+        //            return new List<Parts.Damager>{ };
+        //    }
 
-        }
+        //}
 
     }
 }

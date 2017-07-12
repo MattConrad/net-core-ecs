@@ -37,7 +37,7 @@ namespace SampleGame
             Sys.EntityName.Overwrite(this.Rgs, villian1Id, new Parts.EntityName { ProperName = "Gruk" });
             Sys.EntityName.Overwrite(this.Rgs, villian2Id, new Parts.EntityName { ProperName = "Hork" });
             Sys.EntityName.Overwrite(this.Rgs, villian3Id, new Parts.EntityName { ProperName = "Lil Jon" });
-            Sys.EntityName.Overwrite(this.Rgs, villian3Id, new Parts.EntityName { ProperName = "Garm the Wolf" });
+            Sys.EntityName.Overwrite(this.Rgs, villian4Id, new Parts.EntityName { ProperName = "Garm the Wolf" });
 
             this.BattlefieldId = Sys.Container.CreateBattlefield(this.Rgs, new long[] { heroId, villian1Id, villian2Id, villian3Id, villian4Id });
         }

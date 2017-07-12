@@ -118,7 +118,7 @@ namespace SampleGame.Sys
                 [Vals.BodySlots.WieldHandRight] = humanPunchId
             };
 
-            var wolfBiteId = Blueprinter.GetEntityFromBlueprint(rgs, Vals.NaturalWeaponNames.HumanPunch);
+            var wolfBiteId = Blueprinter.GetEntityFromBlueprint(rgs, Vals.NaturalWeaponNames.WolfBite);
             var wolfNatWeapons = new Dictionary<Vals.BodySlots, long>
             {
                 [Vals.BodySlots.VertebrateMouth] = wolfBiteId

@@ -3,6 +3,8 @@ Do NOT make natural weapons auto-equip when you have nothing else in the slot. T
 
 Make wolves work. This will iron out some questions about natural weapon handling and how the AI should pick its attack for melee.
 
+Eventually, the melee combat AI should choose better than just the first matching action.
+
 We should have a combat-message history, so that the narrator can look through it to say more interesting things. Probably this can live in the battlefield entity. Possibly this means combatmessage should become a part, so that they neatly fit into the battlefield container.
 
 Need type-specific damage and damage prevention. Right now, there is no difference between damage types in any way.

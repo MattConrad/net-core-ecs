@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using EntropyEcsCore;
 
 namespace SampleGame.Sys
@@ -130,14 +131,16 @@ namespace SampleGame.Sys
 
         internal static ActionChosen GetAgentAICombatAction(EcsRegistrar rgs, long globalId, string attackerAI, long attackerId, List<long> battlefieldEntityIds)
         {
-            if (attackerAI == Vals.AI.MeleeOnly) return CombatActionMeleeOnly(rgs, globalId, attackerId, battlefieldEntityIds);
+            if (attackerAI == Vals.AI.MeleeOnly) return AICombatActionMeleeOnly(rgs, globalId, attackerId, battlefieldEntityIds);
 
             throw new ArgumentException($"Attacker AI {attackerAI} not supported.");
         }
 
-        private static ActionChosen CombatActionMeleeOnly(EcsRegistrar rgs, long globalId, long attackerId, List<long> battlefieldEntityIds)
+        private static ActionChosen AICombatActionMeleeOnly(EcsRegistrar rgs, long globalId, long attackerId, List<long> battlefieldEntityIds)
         {
             var action = new ActionChosen { Action = Vals.CombatAction.DoNothing, AgentId = attackerId };
+
+            var naturalWeaponsMap = rgs.GetPartSingle<Parts.NaturalWeaponsMap>(globalId);
 
             var targetIdsToWeights = battlefieldEntityIds
                 .Select(id => new { Id = id, Agent = rgs.GetPartSingleOrDefault<Parts.Agent>(id) })
@@ -163,12 +166,22 @@ namespace SampleGame.Sys
             {
                 var targetId = targetIdsToWeights.First(kvp => kvp.Value == minWeight).Key;
 
-                var attackerEquipment = rgs.GetPartSingle<Parts.Anatomy>(attackerId);
+                var attackerAnatomy = rgs.GetPartSingle<Parts.Anatomy>(attackerId);
 
-                var weaponId = attackerEquipment.SlotsEquipped.GetValueOrDefault(Vals.BodySlots.WieldHandRight, 0);
-                if (weaponId == 0) weaponId = attackerEquipment.SlotsEquipped.GetValueOrDefault(Vals.BodySlots.WieldHandLeft, 0);
+                //MWCTODO++: yaaaah this is way too human centric. 
+                var weaponId = attackerAnatomy.SlotsEquipped.GetValueOrDefault(Vals.BodySlots.WieldHandRight, 0);
+                if (weaponId == 0) weaponId = attackerAnatomy.SlotsEquipped.GetValueOrDefault(Vals.BodySlots.WieldHandLeft, 0);
 
-                //MWCTODO++: we need to pick natural weapons here. for the wolf, to start with
+                if (weaponId == 0)
+                {
+                    var nwmap = naturalWeaponsMap.NaturalWeaponSets.GetValueOrDefault(attackerAnatomy.BodyPlan, null);
+
+                    if (nwmap != null && nwmap.Keys.Any())
+                    {
+                        //MWCTODO: and this isn't great.
+                        weaponId = nwmap.First().Value;
+                    }
+                }
 
                 action.Action = Vals.CombatAction.AttackWeaponMelee;
                 action.TargetEntityId = targetId;
