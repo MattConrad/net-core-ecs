@@ -28,6 +28,7 @@ namespace SampleGame.Messages
         internal string PrimaryDamageCategory { get; set; }
         internal string PrimaryDamagePreventer { get; set; }
         internal decimal AttemptedDamage { get; set; }
+        internal string AttackVerb { get; set; }
 
         internal decimal NetDamage { get; set; }
     }

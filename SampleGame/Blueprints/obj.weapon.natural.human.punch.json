@@ -9,6 +9,8 @@
     "Weight": 0.0,
     "Size": "Rabbit",
     "WieldableSingleHandSize": "Gnome",
+    "MeleeVerb": "punch",
+    "RangedVerb": "fly",
     "Id": 0
   },
   {

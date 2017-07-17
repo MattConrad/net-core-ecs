@@ -33,7 +33,7 @@ namespace SampleGame
             long villian1Id = AgentCreator.Agent(this.Rgs, "agent.monster.orc.basic", "obj.armor.leather-armor", "obj.weapon.sword");
             long villian2Id = AgentCreator.Agent(this.Rgs, "agent.monster.orc.basic", "obj.armor.leather-armor", "obj.weapon.sword");
             long villian3Id = AgentCreator.Agent(this.Rgs, "agent.monster.orc.basic", "obj.armor.leather-armor", "obj.weapon.sword");
-            long villian4Id = AgentCreator.Agent(this.Rgs, "agent.monster.wolf.basic", "obj.armor.leather-armor", "obj.weapon.sword");
+            long villian4Id = AgentCreator.Agent(this.Rgs, "agent.monster.wolf.basic", "obj.armor.leather-armor", null);
             Sys.EntityName.Overwrite(this.Rgs, villian1Id, new Parts.EntityName { ProperName = "Gruk" });
             Sys.EntityName.Overwrite(this.Rgs, villian2Id, new Parts.EntityName { ProperName = "Hork" });
             Sys.EntityName.Overwrite(this.Rgs, villian3Id, new Parts.EntityName { ProperName = "Lil Jon" });

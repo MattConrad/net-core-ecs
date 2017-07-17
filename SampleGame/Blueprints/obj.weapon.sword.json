@@ -9,7 +9,8 @@
     "EquipmentSlots": 3,
     "Weight": 0.0,
     "Size": "Gnome",
-    "WieldableSingleHandSize": "Goliath",
+    "MeleeVerb": "slash",
+    "RangedVerb": "toss",
     "Id": 0
   },
   {

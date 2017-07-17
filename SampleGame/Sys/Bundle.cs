@@ -11,25 +11,23 @@ namespace SampleGame.Sys
     {
         internal static AgentBundle GetAgentBundle(EcsRegistrar rgs, long agentId)
         {
-            var bundle = new AgentBundle();
-
-            bundle.Agent = rgs.GetPartSingle<Parts.Agent>(agentId);
-            bundle.Anatomy = rgs.GetPartSingle<Parts.Anatomy>(agentId);
-            bundle.EntityName = rgs.GetPartSingle<Parts.EntityName>(agentId);
-            bundle.PhysicalObject = rgs.GetPartSingle<Parts.PhysicalObject>(agentId);
-
-            return bundle;
+            return new AgentBundle
+            {
+                Agent = rgs.GetPartSingle<Parts.Agent>(agentId),
+                Anatomy = rgs.GetPartSingle<Parts.Anatomy>(agentId),
+                EntityName = rgs.GetPartSingle<Parts.EntityName>(agentId),
+                PhysicalObject = rgs.GetPartSingle<Parts.PhysicalObject>(agentId)
+            };
         }
 
         internal static WeaponBundle GetWeaponBundle(EcsRegistrar rgs, long weaponId)
         {
-            var bundle = new WeaponBundle();
-
-            bundle.EntityName = rgs.GetPartSingle<Parts.EntityName>(weaponId);
-            bundle.PhysicalObject = rgs.GetPartSingle<Parts.PhysicalObject>(weaponId);
-            bundle.Damagers = rgs.GetParts<Parts.Damager>(weaponId).ToList();
- 
-            return bundle;
+            return new WeaponBundle
+            {
+                EntityName = rgs.GetPartSingle<Parts.EntityName>(weaponId),
+                PhysicalObject = rgs.GetPartSingle<Parts.PhysicalObject>(weaponId),
+                Damagers = rgs.GetParts<Parts.Damager>(weaponId).ToList()
+            };
         }
     }
 

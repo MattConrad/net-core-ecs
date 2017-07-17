@@ -97,6 +97,8 @@ namespace SampleGame.Sys
                 };
             }
 
+            var weapon = Bundle.GetWeaponBundle(rgs, weaponId);
+
             //this is only temporary, later we'll have a clock/scheduler.
             var msg = new Messages.Combat
             {
@@ -104,7 +106,8 @@ namespace SampleGame.Sys
                 ActorId = attackerId,
                 TargetId = targetId,
                 ActorAction = Vals.CombatAction.AttackWeaponMelee,
-                TargetAction = Vals.CombatAction.Dodge
+                TargetAction = Vals.CombatAction.Dodge,
+                AttackVerb = weapon.PhysicalObject.MeleeVerb
             };
 
             var attackerAdjustedSkills = Skills.GetAdjustedSkills(rgs, attackerId);
@@ -147,9 +150,8 @@ namespace SampleGame.Sys
             //var attackerDamagers = (attackerWeaponId == 0L)
             //    ? GetNaturalWeapon(rgs.GetPartSingle<Parts.Anatomy>(attackerId).BodyPlan)
             //    : rgs.GetParts<Parts.Damager>(attackerWeaponId).ToList();
-            var attackerDamagers = rgs.GetParts<Parts.Damager>(weaponId);
 
-            var damageAttempted = attackerDamagers.Sum(d => d.DamageAmount) * finalAttackMultiplier;
+            var damageAttempted = weapon.Damagers.Sum(d => d.DamageAmount) * finalAttackMultiplier;
             var damagePrevented = target.PhysicalObject.DefaultDamageThreshold + targetDamagePreventers.Sum(p => p.DamageThreshold);
             msg.AttemptedDamage = damageAttempted;
 
@@ -196,21 +198,6 @@ namespace SampleGame.Sys
                 default: return 1;
             }
         }
-
-        //MWCTODO: i think this is dead.
-        //private static List<Parts.Damager> GetNaturalWeapon(string bodyPlan)
-        //{
-        //    switch(bodyPlan)
-        //    {
-        //        case Vals.BodyPlan.Human:
-        //            return new List<Parts.Damager>{ 
-        //                new Parts.Damager {  DamageAmount = 1000, DamageCategory = Vals.DamageCategory.MechanicalBlunt }
-        //            };
-        //        default:
-        //            return new List<Parts.Damager>{ };
-        //    }
-
-        //}
 
     }
 }

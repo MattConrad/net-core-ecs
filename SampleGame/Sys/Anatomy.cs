@@ -39,6 +39,8 @@ namespace SampleGame.Sys
         {
             var output = new Output { Category = "Text" };
 
+            //MWCTODO: bundleize this
+
             var equipperAnatomy = rgs.GetPartSingle<Parts.Anatomy>(equipperId);
             var equipperPhysicalObject = rgs.GetPartSingle<Parts.PhysicalObject>(equipperId);
             var equipperEntityName = rgs.GetPartSingle<Parts.EntityName>(equipperId);
@@ -62,7 +64,7 @@ namespace SampleGame.Sys
                 return output;
             }
 
-            if (!matchingEquipperSlots.Any(s => s.Value == 0) )
+            if (matchingEquipperSlots.All(s => s.Value != 0) )
             {
                 output.Data = $"There's no open place to equip the {gearEntityName.GeneralName}. Unequip something else first.";
                 return output;

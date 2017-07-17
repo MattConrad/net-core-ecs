@@ -174,7 +174,7 @@ namespace SampleGame.Sys
 
                 if (weaponId == 0)
                 {
-                    var nwmap = naturalWeaponsMap.NaturalWeaponSets.GetValueOrDefault(attackerAnatomy.BodyPlan, null);
+                    var nwmap = naturalWeaponsMap.NaturalWeaponSets.GetValueOrDefault(attackerAnatomy.NaturalWeaponsCategory, null);
 
                     if (nwmap != null && nwmap.Keys.Any())
                     {

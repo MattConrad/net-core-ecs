@@ -46,7 +46,7 @@ namespace SampleGame
 
                 var targetNames = rgs.GetPartSingle<Parts.EntityName>(msg.TargetId);
 
-                sb.Append($"{actorNames.ProperName} makes a {msg.ActorAdjustedRoll} attack");
+                sb.Append($"{actorNames.ProperName} {msg.AttackVerb}s with a {msg.ActorAdjustedRoll} attack");
 
                 if (msg.ActorAdjustedRoll <= 0)
                 {

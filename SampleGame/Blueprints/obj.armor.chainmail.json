@@ -12,6 +12,8 @@
     "EquipmentSlots": 64,
     "EquipmentSlotName": "HumanoidBody",
     "EquipmentSpecialCode": null,
+    "MeleeVerb": "bash",
+    "RangedVerb": "throw",
     "Id": 0
   },
   {

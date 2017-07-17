@@ -47,12 +47,6 @@ namespace SampleGame.Parts
         /// </summary>
         public string Size { get; set; }
 
-        ///// <summary>
-        ///// Any object might be wielded as a weapon or a shield. This tells us size of *wielder* can wield/equip the object one-handed.
-        ///// The equipment system has default rules on how deviations from this size will work.
-        ///// </summary>
-        //public string WieldableSingleHandSize { get; set; } = Vals.Size.Goliath;
-
         /// <summary>
         /// Which slots can this item be equipped to? Usually, either of two hands, either of two ring fingers, head, etc.
         /// </summary>
@@ -68,5 +62,15 @@ namespace SampleGame.Parts
         /// This will almost always be null.
         /// </summary>
         public string EquipmentSpecialCode { get; set; }
+
+        /// <summary>
+        /// Verb for the melee action: "slash", "bite", "stab". Considering something like "+slash" which can be unfolded to "slash" or "hack" or "cut" or "slice".
+        /// </summary>
+        public string MeleeVerb { get; set; } = "bash";
+
+        /// <summary>
+        /// Verb for the ranged action: "fire", "launch", "shoot". Likewise possibly expandable values.
+        /// </summary>
+        public string RangedVerb { get; set; } = "throw";
     }
 }
