@@ -14,6 +14,9 @@ namespace SampleGame
 
             foreach(var msg in messages)
             {
+                //MWCTODO: add a debug switch for this info
+                results.Add(new Output { Category = OutputCategory.Text, Data = $"(DEBUG: attempted damage {msg.AttemptedDamage} net damage {msg.NetDamage} critical {msg.ActorCritical} target condition {msg.TargetCondition})" });
+
                 var result = new Output { Category = OutputCategory.Text };
 
                 var sb = new StringBuilder();
@@ -46,7 +49,7 @@ namespace SampleGame
 
                 var targetNames = rgs.GetPartSingle<Parts.EntityName>(msg.TargetId);
 
-                sb.Append($"{actorNames.ProperName} {msg.AttackVerb}s with a {msg.ActorAdjustedRoll} attack");
+                sb.Append($"{actorNames.ProperName} {PresentTenseVerb(msg.AttackVerb)} with a {msg.ActorAdjustedRoll} attack.");
 
                 if (msg.ActorAdjustedRoll <= 0)
                 {
@@ -114,6 +117,17 @@ namespace SampleGame
             return results;
         }
 
+        private static string PresentTenseVerb(string verb)
+        {
+            if (verb.EndsWith("o") || verb.EndsWith("sh") 
+                || verb.EndsWith("ch") || verb.EndsWith("tch") 
+                || verb.EndsWith("x") || verb.EndsWith("ss")) return $"{verb}es";
+
+            if (verb.EndsWith("y")) return verb.Substring(0, verb.Length - 1) + "ies";
+
+            return $"{verb}s";
+        }
+
         private static void AppendNoDamageButNearlyDead(StringBuilder sb, string targetProperName, string targetPronoun, long condition)
         {
             if (condition < 2000)
@@ -123,18 +137,6 @@ namespace SampleGame
                 sb.Append($"However, {targetProperName} is still in serious trouble. Blood is dripping out of {targetPronoun} armor and {targetPronoun} staggers a little as {targetPronoun} readies a counterattack.");
             }
         }
-
-        //private static string GetRollAdjectiveFromRange5(int roll)
-        //{
-        //    switch (roll)
-        //    {
-        //        case 5: return "an amazing";
-        //        case 4: return "an excellent";
-        //        case -4: return "a poor";
-        //        case -5: return "a miserable";
-        //        default: return "an undistinguished";
-        //    }
-        //}
 
         //i *think* this belongs here. short term stuff anyway.
         private static string GetLivingThingConditionDesc(long condition)

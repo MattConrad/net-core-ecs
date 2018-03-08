@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using EntropyEcsCore;
+// ReSharper disable SpecifyACultureInStringConversionExplicitly
 
 namespace SampleGame.Sys
 {
@@ -117,6 +118,7 @@ namespace SampleGame.Sys
             decimal attackCritMultiplier = GetDamageMultiplierFromRange7(attackRoll);
             int attackerMeleeSkill = attackerAdjustedSkills[Vals.EntitySkillPhysical.Melee];
             int attackerAdjustedRoll = attackRoll + attackerMeleeSkill;
+            msg.ActorCritical = attackCritMultiplier.ToString();
             msg.ActorAdjustedSkill = attackerMeleeSkill;
             msg.ActorAdjustedRoll = attackerAdjustedRoll;
 
@@ -139,17 +141,8 @@ namespace SampleGame.Sys
             //heh, that distinct is important, since the same armor can now occupy multiple slots.
             var targetEquipmentIds = target.Anatomy.SlotsEquipped.Where(s => s.Value != 0).Select(s => s.Value).Distinct().ToList();
 
+            // ReSharper disable once ConvertClosureToMethodGroup
             var targetDamagePreventers = targetEquipmentIds.SelectMany(eid => rgs.GetParts<Parts.DamagePreventer>(eid)).ToList();
-
-            //MWCTODO: remove commented stuff once monsters are clearing working correctly.
-            //var attackerWieldingSlots = rgs.GetPartSingle<Parts.Anatomy>(attackerId).SlotsEquipped
-            //    .Where(s => s.Key == Vals.BodySlots.WieldHandLeft && s.Value != 0 || s.Key == Vals.BodySlots.WieldHandRight && s.Value != 0)
-            //    .ToList();
-
-            //long attackerWeaponId = attackerWieldingSlots.Any() ? attackerWieldingSlots.First().Value : 0;
-            //var attackerDamagers = (attackerWeaponId == 0L)
-            //    ? GetNaturalWeapon(rgs.GetPartSingle<Parts.Anatomy>(attackerId).BodyPlan)
-            //    : rgs.GetParts<Parts.Damager>(attackerWeaponId).ToList();
 
             var damageAttempted = weapon.Damagers.Sum(d => d.DamageAmount) * finalAttackMultiplier;
             var damagePrevented = target.PhysicalObject.DefaultDamageThreshold + targetDamagePreventers.Sum(p => p.DamageThreshold);
